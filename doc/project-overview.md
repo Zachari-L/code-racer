@@ -10,21 +10,21 @@ L'application sera disponible en français et en anglais, optimisée pour une ut
 
 ## 2. Glossaire
 
-| Terme | Définition |
-|---|---|
-| Course | Session de frappe durant laquelle les participants saisissent un texte commun selon une configuration définie. |
-| Hôte | Utilisateur qui crée une course et en gère les paramètres, les participants, le redémarrage et la clôture. |
-| Participant | Utilisateur qui prend part activement à la frappe et dont la progression est prise en compte dans le classement. |
-| Spectateur | Utilisateur présent dans une course sans y prendre part activement ni figurer au classement. |
-| Invité | Utilisateur qui rejoint une course sous un pseudonyme, sans créer de compte permanent. |
-| Course publique | Course visible et accessible selon les règles définies par l'application. |
-| Course semi-publique | Course accessible au moyen d'un code fourni par l'hôte. |
-| Course privée | Course accessible uniquement au moyen d'un lien d'invitation valide jusqu'à la fin de la course. |
-| WPM | « Words per minute » (mots par minute), indicateur de vitesse de frappe. |
-| Précision | Proportion de caractères saisis correctement par rapport au nombre total de caractères saisis. |
-| Pénalité | Temps ajouté au résultat ou autre effet négatif appliqué après une erreur de saisie. |
-| Heatmap | Représentation visuelle des touches associées aux erreurs les plus fréquentes. |
-| Bot | Participant contrôlé par l'application, dont la vitesse et le taux d'erreur dépendent du niveau choisi. |
+| Terme                | Définition                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Course               | Session de frappe durant laquelle les participants saisissent un texte commun selon une configuration définie.   |
+| Hôte                 | Utilisateur qui crée une course et en gère les paramètres, les participants, le redémarrage et la clôture.       |
+| Participant          | Utilisateur qui prend part activement à la frappe et dont la progression est prise en compte dans le classement. |
+| Spectateur           | Utilisateur présent dans une course sans y prendre part activement ni figurer au classement.                     |
+| Invité               | Utilisateur qui rejoint une course sous un pseudonyme, sans créer de compte permanent.                           |
+| Course publique      | Course visible et accessible selon les règles définies par l'application.                                        |
+| Course semi-publique | Course accessible au moyen d'un code fourni par l'hôte.                                                          |
+| Course privée        | Course accessible uniquement au moyen d'un lien d'invitation valide jusqu'à la fin de la course.                 |
+| WPM                  | « Words per minute » (mots par minute), indicateur de vitesse de frappe.                                         |
+| Précision            | Proportion de caractères saisis correctement par rapport au nombre total de caractères saisis.                   |
+| Pénalité             | Temps ajouté au résultat ou autre effet négatif appliqué après une erreur de saisie.                             |
+| Heatmap              | Représentation visuelle des touches associées aux erreurs les plus fréquentes.                                   |
+| Bot                  | Participant contrôlé par l'application, dont la vitesse et le taux d'erreur dépendent du niveau choisi.          |
 
 ## 3. Exigences fonctionnelles et techniques
 
