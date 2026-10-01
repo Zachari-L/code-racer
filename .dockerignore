@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.agents
+doc
+*.md
+.env*.local
+.env
+.prettierrc
+.prettierignore
