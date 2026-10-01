@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
+@theme {
+  --color-canvas: #f4f4ed;
+  --color-slate-dark: #111112;
+  --color-electric-lime: #d2ff00;
+  --color-azure-blue: #007bff;
+  --color-tangerine-orange: #ff7a00;
+  --color-arcade-magenta: #d9008d;
+  --color-victory-teal: #00bfa5;
+
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f4ed;
+  --foreground: #111112;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #111112;
+  --foreground: #f4f4ed;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+/* Chunky Tactile Arcade Primitives */
+.arcade-border-thick {
+  border-width: 3px;
+  border-style: solid;
+}
+
+.arcade-shadow {
+  box-shadow: 0 4px 0 #111112;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.arcade-shadow:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #111112;
+}
+
+.arcade-pill {
+  border-radius: 9999px;
+}
+
+/* Dynamic background speed lines and arcade dots */
+.arcade-bg-pattern {
+  background-image: radial-gradient(#111112 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.05;
 }
