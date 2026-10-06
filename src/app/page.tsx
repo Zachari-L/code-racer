@@ -1,13 +1,18 @@
+"use client";
+
 import { Navbar } from "@/components/layout/Navbar";
 import { JoinLobbyCard } from "@/components/lobby/JoinLobbyCard";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
 import { ScrollReveal } from "@/components/animated/ScrollReveal";
 import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
-    <div className="bg-canvas text-slate-dark selection:bg-electric-lime selection:text-slate-dark relative flex min-h-screen flex-col">
+    <div className="bg-canvas text-slate-dark selection:bg-electric-lime selection:text-slate-dark relative flex min-h-screen flex-col transition-colors duration-150 dark:bg-[#111112] dark:text-zinc-100">
       {/* Background dot pattern & ambient dynamic background */}
       <div className="arcade-bg-pattern pointer-events-none absolute inset-0" />
       <ArcadeBackground />
@@ -19,21 +24,20 @@ export default function Home() {
           <div className="inline-flex items-center gap-2">
             <Badge variant="lime" className="gap-1.5 px-3 py-1">
               <Sparkles className="h-3.5 w-3.5" />
-              Saison Arcade Classroom
+              {t("home.seasonBadge")}
             </Badge>
-            <Badge variant="azure">Multiplayer 2 à 100 joueurs</Badge>
+            <Badge variant="azure">{t("home.capacityBadge")}</Badge>
           </div>
 
-          <h1 className="text-slate-dark text-4xl leading-[1.05] font-black tracking-tight uppercase sm:text-6xl lg:text-7xl">
-            Tapez plus vite. <br />
+          <h1 className="text-slate-dark text-4xl leading-[1.05] font-black tracking-tight uppercase sm:text-6xl lg:text-7xl dark:text-white">
+            {t("home.title1")} <br />
             <span className="text-azure-blue decoration-electric-lime underline decoration-wavy decoration-4">
-              Gagnez la course.
+              {t("home.title2")}
             </span>
           </h1>
 
-          <p className="mx-auto max-w-2xl text-base font-bold text-zinc-600 sm:text-lg">
-            La compétition de frappe au clavier pour collégiens, lycéens et passionnés. Relevez le
-            défi en temps réel sur des textes littéraires, des répliques cultes ou du code !
+          <p className="mx-auto max-w-2xl text-base font-bold text-zinc-600 sm:text-lg dark:text-zinc-400">
+            {t("home.subtitle")}
           </p>
         </ScrollReveal>
 
@@ -45,8 +49,8 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500">
-        CodeRacer © {new Date().getFullYear()} — Conçu pour les classes et les passionnés de code.
+      <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+        {t("footer.text", { year: new Date().getFullYear() })}
       </footer>
     </div>
   );

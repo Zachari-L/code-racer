@@ -10,17 +10,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        lime: "bg-electric-lime text-slate-dark border-3 border-slate-dark arcade-shadow hover:brightness-105 active:shadow-none",
+        lime: "bg-electric-lime text-slate-dark border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-105 active:shadow-none",
         azure:
-          "bg-azure-blue text-white border-3 border-slate-dark arcade-shadow hover:brightness-110 active:shadow-none",
+          "bg-azure-blue text-white border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
         orange:
-          "bg-tangerine-orange text-white border-3 border-slate-dark arcade-shadow hover:brightness-110 active:shadow-none",
+          "bg-tangerine-orange text-white border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
         magenta:
-          "bg-arcade-magenta text-white border-3 border-slate-dark arcade-shadow hover:brightness-110 active:shadow-none",
-        teal: "bg-victory-teal text-slate-dark border-3 border-slate-dark arcade-shadow hover:brightness-105 active:shadow-none",
+          "bg-arcade-magenta text-white border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
+        teal: "bg-victory-teal text-slate-dark border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-105 active:shadow-none",
         outline:
-          "bg-white text-slate-dark border-3 border-slate-dark arcade-shadow hover:bg-zinc-100 active:shadow-none",
-        ghost: "bg-transparent text-slate-dark hover:bg-black/5 border-3 border-transparent",
+          "bg-white dark:bg-zinc-900 text-slate-dark dark:text-zinc-100 border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:bg-zinc-100 dark:hover:bg-zinc-800 active:shadow-none",
+        ghost:
+          "bg-transparent text-slate-dark dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/5 border-3 border-transparent",
       },
       size: {
         sm: "h-9 px-4 text-xs rounded-full",

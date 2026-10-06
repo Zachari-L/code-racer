@@ -19,7 +19,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "text-slate-dark arcade-shadow flex h-12 w-full rounded-full border-3 bg-white px-5 py-2 text-base font-bold placeholder:font-normal placeholder:text-zinc-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+          "text-slate-dark arcade-shadow flex h-12 w-full rounded-full border-3 bg-white px-5 py-2 text-base font-bold placeholder:font-normal placeholder:text-zinc-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500",
           accentBorders[accentColor],
           className
         )}

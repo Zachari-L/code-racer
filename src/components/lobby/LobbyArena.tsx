@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { RacerCar } from "@/components/animated/RacerCar";
+import { useLanguage } from "@/context/LanguageContext";
 import type { PlayerColor, BotDifficulty } from "@/types/race";
 
 interface LobbyParticipant {
@@ -52,6 +53,7 @@ const PREVIEW_TEXTS = {
 
 export function LobbyArena({ initialCode }: LobbyArenaProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const code = initialCode || DEFAULT_CODE;
   const [copied, setCopied] = React.useState(false);
   const [isSelfReady, setIsSelfReady] = React.useState(true);
@@ -63,7 +65,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
   const [participants, setParticipants] = React.useState<LobbyParticipant[]>([
     {
       id: "p1",
-      nickname: "TurboTypist (Vous)",
+      nickname: `TurboTypist ${t("lobby.you")}`,
       role: "HOST",
       carColor: "azure",
       isReady: true,
@@ -110,18 +112,18 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
   }
 
   function handleAddBot(difficulty: BotDifficulty) {
-    const diffNames: Record<BotDifficulty, string> = {
-      EASY: "Facile (~30 WPM)",
-      MEDIUM: "Moyen (~60 WPM)",
-      HARD: "Difficile (~90 WPM)",
-      IMPOSSIBLE: "Impossible (~130 WPM)",
+    const diffLabels: Record<BotDifficulty, string> = {
+      EASY: `${t("lobby.botEasy")} (~30 WPM)`,
+      MEDIUM: `${t("lobby.botMedium")} (~60 WPM)`,
+      HARD: `${t("lobby.botHard")} (~90 WPM)`,
+      IMPOSSIBLE: `${t("lobby.botPro")} (~130 WPM)`,
     };
     const colors: PlayerColor[] = ["azure", "tangerine", "magenta", "teal"];
     const nextColor = colors[participants.length % colors.length];
 
     const newBot: LobbyParticipant = {
       id: `bot_${Date.now()}`,
-      nickname: `Bot_${difficulty.slice(0, 3)} (${diffNames[difficulty]})`,
+      nickname: `Bot_${difficulty.slice(0, 3)} (${diffLabels[difficulty]})`,
       role: "PARTICIPANT",
       carColor: nextColor,
       isReady: true,
@@ -139,33 +141,33 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6">
       {/* Top Header Card with 6-Digit Lobby Code & Status */}
-      <div className="border-slate-dark arcade-shadow flex flex-col items-center justify-between gap-6 rounded-3xl border-3 bg-white p-6 md:flex-row md:p-8">
+      <div className="border-slate-dark arcade-shadow flex flex-col items-center justify-between gap-6 rounded-3xl border-3 bg-white p-6 transition-colors duration-150 sm:p-8 md:flex-row dark:border-zinc-700 dark:bg-zinc-900">
         <div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
           <div className="inline-flex items-center gap-2">
             <Badge variant="lime" className="gap-1.5 px-3 py-1 text-xs">
               <span className="h-2 w-2 animate-ping rounded-full bg-slate-900" />
-              Salon Multijoueur
+              {t("lobby.tag")}
             </Badge>
             <Badge variant="azure" className="gap-1.5 px-3 py-1 text-xs">
               <Users className="h-3.5 w-3.5" />
-              {participants.length} / 100 Joueurs
+              {participants.length} / 100 {t("lobby.playersCount")}
             </Badge>
           </div>
 
-          <h1 className="text-slate-dark text-3xl font-black uppercase sm:text-4xl">
-            Arène de Départ #{code.slice(0, 3)}
+          <h1 className="text-slate-dark text-3xl font-black uppercase sm:text-4xl dark:text-white">
+            {t("lobby.title")} #{code.slice(0, 3)}
           </h1>
-          <p className="text-sm font-bold text-zinc-500">
-            Partagez le code ou le lien avec votre classe pour rejoindre la grille de départ.
+          <p className="text-sm font-bold text-zinc-500 dark:text-zinc-400">
+            {t("lobby.description")}
           </p>
         </div>
 
         {/* 6-Digit Arcade Code Box */}
         <div className="flex flex-col items-center gap-2">
-          <span className="text-slate-dark text-xs font-black tracking-widest uppercase">
-            Code d&apos;accès
+          <span className="text-slate-dark text-xs font-black tracking-widest uppercase dark:text-zinc-300">
+            {t("lobby.accessCode")}
           </span>
-          <div className="border-slate-dark arcade-shadow flex items-center gap-3 rounded-2xl border-3 bg-zinc-50 px-5 py-3">
+          <div className="border-slate-dark arcade-shadow flex items-center gap-3 rounded-2xl border-3 bg-zinc-50 px-5 py-3 dark:border-zinc-700 dark:bg-zinc-800">
             <span className="text-azure-blue font-mono text-3xl font-black tracking-[0.25em] sm:text-4xl">
               {code}
             </span>
@@ -174,15 +176,15 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
               size="sm"
               onClick={handleCopyCode}
               className="h-10 px-3 text-xs"
-              title="Copier le code"
+              title={t("lobby.copyCode")}
             >
               {copied ? (
                 <span className="text-victory-teal flex items-center gap-1 font-bold">
-                  <Check className="h-4 w-4" /> Copié
+                  <Check className="h-4 w-4" /> {t("lobby.copied")}
                 </span>
               ) : (
                 <span className="flex items-center gap-1 font-bold">
-                  <Copy className="h-4 w-4" /> Copier
+                  <Copy className="h-4 w-4" /> {t("lobby.copyCode")}
                 </span>
               )}
             </Button>
@@ -192,21 +194,20 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
 
       {/* Main Grid: Starting Grid on Left, Settings & Text Preview on Right */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Left Column (2 Cols wide on desktop): Starting Grid / Drivers */}
+        {/* Left Column: Starting Grid */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <Card className="bg-white">
+          <Card className="bg-white dark:bg-zinc-900">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div>
                 <CardTitle className="flex items-center gap-2 text-2xl">
                   <Users className="text-azure-blue h-6 w-6" />
-                  Grille de Départ
+                  {t("lobby.gridTitle")}
                 </CardTitle>
-                <CardDescription>
-                  Les pilotes prêts s&apos;élanceront dès que l&apos;hôte lance la course.
-                </CardDescription>
+                <CardDescription>{t("lobby.gridDesc")}</CardDescription>
               </div>
               <Badge variant="outline" className="font-mono text-xs">
-                {participants.filter((p) => p.isReady).length}/{participants.length} Prêts
+                {participants.filter((p) => p.isReady).length}/{participants.length}{" "}
+                {t("lobby.readyCount")}
               </Badge>
             </CardHeader>
 
@@ -222,14 +223,16 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className={`border-slate-dark arcade-shadow relative flex flex-col justify-between rounded-2xl border-3 p-4 transition-all ${
-                          isSelf ? "bg-electric-lime/10" : "bg-zinc-50/80"
+                        className={`border-slate-dark arcade-shadow relative flex flex-col justify-between rounded-2xl border-3 p-4 transition-all dark:border-zinc-700 ${
+                          isSelf
+                            ? "bg-electric-lime/10 dark:bg-electric-lime/15"
+                            : "bg-zinc-50/80 dark:bg-zinc-800/80"
                         }`}
                       >
                         {/* Top: Avatar Car & Nickname */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2.5">
-                            <div className="border-slate-dark flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 bg-white p-1">
+                            <div className="border-slate-dark flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 bg-white p-1 dark:border-zinc-700 dark:bg-zinc-900">
                               <RacerCar
                                 color={player.carColor}
                                 width={56}
@@ -240,19 +243,19 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                             </div>
                             <div className="flex flex-col">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-slate-dark truncate text-sm font-black">
+                                <span className="text-slate-dark truncate text-sm font-black dark:text-zinc-100">
                                   {player.nickname}
                                 </span>
                                 {player.role === "HOST" && (
                                   <Crown className="text-tangerine-orange h-4 w-4 shrink-0" />
                                 )}
                               </div>
-                              <span className="text-[11px] font-extrabold text-zinc-500 uppercase">
+                              <span className="text-[11px] font-extrabold text-zinc-500 uppercase dark:text-zinc-400">
                                 {player.isBot
-                                  ? "Pilote Virtuel"
+                                  ? t("lobby.virtualPilot")
                                   : player.role === "HOST"
-                                    ? "Hôte"
-                                    : "Participant"}
+                                    ? t("lobby.host")
+                                    : t("lobby.participant")}
                               </span>
                             </div>
                           </div>
@@ -264,11 +267,11 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                           >
                             {player.isReady ? (
                               <>
-                                <CheckCircle2 className="h-3 w-3" /> Prêt
+                                <CheckCircle2 className="h-3 w-3" /> {t("lobby.ready")}
                               </>
                             ) : (
                               <>
-                                <Hourglass className="h-3 w-3" /> En attente
+                                <Hourglass className="h-3 w-3" /> {t("lobby.waiting")}
                               </>
                             )}
                           </Badge>
@@ -280,14 +283,14 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
               </div>
 
               {/* Bot Addition Selector */}
-              <div className="border-slate-dark/20 mt-4 rounded-2xl border-2 border-dashed bg-zinc-50 p-4">
+              <div className="border-slate-dark/20 mt-4 rounded-2xl border-2 border-dashed bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="text-slate-dark flex items-center gap-2 text-xs font-black uppercase">
+                  <span className="text-slate-dark flex items-center gap-2 text-xs font-black uppercase dark:text-zinc-200">
                     <Bot className="text-tangerine-orange h-4 w-4" />
-                    Ajouter des Pilotes Virtuels (Bots)
+                    {t("lobby.addBotsTitle")}
                   </span>
-                  <span className="text-[11px] font-semibold text-zinc-400">
-                    Complétez la grille pour vous entraîner
+                  <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500">
+                    {t("lobby.addBotsDesc")}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -298,7 +301,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     onClick={() => handleAddBot("EASY")}
                     className="gap-1 text-xs"
                   >
-                    <Plus className="h-3 w-3" /> Facile
+                    <Plus className="h-3 w-3" /> {t("lobby.botEasy")}
                   </Button>
                   <Button
                     type="button"
@@ -307,7 +310,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     onClick={() => handleAddBot("MEDIUM")}
                     className="gap-1 text-xs"
                   >
-                    <Plus className="h-3 w-3" /> Moyen
+                    <Plus className="h-3 w-3" /> {t("lobby.botMedium")}
                   </Button>
                   <Button
                     type="button"
@@ -316,7 +319,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     onClick={() => handleAddBot("HARD")}
                     className="gap-1 text-xs"
                   >
-                    <Plus className="h-3 w-3" /> Difficile
+                    <Plus className="h-3 w-3" /> {t("lobby.botHard")}
                   </Button>
                   <Button
                     type="button"
@@ -325,7 +328,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     onClick={() => handleAddBot("IMPOSSIBLE")}
                     className="gap-1 text-xs"
                   >
-                    <Plus className="h-3 w-3" /> Pro
+                    <Plus className="h-3 w-3" /> {t("lobby.botPro")}
                   </Button>
                 </div>
               </div>
@@ -335,109 +338,115 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
 
         {/* Right Column: Settings & Text Preview */}
         <div className="flex flex-col gap-6">
-          <Card className="bg-white">
+          <Card className="bg-white dark:bg-zinc-900">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-xl">
                 <Settings className="text-tangerine-orange h-5 w-5" />
-                Paramètres de Course
+                {t("lobby.settingsTitle")}
               </CardTitle>
-              <CardDescription>Configuration du salon pour cette session</CardDescription>
+              <CardDescription>{t("lobby.settingsDesc")}</CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-4">
               <div>
-                <label className="text-slate-dark mb-1.5 block text-xs font-black uppercase">
-                  Catégorie du Texte
+                <label className="text-slate-dark mb-1.5 block text-xs font-black uppercase dark:text-zinc-200">
+                  {t("lobby.textCat")}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setSelectedCategory("quotes")}
-                    className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all ${
+                    className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "quotes"
                         ? "bg-electric-lime text-slate-dark shadow-xs"
-                        : "bg-white text-zinc-600 hover:bg-zinc-100"
+                        : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                   >
-                    Citations
+                    {t("lobby.catQuotes")}
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedCategory("code")}
-                    className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all ${
+                    className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "code"
                         ? "bg-electric-lime text-slate-dark shadow-xs"
-                        : "bg-white text-zinc-600 hover:bg-zinc-100"
+                        : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                   >
-                    Code TS
+                    {t("lobby.catCode")}
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedCategory("moliere")}
-                    className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all ${
+                    className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "moliere"
                         ? "bg-electric-lime text-slate-dark shadow-xs"
-                        : "bg-white text-zinc-600 hover:bg-zinc-100"
+                        : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                   >
-                    Théâtre
+                    {t("lobby.catMoliere")}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="text-slate-dark mb-1.5 block text-xs font-black uppercase">
-                  Mode de Frappe
+                <label className="text-slate-dark mb-1.5 block text-xs font-black uppercase dark:text-zinc-200">
+                  {t("lobby.mode")}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setStrictMode(false)}
-                    className={`border-slate-dark rounded-xl border-2 px-3 py-2 text-left text-xs font-black transition-all ${
+                    className={`border-slate-dark rounded-xl border-2 px-3 py-2 text-left text-xs font-black transition-all dark:border-zinc-700 ${
                       !strictMode
                         ? "bg-azure-blue/15 border-azure-blue text-azure-blue shadow-xs"
-                        : "bg-white text-zinc-500 hover:bg-zinc-100"
+                        : "bg-white text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
                     }`}
                   >
-                    <div className="font-black">Permissif</div>
-                    <div className="text-[10px] font-normal text-zinc-500">Pénalité de vitesse</div>
+                    <div className="font-black">{t("lobby.modePermissive")}</div>
+                    <div className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400">
+                      {t("lobby.modePermissiveDesc")}
+                    </div>
                   </button>
                   <button
                     type="button"
                     onClick={() => setStrictMode(true)}
-                    className={`border-slate-dark rounded-xl border-2 px-3 py-2 text-left text-xs font-black transition-all ${
+                    className={`border-slate-dark rounded-xl border-2 px-3 py-2 text-left text-xs font-black transition-all dark:border-zinc-700 ${
                       strictMode
                         ? "bg-arcade-magenta/15 border-arcade-magenta text-arcade-magenta shadow-xs"
-                        : "bg-white text-zinc-500 hover:bg-zinc-100"
+                        : "bg-white text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
                     }`}
                   >
-                    <div className="font-black">Strict</div>
-                    <div className="text-[10px] font-normal text-zinc-500">Correction requise</div>
+                    <div className="font-black">{t("lobby.modeStrict")}</div>
+                    <div className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400">
+                      {t("lobby.modeStrictDesc")}
+                    </div>
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-t border-zinc-200 pt-3 text-xs font-bold text-zinc-600">
+              <div className="flex items-center justify-between border-t border-zinc-200 pt-3 text-xs font-bold text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-zinc-500" /> Durée Maximum
+                  <Clock className="h-4 w-4 text-zinc-500" /> {t("lobby.duration")}
                 </span>
-                <span className="font-mono font-black text-slate-900">120 secondes</span>
+                <span className="font-mono font-black text-slate-900 dark:text-white">
+                  120 {t("lobby.seconds")}
+                </span>
               </div>
 
-              <div className="flex items-center justify-between border-t border-zinc-200 pt-3 text-xs font-bold text-zinc-600">
+              <div className="flex items-center justify-between border-t border-zinc-200 pt-3 text-xs font-bold text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
                 <span className="flex items-center gap-1.5">
-                  <ShieldAlert className="text-azure-blue h-4 w-4" /> Anti-Triche
+                  <ShieldAlert className="text-azure-blue h-4 w-4" /> {t("lobby.antiCheat")}
                 </span>
-                <span className="text-victory-teal font-black">Actif (Copier/Coller bloqué)</span>
+                <span className="text-victory-teal font-black">{t("lobby.antiCheatActive")}</span>
               </div>
 
               {/* Text Preview Monospace Box */}
-              <div className="border-slate-dark/15 rounded-2xl border-2 bg-zinc-50 p-3">
-                <div className="mb-1.5 flex items-center gap-1 text-[11px] font-black tracking-wider text-zinc-400 uppercase">
-                  <BookOpen className="h-3.5 w-3.5" /> Aperçu du Texte à Taper
+              <div className="border-slate-dark/15 rounded-2xl border-2 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50">
+                <div className="mb-1.5 flex items-center gap-1 text-[11px] font-black tracking-wider text-zinc-400 uppercase dark:text-zinc-500">
+                  <BookOpen className="h-3.5 w-3.5" /> {t("lobby.previewText")}
                 </div>
-                <p className="font-mono text-xs leading-relaxed text-zinc-700 italic">
+                <p className="font-mono text-xs leading-relaxed text-zinc-700 italic dark:text-zinc-300">
                   &ldquo;{PREVIEW_TEXTS[selectedCategory]}&rdquo;
                 </p>
               </div>
@@ -447,11 +456,11 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
       </div>
 
       {/* Bottom Sticky Action Bar */}
-      <div className="border-slate-dark arcade-shadow sticky bottom-4 z-30 flex flex-col items-center justify-between gap-4 rounded-3xl border-3 bg-white p-4 sm:flex-row sm:p-5">
+      <div className="border-slate-dark arcade-shadow sticky bottom-4 z-30 flex flex-col items-center justify-between gap-4 rounded-3xl border-3 bg-white p-4 transition-colors duration-150 sm:flex-row sm:p-5 dark:border-zinc-700 dark:bg-zinc-900">
         <div className="flex items-center gap-3">
           <Link href="/">
             <Button variant="outline" size="md" className="gap-2 text-xs">
-              <ArrowLeft className="h-4 w-4" /> Quitter le Salon
+              <ArrowLeft className="h-4 w-4" /> {t("lobby.leaveBtn")}
             </Button>
           </Link>
           <Button
@@ -462,7 +471,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
             className="gap-2 text-xs"
           >
             <CheckCircle2 className="h-4 w-4" />
-            {isSelfReady ? "Statut : Prêt !" : "Cliquer pour se préparer"}
+            {isSelfReady ? t("lobby.readyBtnTrue") : t("lobby.readyBtnFalse")}
           </Button>
         </div>
 
@@ -476,7 +485,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
             className="w-full gap-2 text-base sm:w-auto"
           >
             <Play className="fill-slate-dark h-5 w-5" />
-            DÉMARRER LA COURSE
+            {t("lobby.startRace")}
           </Button>
         </div>
       </div>

@@ -7,10 +7,12 @@ import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useLanguage } from "@/context/LanguageContext";
 import { joinLobby, createLobby } from "@/server/actions/race";
 
 export function JoinLobbyCard() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [code, setCode] = React.useState("");
   const [nickname, setNickname] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
@@ -19,7 +21,7 @@ export function JoinLobbyCard() {
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
     if (!code || code.length !== 6) {
-      setError("Entrez le code à 6 chiffres de la course.");
+      setError(t("card.codeError"));
       return;
     }
     const playerNick = nickname.trim() || `Pilote_${Math.floor(100 + Math.random() * 900)}`;
@@ -66,27 +68,25 @@ export function JoinLobbyCard() {
   }
 
   return (
-    <Card className="relative w-full max-w-lg bg-white">
+    <Card className="relative w-full max-w-lg bg-white dark:bg-zinc-900">
       <CardHeader className="relative z-10 text-center">
         <div className="bg-azure-blue/10 border-azure-blue mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-2xl border-2">
           <Users className="text-azure-blue h-7 w-7" />
         </div>
-        <CardTitle className="text-3xl">Rejoindre l&apos;Arène</CardTitle>
-        <CardDescription>
-          Entrez le code à 6 chiffres partagé par votre enseignant ou ami(e)
-        </CardDescription>
+        <CardTitle className="text-3xl">{t("card.joinTitle")}</CardTitle>
+        <CardDescription>{t("card.joinDesc")}</CardDescription>
       </CardHeader>
 
       <CardContent className="relative z-10">
         <form onSubmit={handleJoin} className="space-y-4">
           <div>
-            <label className="text-slate-dark mb-1 block text-xs font-black tracking-wider uppercase">
-              Code de Salon (6 chiffres)
+            <label className="text-slate-dark mb-1 block text-xs font-black tracking-wider uppercase dark:text-zinc-200">
+              {t("card.codeLabel")}
             </label>
             <Input
               type="text"
               maxLength={6}
-              placeholder="Ex: 482910"
+              placeholder={t("card.codePlaceholder")}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
               accentColor="azure"
@@ -95,12 +95,12 @@ export function JoinLobbyCard() {
           </div>
 
           <div>
-            <label className="text-slate-dark mb-1 block text-xs font-black tracking-wider uppercase">
-              Votre Pseudonyme
+            <label className="text-slate-dark mb-1 block text-xs font-black tracking-wider uppercase dark:text-zinc-200">
+              {t("card.nickLabel")}
             </label>
             <Input
               type="text"
-              placeholder="Ex: TurboTypist"
+              placeholder={t("card.nickPlaceholder")}
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               accentColor="orange"
@@ -130,15 +130,15 @@ export function JoinLobbyCard() {
             disabled={isLoading}
           >
             <Play className="fill-slate-dark h-5 w-5" />
-            {isLoading ? "Connexion..." : "REJOINDRE LA COURSE"}
+            {isLoading ? t("card.connecting") : t("card.joinBtn")}
           </Button>
 
           <div className="relative my-4 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t-2 border-zinc-200" />
+              <span className="w-full border-t-2 border-zinc-200 dark:border-zinc-700" />
             </div>
-            <span className="relative bg-white px-3 text-xs font-black tracking-widest text-zinc-400 uppercase">
-              OU
+            <span className="relative bg-white px-3 text-xs font-black tracking-widest text-zinc-400 uppercase dark:bg-zinc-900 dark:text-zinc-500">
+              {t("card.or")}
             </span>
           </div>
 
@@ -153,7 +153,7 @@ export function JoinLobbyCard() {
               className="w-full gap-1.5 text-xs"
             >
               <Plus className="text-victory-teal h-4 w-4" />
-              Créer un Salon
+              {t("card.createLobby")}
             </Button>
 
             <Button
@@ -165,7 +165,7 @@ export function JoinLobbyCard() {
               className="w-full gap-1.5 text-xs"
             >
               <Zap className="h-4 w-4" />
-              Partie Rapide
+              {t("card.quickPlay")}
             </Button>
           </div>
         </form>

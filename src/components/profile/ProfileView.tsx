@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { RacerCar } from "@/components/animated/RacerCar";
+import { useLanguage } from "@/context/LanguageContext";
 import type { PlayerColor } from "@/types/race";
 
 interface ProfileData {
@@ -97,6 +98,7 @@ interface ProfileViewProps {
 }
 
 export function ProfileView({ initialUsername }: ProfileViewProps) {
+  const { t } = useLanguage();
   // Toggle between viewing self vs viewing another player to test both states easily
   const [viewMode, setViewMode] = React.useState<"self" | "other">(
     initialUsername && initialUsername.toLowerCase() !== "turbotypist" ? "other" : "self"
@@ -109,10 +111,10 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6">
       {/* Perspective Toggle Bar (for testing/previewing both views) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-100/70 p-3 text-xs font-bold text-zinc-600">
-        <span className="flex items-center gap-1.5 font-black text-zinc-700 uppercase">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-100/70 p-3 text-xs font-bold text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800/60 dark:text-zinc-300">
+        <span className="flex items-center gap-1.5 font-black text-zinc-700 uppercase dark:text-zinc-200">
           <Sparkles className="text-tangerine-orange h-4 w-4" />
-          Aperçu de la vue profil :
+          {t("profile.previewTag")}
         </span>
         <div className="flex items-center gap-2">
           <button
@@ -120,31 +122,31 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
             onClick={() => setViewMode("self")}
             className={`cursor-pointer rounded-full px-3 py-1 font-black transition-all ${
               viewMode === "self"
-                ? "bg-electric-lime border-slate-dark text-slate-dark border-2 shadow-xs"
-                : "bg-white text-zinc-500 hover:bg-zinc-200"
+                ? "bg-electric-lime border-slate-dark text-slate-dark border-2 shadow-xs dark:border-zinc-700"
+                : "bg-white text-zinc-500 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
             }`}
           >
-            👤 Mon Profil (TurboTypist)
+            {t("profile.myProfile")}
           </button>
           <button
             type="button"
             onClick={() => setViewMode("other")}
             className={`cursor-pointer rounded-full px-3 py-1 font-black transition-all ${
               viewMode === "other"
-                ? "bg-azure-blue border-slate-dark border-2 text-white shadow-xs"
-                : "bg-white text-zinc-500 hover:bg-zinc-200"
+                ? "bg-azure-blue border-slate-dark border-2 text-white shadow-xs dark:border-zinc-700"
+                : "bg-white text-zinc-500 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
             }`}
           >
-            👥 Profil d&apos;un autre joueur (PixelDriver)
+            {t("profile.otherProfile")}
           </button>
         </div>
       </div>
 
       {/* Main Profile Header Card */}
-      <div className="border-slate-dark arcade-shadow flex flex-col items-center justify-between gap-6 rounded-3xl border-3 bg-white p-6 sm:p-8 md:flex-row">
+      <div className="border-slate-dark arcade-shadow flex flex-col items-center justify-between gap-6 rounded-3xl border-3 bg-white p-6 transition-colors duration-150 sm:p-8 md:flex-row dark:border-zinc-700 dark:bg-zinc-900">
         <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
           {/* Driver Avatar / Equipped Car */}
-          <div className="border-slate-dark arcade-shadow relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl border-3 bg-zinc-50 p-2">
+          <div className="border-slate-dark arcade-shadow relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl border-3 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-800">
             <RacerCar
               color={viewMode === "self" ? equippedColor : currentData.carColor}
               width={80}
@@ -156,24 +158,26 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
 
           <div className="flex flex-col gap-1.5">
             <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-              <h1 className="text-slate-dark text-3xl font-black uppercase sm:text-4xl">
+              <h1 className="text-slate-dark text-3xl font-black uppercase sm:text-4xl dark:text-white">
                 {displayedUsername}
               </h1>
               <Badge variant={viewMode === "self" ? "lime" : "azure"} className="text-xs">
-                Niveau {currentData.level}
+                {t("profile.level")} {currentData.level}
               </Badge>
             </div>
 
-            <p className="text-slate-dark text-sm font-black">{currentData.title}</p>
+            <p className="text-slate-dark text-sm font-black dark:text-zinc-200">
+              {currentData.title}
+            </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-bold text-zinc-500 sm:justify-start">
+            <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-bold text-zinc-500 sm:justify-start dark:text-zinc-400">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-                Membre depuis {currentData.memberSince}
+                {t("profile.memberSince")} {currentData.memberSince}
               </span>
               <span className="flex items-center gap-1">
                 <ShieldCheck className="text-victory-teal h-3.5 w-3.5" />
-                Pilote Vérifié (Anonymat protégé)
+                {t("profile.verified")}
               </span>
             </div>
           </div>
@@ -185,7 +189,7 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
             <>
               <Link href="/lobby">
                 <Button variant="lime" size="md" pulse={true} className="gap-2 text-xs">
-                  <Zap className="fill-slate-dark h-4 w-4" /> Rejoindre une Course
+                  <Zap className="fill-slate-dark h-4 w-4" /> {t("profile.joinRace")}
                 </Button>
               </Link>
             </>
@@ -193,7 +197,7 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
             <>
               <Link href="/lobby">
                 <Button variant="azure" size="md" className="gap-2 text-xs">
-                  <Swords className="h-4 w-4" /> Défier en Duel
+                  <Swords className="h-4 w-4" /> {t("profile.challengeDuel")}
                 </Button>
               </Link>
             </>
@@ -204,56 +208,66 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
       {/* Arcade Key Stats Overview Cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         {/* Record WPM */}
-        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4">
-          <div className="bg-electric-lime/40 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
+        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="bg-electric-lime/40 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2 dark:border-zinc-700">
             <Flame className="text-slate-dark h-5 w-5" />
           </div>
-          <span className="text-[11px] font-black text-zinc-500 uppercase">Record Vitesse</span>
-          <span className="text-slate-dark font-mono text-2xl font-black">
+          <span className="text-[11px] font-black text-zinc-500 uppercase dark:text-zinc-400">
+            {t("profile.recordWpm")}
+          </span>
+          <span className="text-slate-dark font-mono text-2xl font-black dark:text-white">
             {currentData.bestWpm} <span className="text-xs text-zinc-400">WPM</span>
           </span>
         </div>
 
         {/* Average WPM */}
-        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4">
-          <div className="bg-azure-blue/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
+        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="bg-azure-blue/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2 dark:border-zinc-700">
             <Gauge className="text-azure-blue h-5 w-5" />
           </div>
-          <span className="text-[11px] font-black text-zinc-500 uppercase">Moyenne</span>
-          <span className="text-slate-dark font-mono text-2xl font-black">
+          <span className="text-[11px] font-black text-zinc-500 uppercase dark:text-zinc-400">
+            {t("profile.average")}
+          </span>
+          <span className="text-slate-dark font-mono text-2xl font-black dark:text-white">
             {currentData.averageWpm} <span className="text-xs text-zinc-400">WPM</span>
           </span>
         </div>
 
         {/* Accuracy */}
-        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4">
-          <div className="bg-victory-teal/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
+        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="bg-victory-teal/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2 dark:border-zinc-700">
             <ShieldCheck className="text-victory-teal h-5 w-5" />
           </div>
-          <span className="text-[11px] font-black text-zinc-500 uppercase">Précision</span>
-          <span className="text-slate-dark font-mono text-2xl font-black">
+          <span className="text-[11px] font-black text-zinc-500 uppercase dark:text-zinc-400">
+            {t("profile.precision")}
+          </span>
+          <span className="text-slate-dark font-mono text-2xl font-black dark:text-white">
             {currentData.accuracy}%
           </span>
         </div>
 
         {/* Total Races */}
-        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4">
-          <div className="bg-tangerine-orange/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
+        <div className="border-slate-dark arcade-shadow flex flex-col rounded-2xl border-3 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="bg-tangerine-orange/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2 dark:border-zinc-700">
             <Flag className="text-tangerine-orange h-5 w-5" />
           </div>
-          <span className="text-[11px] font-black text-zinc-500 uppercase">Courses</span>
-          <span className="text-slate-dark font-mono text-2xl font-black">
+          <span className="text-[11px] font-black text-zinc-500 uppercase dark:text-zinc-400">
+            {t("profile.races")}
+          </span>
+          <span className="text-slate-dark font-mono text-2xl font-black dark:text-white">
             {currentData.totalRaces}
           </span>
         </div>
 
         {/* Victories */}
-        <div className="border-slate-dark arcade-shadow col-span-2 flex flex-col rounded-2xl border-3 bg-white p-4 md:col-span-1">
-          <div className="bg-arcade-magenta/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
+        <div className="border-slate-dark arcade-shadow col-span-2 flex flex-col rounded-2xl border-3 bg-white p-4 md:col-span-1 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="bg-arcade-magenta/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2 dark:border-zinc-700">
             <Trophy className="text-arcade-magenta h-5 w-5" />
           </div>
-          <span className="text-[11px] font-black text-zinc-500 uppercase">Victoires</span>
-          <span className="text-slate-dark font-mono text-2xl font-black">
+          <span className="text-[11px] font-black text-zinc-500 uppercase dark:text-zinc-400">
+            {t("profile.victories")}
+          </span>
+          <span className="text-slate-dark font-mono text-2xl font-black dark:text-white">
             {currentData.victories}
           </span>
         </div>
@@ -261,12 +275,10 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
 
       {/* Driver Garage & Customization (when viewing own profile) */}
       {viewMode === "self" && (
-        <Card className="bg-white">
+        <Card className="bg-white dark:bg-zinc-900">
           <CardHeader>
-            <CardTitle className="text-xl">Garage du Pilote</CardTitle>
-            <CardDescription>
-              Choisissez la couleur de carrosserie de votre bolide pour les courses multijoueur.
-            </CardDescription>
+            <CardTitle className="text-xl">{t("profile.garageTitle")}</CardTitle>
+            <CardDescription>{t("profile.garageDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -284,10 +296,10 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
                     key={car.id}
                     type="button"
                     onClick={() => setEquippedColor(car.color)}
-                    className={`border-slate-dark arcade-shadow flex cursor-pointer flex-col items-center rounded-2xl border-3 p-4 transition-all ${
+                    className={`border-slate-dark arcade-shadow flex cursor-pointer flex-col items-center rounded-2xl border-3 p-4 transition-all dark:border-zinc-700 ${
                       isSelected
-                        ? "bg-electric-lime/20 ring-electric-lime ring-3"
-                        : "bg-zinc-50 hover:bg-zinc-100"
+                        ? "bg-electric-lime/20 ring-electric-lime dark:bg-electric-lime/15 ring-3"
+                        : "bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700"
                     }`}
                   >
                     <div className="mb-2 flex h-14 w-full items-center justify-center">
@@ -299,9 +311,11 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
                         showHeadlight={false}
                       />
                     </div>
-                    <span className="text-slate-dark text-xs font-black uppercase">{car.name}</span>
+                    <span className="text-slate-dark text-xs font-black uppercase dark:text-zinc-100">
+                      {car.name}
+                    </span>
                     <Badge variant={isSelected ? "lime" : "outline"} className="mt-2 text-[10px]">
-                      {isSelected ? "Équipé" : "Choisir"}
+                      {isSelected ? t("profile.equipped") : t("profile.equip")}
                     </Badge>
                   </button>
                 );
@@ -312,33 +326,35 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
       )}
 
       {/* Recent Race History Table */}
-      <Card className="bg-white">
+      <Card className="bg-white dark:bg-zinc-900">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Trophy className="text-tangerine-orange h-5 w-5" />
-            Historique Récent des Courses
+            {t("profile.historyTitle")}
           </CardTitle>
-          <CardDescription>Dernières performances enregistrées sur l&apos;arène</CardDescription>
+          <CardDescription>{t("profile.historyDesc")}</CardDescription>
         </CardHeader>
 
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b-2 border-zinc-200 text-zinc-400 uppercase">
-                  <th className="py-2.5 pr-4 font-black">Date</th>
-                  <th className="py-2.5 pr-4 font-black">Catégorie</th>
-                  <th className="py-2.5 pr-4 font-black">Vitesse</th>
-                  <th className="py-2.5 pr-4 font-black">Précision</th>
-                  <th className="py-2.5 font-black">Rang</th>
+                <tr className="border-b-2 border-zinc-200 text-zinc-400 uppercase dark:border-zinc-800 dark:text-zinc-500">
+                  <th className="py-2.5 pr-4 font-black">{t("profile.thDate")}</th>
+                  <th className="py-2.5 pr-4 font-black">{t("profile.thCategory")}</th>
+                  <th className="py-2.5 pr-4 font-black">{t("profile.thSpeed")}</th>
+                  <th className="py-2.5 pr-4 font-black">{t("profile.thAccuracy")}</th>
+                  <th className="py-2.5 font-black">{t("profile.thRank")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 font-bold">
+              <tbody className="divide-y divide-zinc-100 font-bold dark:divide-zinc-800">
                 {currentData.recentRaces.map((race) => (
-                  <tr key={race.id} className="hover:bg-zinc-50">
-                    <td className="py-3 pr-4 text-zinc-500">{race.date}</td>
-                    <td className="py-3 pr-4 font-black text-slate-900">{race.category}</td>
-                    <td className="py-3 pr-4 font-mono font-black text-slate-900">
+                  <tr key={race.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                    <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">{race.date}</td>
+                    <td className="py-3 pr-4 font-black text-slate-900 dark:text-white">
+                      {race.category}
+                    </td>
+                    <td className="py-3 pr-4 font-mono font-black text-slate-900 dark:text-white">
                       <span className="text-azure-blue">{race.wpm}</span> WPM
                     </td>
                     <td className="text-victory-teal py-3 pr-4 font-mono font-black">
@@ -365,47 +381,51 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
       </Card>
 
       {/* Badges and Achievements Gallery */}
-      <Card className="bg-white">
+      <Card className="bg-white dark:bg-zinc-900">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Award className="text-arcade-magenta h-5 w-5" />
-            Succès & Trophées Débloqués
+            {t("profile.achievementsTitle")}
           </CardTitle>
-          <CardDescription>Exploits accomplis sur CodeRacer</CardDescription>
+          <CardDescription>{t("profile.achievementsDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center">
+            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center dark:border-zinc-700 dark:bg-zinc-800">
               <span className="text-2xl">⚡</span>
-              <span className="text-slate-dark mt-1 text-xs font-black uppercase">
-                Club 100 WPM
+              <span className="text-slate-dark mt-1 text-xs font-black uppercase dark:text-zinc-100">
+                {t("profile.ach100Title")}
               </span>
-              <span className="text-[10px] font-semibold text-zinc-500">Dépassé les 100 WPM</span>
+              <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
+                {t("profile.ach100Desc")}
+              </span>
             </div>
-            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center">
+            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center dark:border-zinc-700 dark:bg-zinc-800">
               <span className="text-2xl">🎯</span>
-              <span className="text-slate-dark mt-1 text-xs font-black uppercase">
-                Précision Parfaite
+              <span className="text-slate-dark mt-1 text-xs font-black uppercase dark:text-zinc-100">
+                {t("profile.achAccTitle")}
               </span>
-              <span className="text-[10px] font-semibold text-zinc-500">
-                100% sans aucune faute
+              <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
+                {t("profile.achAccDesc")}
               </span>
             </div>
-            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center">
+            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center dark:border-zinc-700 dark:bg-zinc-800">
               <span className="text-2xl">🏆</span>
-              <span className="text-slate-dark mt-1 text-xs font-black uppercase">
-                Roi de l&apos;Arène
+              <span className="text-slate-dark mt-1 text-xs font-black uppercase dark:text-zinc-100">
+                {t("profile.achKingTitle")}
               </span>
-              <span className="text-[10px] font-semibold text-zinc-500">
-                50 victoires multijoueur
+              <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
+                {t("profile.achKingDesc")}
               </span>
             </div>
-            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center">
+            <div className="border-slate-dark flex flex-col items-center rounded-2xl border-2 bg-zinc-50 p-3 text-center dark:border-zinc-700 dark:bg-zinc-800">
               <span className="text-2xl">🏎️</span>
-              <span className="text-slate-dark mt-1 text-xs font-black uppercase">
-                Pilote Assidu
+              <span className="text-slate-dark mt-1 text-xs font-black uppercase dark:text-zinc-100">
+                {t("profile.achDedTitle")}
               </span>
-              <span className="text-[10px] font-semibold text-zinc-500">Plus de 200 courses</span>
+              <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
+                {t("profile.achDedDesc")}
+              </span>
             </div>
           </div>
         </CardContent>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { RacerCar } from "@/components/animated/RacerCar";
+import { useLanguage } from "@/context/LanguageContext";
 import type { PlayerColor } from "@/types/race";
 
 interface Competitor {
@@ -32,6 +33,7 @@ export function RaceArena({
   initialCode = "482910",
   initialText = DEFAULT_SAMPLE_TEXT,
 }: RaceArenaProps) {
+  const { t } = useLanguage();
   const [textToType] = React.useState(initialText);
   const [typedInput, setTypedInput] = React.useState("");
   const [startTime, setStartTime] = React.useState<number | null>(null);
@@ -41,7 +43,14 @@ export function RaceArena({
 
   // Competitor states
   const [competitors, setCompetitors] = React.useState<Competitor[]>([
-    { id: "c1", name: "TurboTypist (Vous)", color: "azure", progress: 0, wpm: 0, isSelf: true },
+    {
+      id: "c1",
+      name: `TurboTypist ${t("lobby.you")}`,
+      color: "azure",
+      progress: 0,
+      wpm: 0,
+      isSelf: true,
+    },
     { id: "c2", name: "PixelDriver", color: "tangerine", progress: 0, wpm: 68 },
     { id: "c3", name: "VeloceCode", color: "magenta", progress: 0, wpm: 62 },
     { id: "c4", name: "Bot_Flash", color: "teal", progress: 0, wpm: 55 },
@@ -132,7 +141,14 @@ export function RaceArena({
     setElapsedSec(0);
     setIsFinished(false);
     setCompetitors([
-      { id: "c1", name: "TurboTypist (Vous)", color: "azure", progress: 0, wpm: 0, isSelf: true },
+      {
+        id: "c1",
+        name: `TurboTypist ${t("lobby.you")}`,
+        color: "azure",
+        progress: 0,
+        wpm: 0,
+        isSelf: true,
+      },
       { id: "c2", name: "PixelDriver", color: "tangerine", progress: 0, wpm: 68 },
       { id: "c3", name: "VeloceCode", color: "magenta", progress: 0, wpm: 62 },
       { id: "c4", name: "Bot_Flash", color: "teal", progress: 0, wpm: 55 },
@@ -152,21 +168,21 @@ export function RaceArena({
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6">
       {/* Top Race HUD Bar */}
-      <div className="border-slate-dark arcade-shadow flex flex-wrap items-center justify-between gap-4 rounded-3xl border-3 bg-white p-5 sm:p-6">
+      <div className="border-slate-dark arcade-shadow flex flex-wrap items-center justify-between gap-4 rounded-3xl border-3 bg-white p-5 transition-colors duration-150 sm:p-6 dark:border-zinc-700 dark:bg-zinc-900">
         <div className="flex items-center gap-3">
           <Badge variant="lime" className="gap-1.5 px-3 py-1">
             <span className="h-2 w-2 animate-ping rounded-full bg-slate-900" />
-            Course en Direct
+            {t("race.liveBadge")}
           </Badge>
-          <span className="font-mono text-xs font-black tracking-wider text-zinc-500 uppercase">
-            Salon #{initialCode}
+          <span className="font-mono text-xs font-black tracking-wider text-zinc-500 uppercase dark:text-zinc-400">
+            {t("race.lobbyRef")} #{initialCode}
           </span>
         </div>
 
         {/* Live Gauges */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           {/* Position */}
-          <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-3 py-1 text-xs font-black">
+          <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-3 py-1 text-xs font-black dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
             <Trophy className="text-tangerine-orange h-4 w-4" />
             <span>
               {currentRank === 1 ? "1er" : `${currentRank}e`} / {competitors.length}
@@ -174,20 +190,20 @@ export function RaceArena({
           </div>
 
           {/* Live WPM Speedometer */}
-          <div className="bg-electric-lime border-slate-dark arcade-shadow flex items-center gap-1.5 rounded-full border-2 px-3.5 py-1 text-xs font-black text-slate-900">
+          <div className="bg-electric-lime border-slate-dark arcade-shadow flex items-center gap-1.5 rounded-full border-2 px-3.5 py-1 text-xs font-black text-slate-900 dark:border-zinc-700">
             <Flame className="h-4 w-4 fill-slate-900 text-slate-900" />
             <span>{liveWpm} WPM</span>
           </div>
 
           {/* Accuracy Gauge */}
-          <div className="border-slate-dark bg-victory-teal/20 flex items-center gap-1.5 rounded-full border-2 px-3 py-1 text-xs font-black text-slate-900">
+          <div className="border-slate-dark bg-victory-teal/20 dark:bg-victory-teal/30 flex items-center gap-1.5 rounded-full border-2 px-3 py-1 text-xs font-black text-slate-900 dark:border-zinc-700 dark:text-zinc-100">
             <Gauge className="text-victory-teal h-4 w-4" />
             <span>{accuracy}% ACC</span>
           </div>
 
           {/* Time Elapsed */}
-          <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-3 py-1 font-mono text-xs font-black text-zinc-700">
-            <Clock className="h-3.5 w-3.5 text-zinc-500" />
+          <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-3 py-1 font-mono text-xs font-black text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+            <Clock className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
             <span>
               {Math.floor(elapsedSec / 60)
                 .toString()
@@ -199,15 +215,15 @@ export function RaceArena({
       </div>
 
       {/* Realtime Multi-Lane Track Arena */}
-      <Card className="overflow-hidden bg-white">
+      <Card className="overflow-hidden bg-white dark:bg-zinc-900">
         <CardContent className="p-4 sm:p-6">
-          <div className="mb-4 flex items-center justify-between border-b-2 border-zinc-100 pb-3">
-            <div className="flex items-center gap-2 font-black text-slate-900 uppercase">
+          <div className="mb-4 flex items-center justify-between border-b-2 border-zinc-100 pb-3 dark:border-zinc-800">
+            <div className="flex items-center gap-2 font-black text-slate-900 uppercase dark:text-white">
               <Flag className="text-azure-blue h-5 w-5" />
-              <span>Circuit des Champions</span>
+              <span>{t("race.trackTitle")}</span>
             </div>
-            <div className="flex items-center gap-3 font-mono text-xs font-bold text-zinc-400">
-              <span>Ligne d&apos;arrivée</span>
+            <div className="flex items-center gap-3 font-mono text-xs font-bold text-zinc-400 dark:text-zinc-500">
+              <span>{t("race.finishLine")}</span>
               <div className="h-4 w-4 rounded-xs border border-slate-900 bg-[repeating-conic-gradient(#111112_0_25%,#ffffff_0_50%)] bg-[length:4px_4px]" />
             </div>
           </div>
@@ -221,8 +237,10 @@ export function RaceArena({
               return (
                 <div
                   key={racer.id}
-                  className={`border-slate-dark relative rounded-2xl border-2 p-2 transition-all ${
-                    racer.isSelf ? "border-azure-blue bg-azure-blue/5" : "bg-zinc-50/60"
+                  className={`border-slate-dark relative rounded-2xl border-2 p-2 transition-all dark:border-zinc-700 ${
+                    racer.isSelf
+                      ? "border-azure-blue bg-azure-blue/5 dark:bg-azure-blue/10"
+                      : "bg-zinc-50/60 dark:bg-zinc-800/60"
                   }`}
                 >
                   {/* Racer Tag & Stats above the track */}
@@ -239,9 +257,9 @@ export function RaceArena({
                                 : "bg-victory-teal"
                         }`}
                       />
-                      <span className="text-slate-dark">{racer.name}</span>
+                      <span className="text-slate-dark dark:text-zinc-100">{racer.name}</span>
                     </span>
-                    <span className="font-mono text-[11px] text-zinc-500">
+                    <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
                       {racerWpm} WPM • {Math.round(currentProgress)}%
                     </span>
                   </div>
@@ -301,19 +319,19 @@ export function RaceArena({
       </Card>
 
       {/* Typing Arena: Snippet Display + Realtime Input Box */}
-      <Card className="bg-white">
+      <Card className="bg-white dark:bg-zinc-900">
         <CardContent className="space-y-5 p-6">
-          <div className="flex items-center justify-between border-b-2 border-zinc-100 pb-3">
-            <span className="text-slate-dark text-xs font-black tracking-wider uppercase">
-              Texte à Dactylographier
+          <div className="flex items-center justify-between border-b-2 border-zinc-100 pb-3 dark:border-zinc-800">
+            <span className="text-slate-dark text-xs font-black tracking-wider uppercase dark:text-zinc-200">
+              {t("race.textToType")}
             </span>
             <Badge variant="outline" className="text-[11px]">
-              Anti-Triche Actif (Collage bloqué)
+              {t("race.antiCheatActive")}
             </Badge>
           </div>
 
           {/* Interactive Monospace Code Box */}
-          <div className="border-slate-dark/20 rounded-2xl border-2 bg-zinc-50/80 p-5 font-mono text-base leading-loose select-none sm:text-lg">
+          <div className="border-slate-dark/20 rounded-2xl border-2 bg-zinc-50/80 p-5 font-mono text-base leading-loose select-none sm:text-lg dark:border-zinc-700 dark:bg-zinc-800/80">
             {/* Correctly typed portion */}
             <span className="text-victory-teal bg-victory-teal/10 rounded-sm font-bold">
               {textToType.slice(0, typedInput.length)}
@@ -329,13 +347,15 @@ export function RaceArena({
             )}
 
             {/* Remaining text to type */}
-            <span className="text-zinc-400">{textToType.slice(typedInput.length)}</span>
+            <span className="text-zinc-400 dark:text-zinc-500">
+              {textToType.slice(typedInput.length)}
+            </span>
           </div>
 
           {/* Big Tactile Typing Input Field */}
           <div className="space-y-2">
-            <label className="text-slate-dark block text-xs font-black tracking-wider uppercase">
-              Votre Saisie
+            <label className="text-slate-dark block text-xs font-black tracking-wider uppercase dark:text-zinc-200">
+              {t("race.yourInput")}
             </label>
             <input
               ref={inputRef}
@@ -345,12 +365,8 @@ export function RaceArena({
               value={typedInput}
               onChange={handleInputChange}
               onPaste={(e) => e.preventDefault()} // Anti-cheat rule strictly enforced
-              placeholder={
-                isFinished
-                  ? "Course terminée !"
-                  : "Tapez le texte ci-dessus pour faire accélérer votre bolide..."
-              }
-              className="text-slate-dark border-slate-dark arcade-shadow focus:border-azure-blue focus:ring-azure-blue/20 w-full rounded-2xl border-3 bg-white px-5 py-3 font-mono text-base font-bold placeholder:font-sans placeholder:font-normal placeholder:text-zinc-400 focus:ring-4 focus:outline-none disabled:bg-zinc-100"
+              placeholder={isFinished ? t("race.inputFinished") : t("race.inputPlaceholder")}
+              className="text-slate-dark border-slate-dark arcade-shadow focus:border-azure-blue focus:ring-azure-blue/20 w-full rounded-2xl border-3 bg-white px-5 py-3 font-mono text-base font-bold placeholder:font-sans placeholder:font-normal placeholder:text-zinc-400 focus:ring-4 focus:outline-none disabled:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:disabled:bg-zinc-800/50"
             />
           </div>
 
@@ -361,20 +377,22 @@ export function RaceArena({
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="border-slate-dark arcade-shadow bg-electric-lime/30 flex flex-col items-center justify-between gap-4 rounded-2xl border-3 p-5 sm:flex-row"
+                className="border-slate-dark arcade-shadow bg-electric-lime/30 dark:bg-electric-lime/20 flex flex-col items-center justify-between gap-4 rounded-2xl border-3 p-5 sm:flex-row dark:border-zinc-700"
               >
                 <div className="flex items-center gap-3">
-                  <div className="border-slate-dark flex h-12 w-12 items-center justify-center rounded-2xl border-2 bg-white">
+                  <div className="border-slate-dark flex h-12 w-12 items-center justify-center rounded-2xl border-2 bg-white dark:border-zinc-700 dark:bg-zinc-800">
                     <Trophy className="text-tangerine-orange h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="text-slate-dark text-lg font-black uppercase">
-                      Ligne Franchie !{" "}
-                      {currentRank === 1 ? "Victoire !" : `Terminé (${currentRank}e)`}
+                    <h3 className="text-slate-dark text-lg font-black uppercase dark:text-white">
+                      {currentRank === 1
+                        ? t("race.victory")
+                        : t("race.finishedRank", { rank: currentRank })}
                     </h3>
-                    <p className="text-xs font-bold text-zinc-600">
-                      Vitesse finale : <span className="font-mono font-black">{liveWpm} WPM</span> •
-                      Précision : <span className="font-mono font-black">{accuracy}%</span>
+                    <p className="text-xs font-bold text-zinc-600 dark:text-zinc-300">
+                      {t("race.finalSpeed")}{" "}
+                      <span className="font-mono font-black">{liveWpm} WPM</span> •{" "}
+                      {t("race.accuracy")} <span className="font-mono font-black">{accuracy}%</span>
                     </p>
                   </div>
                 </div>
@@ -386,11 +404,11 @@ export function RaceArena({
                     onClick={handleReset}
                     className="gap-1.5 text-xs"
                   >
-                    <RotateCcw className="h-4 w-4" /> Recommencer
+                    <RotateCcw className="h-4 w-4" /> {t("race.restart")}
                   </Button>
                   <Link href={`/lobby/${initialCode}`}>
                     <Button variant="azure" size="sm" className="gap-1.5 text-xs">
-                      Retour au Salon
+                      {t("race.backToLobby")}
                     </Button>
                   </Link>
                 </div>
@@ -401,23 +419,23 @@ export function RaceArena({
       </Card>
 
       {/* Bottom Race Controls */}
-      <div className="border-slate-dark arcade-shadow flex flex-wrap items-center justify-between gap-4 rounded-3xl border-3 bg-white p-4 sm:p-5">
+      <div className="border-slate-dark arcade-shadow flex flex-wrap items-center justify-between gap-4 rounded-3xl border-3 bg-white p-4 transition-colors duration-150 sm:p-5 dark:border-zinc-700 dark:bg-zinc-900">
         <div className="flex items-center gap-2">
           <Link href="/">
             <Button variant="outline" size="md" className="gap-1.5 text-xs">
-              <ArrowLeft className="h-4 w-4" /> Quitter
+              <ArrowLeft className="h-4 w-4" /> {t("race.quit")}
             </Button>
           </Link>
           <Link href={`/lobby/${initialCode}`}>
             <Button variant="outline" size="md" className="gap-1.5 text-xs">
-              <DoorOpen className="h-4 w-4" /> Salon
+              <DoorOpen className="h-4 w-4" /> {t("race.backToLobby")}
             </Button>
           </Link>
         </div>
 
         <div className="flex items-center gap-2">
           <Button variant="outline" size="md" onClick={handleReset} className="gap-2 text-xs">
-            <RotateCcw className="h-4 w-4" /> Réinitialiser la Course
+            <RotateCcw className="h-4 w-4" /> {t("race.reset")}
           </Button>
         </div>
       </div>
