@@ -7,11 +7,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        lime: "bg-electric-lime text-slate-dark",
+        lime: "bg-electric-lime text-[#111112] dark:text-[#111112]",
         azure: "bg-azure-blue text-white",
         orange: "bg-tangerine-orange text-white",
         magenta: "bg-arcade-magenta text-white",
-        teal: "bg-victory-teal text-slate-dark",
+        teal: "bg-victory-teal text-[#111112] dark:text-[#111112]",
         slate: "bg-slate-dark text-white dark:bg-zinc-800",
         outline: "bg-white text-slate-dark dark:bg-zinc-900 dark:text-zinc-100",
       },

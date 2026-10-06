@@ -358,7 +358,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     onClick={() => setSelectedCategory("quotes")}
                     className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "quotes"
-                        ? "bg-electric-lime text-slate-dark shadow-xs"
+                        ? "bg-electric-lime text-[#111112] shadow-xs dark:text-[#111112]"
                         : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                   >
@@ -369,7 +369,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     onClick={() => setSelectedCategory("code")}
                     className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "code"
-                        ? "bg-electric-lime text-slate-dark shadow-xs"
+                        ? "bg-electric-lime text-[#111112] shadow-xs dark:text-[#111112]"
                         : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                   >
@@ -380,7 +380,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     onClick={() => setSelectedCategory("moliere")}
                     className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "moliere"
-                        ? "bg-electric-lime text-slate-dark shadow-xs"
+                        ? "bg-electric-lime text-[#111112] shadow-xs dark:text-[#111112]"
                         : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                   >

@@ -122,7 +122,7 @@ export function ProfileView({ initialUsername }: ProfileViewProps) {
             onClick={() => setViewMode("self")}
             className={`cursor-pointer rounded-full px-3 py-1 font-black transition-all ${
               viewMode === "self"
-                ? "bg-electric-lime border-slate-dark text-slate-dark border-2 shadow-xs dark:border-zinc-700"
+                ? "bg-electric-lime border-slate-dark border-2 text-[#111112] shadow-xs dark:border-zinc-700 dark:text-[#111112]"
                 : "bg-white text-zinc-500 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
             }`}
           >

@@ -190,8 +190,8 @@ export function RaceArena({
           </div>
 
           {/* Live WPM Speedometer */}
-          <div className="bg-electric-lime border-slate-dark arcade-shadow flex items-center gap-1.5 rounded-full border-2 px-3.5 py-1 text-xs font-black text-slate-900 dark:border-zinc-700">
-            <Flame className="h-4 w-4 fill-slate-900 text-slate-900" />
+          <div className="bg-electric-lime border-slate-dark arcade-shadow flex items-center gap-1.5 rounded-full border-2 px-3.5 py-1 text-xs font-black text-[#111112] dark:border-zinc-700 dark:text-[#111112]">
+            <Flame className="h-4 w-4 fill-[#111112] text-[#111112]" />
             <span>{liveWpm} WPM</span>
           </div>
 
