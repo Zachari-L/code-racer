@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Trophy, User, Sparkles } from "lucide-react";
+import { Users, Flame, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TireIcon } from "@/components/animated/TireIcon";
 
@@ -23,23 +23,23 @@ export function Navbar() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-3 sm:gap-4">
-          <Link href="/solo">
-            <Button variant="outline" size="sm" className="hidden gap-2 sm:inline-flex">
-              <Sparkles className="text-tangerine-orange h-4 w-4" />
-              Entraînement Solo
+        <nav className="flex items-center gap-2 sm:gap-3">
+          <Link href="/lobby">
+            <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2">
+              <Users className="text-azure-blue h-4 w-4" />
+              <span>Salons</span>
             </Button>
           </Link>
-          <Link href="/leaderboard">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Trophy className="text-arcade-magenta h-4 w-4" />
-              Classement
+          <Link href="/race">
+            <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2">
+              <Flame className="text-tangerine-orange h-4 w-4" />
+              <span>Course</span>
             </Button>
           </Link>
-          <Link href="/login">
-            <Button variant="azure" size="sm" className="gap-2">
+          <Link href="/profile">
+            <Button variant="azure" size="sm" className="gap-1.5 sm:gap-2">
               <User className="h-4 w-4" />
-              Connexion
+              <span>Profil</span>
             </Button>
           </Link>
         </nav>

@@ -2,8 +2,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { JoinLobbyCard } from "@/components/lobby/JoinLobbyCard";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
 import { ScrollReveal } from "@/components/animated/ScrollReveal";
-import { LiveTypingTeaser } from "@/components/animated/LiveTypingTeaser";
-import { Zap, ShieldCheck, Bot, Trophy, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
@@ -38,71 +37,10 @@ export default function Home() {
           </p>
         </ScrollReveal>
 
-        {/* Lobby joining card & Live preview teaser stacked vertically */}
-        <div className="my-4 flex w-full max-w-2xl flex-col items-center justify-center gap-8">
+        {/* Lobby joining card */}
+        <div className="my-6 flex w-full max-w-lg flex-col items-center justify-center">
           <ScrollReveal direction="up" delay={0.1} className="flex w-full justify-center">
             <JoinLobbyCard />
-          </ScrollReveal>
-
-          <ScrollReveal direction="up" delay={0.2} className="flex w-full justify-center">
-            <LiveTypingTeaser />
-          </ScrollReveal>
-        </div>
-
-        {/* Static informational feature badges (unclickable: no hover animations) */}
-        <div className="mt-16 grid w-full max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
-          <ScrollReveal direction="pop" delay={0.1}>
-            <div className="border-slate-dark arcade-shadow flex flex-col items-center rounded-2xl border-3 bg-white p-4 text-center">
-              <div className="bg-electric-lime/40 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
-                <Zap className="text-slate-dark h-5 w-5" />
-              </div>
-              <span className="text-slate-dark text-xs font-black uppercase">
-                Course Temps Réel
-              </span>
-              <span className="text-[11px] font-semibold text-zinc-500">
-                Synchronisation instantanée
-              </span>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal direction="pop" delay={0.2}>
-            <div className="border-slate-dark arcade-shadow flex flex-col items-center rounded-2xl border-3 bg-white p-4 text-center">
-              <div className="bg-azure-blue/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
-                <ShieldCheck className="text-azure-blue h-5 w-5" />
-              </div>
-              <span className="text-slate-dark text-xs font-black uppercase">
-                Anti-Triche & Collage
-              </span>
-              <span className="text-[11px] font-semibold text-zinc-500">Copier-coller bloqué</span>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal direction="pop" delay={0.3}>
-            <div className="border-slate-dark arcade-shadow flex flex-col items-center rounded-2xl border-3 bg-white p-4 text-center">
-              <div className="bg-tangerine-orange/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
-                <Bot className="text-tangerine-orange h-5 w-5" />
-              </div>
-              <span className="text-slate-dark text-xs font-black uppercase">
-                4 Niveaux de Bots
-              </span>
-              <span className="text-[11px] font-semibold text-zinc-500">
-                De Facile à Impossible
-              </span>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal direction="pop" delay={0.4}>
-            <div className="border-slate-dark arcade-shadow flex flex-col items-center rounded-2xl border-3 bg-white p-4 text-center">
-              <div className="bg-arcade-magenta/20 border-slate-dark mb-2 flex h-10 w-10 items-center justify-center rounded-xl border-2">
-                <Trophy className="text-arcade-magenta h-5 w-5" />
-              </div>
-              <span className="text-slate-dark text-xs font-black uppercase">
-                Statistiques & Heatmap
-              </span>
-              <span className="text-[11px] font-semibold text-zinc-500">
-                WPM, précision, erreurs
-              </span>
-            </div>
           </ScrollReveal>
         </div>
       </main>

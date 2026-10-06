@@ -36,7 +36,7 @@ export function JoinLobbyCard() {
     setIsLoading(false);
 
     if (result.success && result.code) {
-      router.push(`/race/${result.code}`);
+      router.push(`/lobby/${result.code}`);
     } else {
       setError(result.error ?? "Impossible de rejoindre cette course.");
     }
@@ -59,7 +59,7 @@ export function JoinLobbyCard() {
     setIsLoading(false);
 
     if (result.success && result.code) {
-      router.push(`/race/${result.code}`);
+      router.push(`/lobby/${result.code}`);
     } else {
       setError(result.error ?? "Impossible de créer la course.");
     }
