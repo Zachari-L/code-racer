@@ -613,7 +613,7 @@ export function RaceArena({
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="border-slate-dark arcade-shadow bg-electric-lime/25 dark:bg-electric-lime/20 absolute inset-x-4 bottom-4 z-30 flex flex-col items-center justify-between gap-3 rounded-2xl border-3 p-4 sm:flex-row dark:border-zinc-700"
+              className="border-slate-dark arcade-shadow absolute inset-x-4 bottom-4 z-30 flex flex-col items-center justify-between gap-3 rounded-2xl border-3 bg-white p-4 shadow-xl sm:flex-row dark:border-zinc-700 dark:bg-zinc-900"
             >
               <div className="flex items-center gap-3">
                 <div className="border-slate-dark flex h-10 w-10 items-center justify-center rounded-xl border-2 bg-white dark:border-zinc-700 dark:bg-zinc-800">
