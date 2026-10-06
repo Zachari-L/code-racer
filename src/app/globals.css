@@ -23,11 +23,16 @@
   --foreground: #f4f4ed;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* Chunky Tactile Arcade Primitives */
@@ -36,15 +41,31 @@ body {
   border-style: solid;
 }
 
+/* Base static drop shadow for cards and containers */
 .arcade-shadow {
   box-shadow: 0 4px 0 #111112;
-  transition:
-    transform 0.1s ease,
-    box-shadow 0.1s ease;
 }
 
-.arcade-shadow:active {
-  transform: translateY(3px);
+/* ONLY clickable elements (buttons, links, interactives) move and lift on hover/active */
+button.arcade-shadow,
+a.arcade-shadow,
+.arcade-clickable {
+  transition:
+    transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+button.arcade-shadow:hover,
+a.arcade-shadow:hover,
+.arcade-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #111112;
+}
+
+button.arcade-shadow:active,
+a.arcade-shadow:active,
+.arcade-clickable:active {
+  transform: translateY(2px);
   box-shadow: 0 1px 0 #111112;
 }
 
@@ -52,9 +73,67 @@ body {
   border-radius: 9999px;
 }
 
-/* Dynamic background speed lines and arcade dots */
+/* Subtle background dot pattern (strictly ambient and static) */
 .arcade-bg-pattern {
-  background-image: radial-gradient(#111112 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.05;
+  background-image: radial-gradient(#111112 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  opacity: 0.04;
+}
+
+/* Pulsing highlight for Electric Lime CTA buttons */
+@keyframes arcade-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 4px 0 #111112,
+      0 0 0 0 rgba(210, 255, 0, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 4px 0 #111112,
+      0 0 0 8px rgba(210, 255, 0, 0);
+  }
+}
+
+.arcade-pulse-cta {
+  animation: arcade-pulse 2.2s infinite ease-in-out;
+}
+
+/* Speed line dash animation */
+@keyframes dash {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+
+.animate-speed-dash {
+  stroke-dasharray: 20 15;
+  animation: dash 25s linear infinite;
+}
+
+.animate-speed-dash-fast {
+  stroke-dasharray: 30 20;
+  animation: dash 12s linear infinite;
+}
+
+/* Animated diagonal stripes moving from left to right on traversed track */
+@keyframes road-diagonal-ltr {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 25.46px 0;
+  }
+}
+
+.animate-road-stripes {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.45) 0,
+    rgba(255, 255, 255, 0.45) 8px,
+    transparent 8px,
+    transparent 18px
+  );
+  background-size: 25.46px 25.46px;
+  animation: road-diagonal-ltr var(--road-speed, 0.6s) linear infinite;
 }

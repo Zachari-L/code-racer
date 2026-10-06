@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
-import { Flag, Trophy, User, Sparkles } from "lucide-react";
+import { Trophy, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TireIcon } from "@/components/animated/TireIcon";
 
 export function Navbar() {
   return (
-    <header className="border-slate-dark sticky top-0 z-40 w-full border-b-3 bg-white/90 backdrop-blur-md">
+    <header className="border-slate-dark sticky top-0 z-40 w-full border-b-3 bg-white/85 backdrop-blur-md transition-all">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8">
         <Link href="/" className="group flex items-center gap-3">
-          <div className="bg-electric-lime border-slate-dark arcade-shadow flex h-12 w-12 items-center justify-center rounded-2xl border-3 transition-transform group-hover:rotate-6">
-            <Flag className="text-slate-dark h-6 w-6 stroke-[2.5]" />
+          <div className="bg-electric-lime border-slate-dark arcade-shadow flex h-12 w-12 items-center justify-center rounded-2xl border-3 transition-transform duration-200 group-hover:rotate-12">
+            <TireIcon size={32} spinOnHover />
           </div>
           <div className="flex flex-col">
             <span className="text-slate-dark text-2xl font-black tracking-wider uppercase">

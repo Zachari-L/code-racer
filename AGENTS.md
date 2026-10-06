@@ -86,6 +86,7 @@ Always adhere strictly to the visual guidelines defined in `doc/artistic-directi
 - 3px solid borders (`arcade-border-thick`, `border-3 border-slate-dark`).
 - Heavy drop shadow: `box-shadow: 0 4px 0 #111112` (`arcade-shadow`).
 - Pill buttons (`rounded-full`).
+- **Hover & Animation Exclusivity:** Unclickable cards, containers, and preview widgets MUST NOT have hover animations, 3D tilts, or cursor sheen glares. ONLY clickable elements (buttons, links, active inputs) may move, scale, or change shadow on hover.
 
 ---
 

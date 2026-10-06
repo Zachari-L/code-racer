@@ -1,9 +1,12 @@
+"use client";
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { motion, type HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center font-extrabold tracking-wide uppercase transition-all duration-150 cursor-pointer select-none disabled:pointer-events-none disabled:opacity-50 active:translate-y-0.5",
+  "inline-flex items-center justify-center font-extrabold tracking-wide uppercase transition-colors cursor-pointer select-none disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -25,21 +28,39 @@ const buttonVariants = cva(
         lg: "h-14 px-8 text-base rounded-full",
         xl: "h-16 px-10 text-lg rounded-full",
       },
+      pulse: {
+        true: "arcade-pulse-cta",
+        false: "",
+      },
     },
     defaultVariants: {
       variant: "lime",
       size: "md",
+      pulse: false,
     },
   }
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
+  extends Omit<HTMLMotionProps<"button">, "ref">, VariantProps<typeof buttonVariants> {
+  animatePress?: boolean;
+}
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant, size, pulse, animatePress = true, children, ...props }, ref) => {
     return (
-      <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+      <motion.button
+        className={cn(
+          buttonVariants({ variant, size, pulse: pulse ?? variant === "lime", className })
+        )}
+        ref={ref}
+        whileHover={animatePress ? { y: -3, scale: 1.02 } : undefined}
+        whileTap={animatePress ? { y: 2, scale: 0.98 } : undefined}
+        transition={{ type: "spring", stiffness: 450, damping: 17 }}
+        {...props}
+      >
+        {children}
+      </motion.button>
     );
   }
 );

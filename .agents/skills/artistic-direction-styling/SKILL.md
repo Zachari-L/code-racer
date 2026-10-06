@@ -57,7 +57,7 @@ The design balances structured educational clarity with exhilarating multiplayer
    ```css
    box-shadow: 0 4px 0 #111112;
    ```
-   - On `:active`, compress by 3px with `translate-y-[3px]` and `box-shadow: 0 1px 0 #111112`.
+   - On `:active`, compress by 2px with `translate-y-[2px]` and `box-shadow: 0 1px 0 #111112`.
 3. **Pill & Rounded Shapes:**
    - Buttons: `rounded-full`.
    - Cards & Modals: `rounded-3xl`.
@@ -70,3 +70,11 @@ The design balances structured educational clarity with exhilarating multiplayer
 - Each participant is assigned one of the 4 competitor colors (`azure`, `tangerine`, `magenta`, `teal`).
 - All feedback for that player (their track lane, their car, their live WPM pill, their leaderboard card) **must match their assigned color**.
 - Cars are smooth, chunky, toy-like low-poly 3D models or 2D SVG arcade sprites.
+
+---
+
+## 6. Interaction & Hover Rules
+
+- **Unclickable Elements Remain Static:** Unclickable cards, containers, previews, and feature badges **must never** have hover animations, 3D tilts, or cursor sheen glares.
+- **Clickable Exclusivity:** ONLY clickable elements (buttons, links, active inputs) may lift, scale, or expand shadow on hover (`button.arcade-shadow:hover`, `a.arcade-shadow:hover`).
+- **Ambient Backgrounds:** Background animations (speed lines, ambient confetti) must remain ambient and gentle, and must never track mouse movement or distract from typing focus.

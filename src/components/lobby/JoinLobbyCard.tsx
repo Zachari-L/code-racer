@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Play, Plus, Zap, Users } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -65,10 +66,8 @@ export function JoinLobbyCard() {
   }
 
   return (
-    <Card className="relative w-full max-w-lg overflow-hidden bg-white">
-      <div className="bg-electric-lime pointer-events-none absolute top-0 right-0 h-24 w-24 translate-x-6 -translate-y-6 transform rounded-full opacity-20" />
-
-      <CardHeader className="text-center">
+    <Card className="relative w-full max-w-lg bg-white">
+      <CardHeader className="relative z-10 text-center">
         <div className="bg-azure-blue/10 border-azure-blue mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-2xl border-2">
           <Users className="text-azure-blue h-7 w-7" />
         </div>
@@ -78,7 +77,7 @@ export function JoinLobbyCard() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="relative z-10">
         <form onSubmit={handleJoin} className="space-y-4">
           <div>
             <label className="text-slate-dark mb-1 block text-xs font-black tracking-wider uppercase">
@@ -108,16 +107,25 @@ export function JoinLobbyCard() {
             />
           </div>
 
-          {error && (
-            <div className="border-arcade-magenta bg-arcade-magenta/10 text-arcade-magenta rounded-2xl border-2 p-3 text-center text-xs font-black">
-              {error}
-            </div>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="border-arcade-magenta bg-arcade-magenta/10 text-arcade-magenta rounded-2xl border-2 p-3 text-center text-xs font-black"
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
+          {/* Clickable button with hover/tap movement and CTA pulse */}
           <Button
             type="submit"
             variant="lime"
             size="lg"
+            pulse={true}
             className="mt-2 w-full gap-2 text-lg"
             disabled={isLoading}
           >
@@ -134,6 +142,7 @@ export function JoinLobbyCard() {
             </span>
           </div>
 
+          {/* Clickable action buttons */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Button
               type="button"
