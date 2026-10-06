@@ -2,13 +2,26 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Flame, Gauge, Trophy, Flag, RotateCcw, DoorOpen, ArrowLeft, Clock } from "lucide-react";
+import {
+  Flame,
+  Gauge,
+  Trophy,
+  Flag,
+  RotateCcw,
+  ArrowLeft,
+  Clock,
+  Sun,
+  Moon,
+  Globe,
+  CheckCircle2,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { RacerCar } from "@/components/animated/RacerCar";
+import { TireIcon } from "@/components/animated/TireIcon";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 import type { PlayerColor } from "@/types/race";
 
 interface Competitor {
@@ -33,13 +46,41 @@ export function RaceArena({
   initialCode = "482910",
   initialText = DEFAULT_SAMPLE_TEXT,
 }: RaceArenaProps) {
-  const { t } = useLanguage();
+  const { t, language, toggleLanguage } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
+
   const [textToType] = React.useState(initialText);
   const [typedInput, setTypedInput] = React.useState("");
   const [startTime, setStartTime] = React.useState<number | null>(null);
   const [elapsedSec, setElapsedSec] = React.useState(0);
   const [isFinished, setIsFinished] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(true);
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Group text into words while keeping character indices
+  const words = React.useMemo(() => {
+    const result: {
+      chars: { char: string; index: number }[];
+      spaceIndex: number | null;
+    }[] = [];
+    let currentChars: { char: string; index: number }[] = [];
+
+    for (let i = 0; i < textToType.length; i++) {
+      const ch = textToType[i];
+      if (ch === " ") {
+        result.push({ chars: currentChars, spaceIndex: i });
+        currentChars = [];
+      } else {
+        currentChars.push({ char: ch, index: i });
+      }
+    }
+
+    if (currentChars.length > 0) {
+      result.push({ chars: currentChars, spaceIndex: null });
+    }
+
+    return result;
+  }, [textToType]);
 
   // Competitor states
   const [competitors, setCompetitors] = React.useState<Competitor[]>([
@@ -118,24 +159,8 @@ export function RaceArena({
     };
   }, [startTime, isFinished, playerProgress, liveWpm, textToType.length]);
 
-  // Handle typing input
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const val = e.target.value;
-    if (!startTime) {
-      setStartTime(Date.now());
-    }
-
-    // Only allow typing up to text length
-    if (val.length <= textToType.length) {
-      setTypedInput(val);
-
-      if (val.length === textToType.length) {
-        setIsFinished(true);
-      }
-    }
-  }
-
-  function handleReset() {
+  // Reset race handler
+  const handleReset = React.useCallback(() => {
     setTypedInput("");
     setStartTime(null);
     setElapsedSec(0);
@@ -153,8 +178,60 @@ export function RaceArena({
       { id: "c3", name: "VeloceCode", color: "magenta", progress: 0, wpm: 62 },
       { id: "c4", name: "Bot_Flash", color: "teal", progress: 0, wpm: 55 },
     ]);
-    if (inputRef.current) {
-      inputRef.current.focus();
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 10);
+  }, [t]);
+
+  // Auto-focus input on mount
+  React.useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  // Global keyboard shortcuts: Esc to reset, refocus on printable keystroke
+  React.useEffect(() => {
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      if (isFinished) return;
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleReset();
+        return;
+      }
+      if (document.activeElement === inputRef.current) return;
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === "BUTTON" || activeEl.tagName === "A")) {
+        if (e.key === "Enter" || e.key === " ") return;
+      }
+
+      inputRef.current?.focus();
+    }
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [isFinished, handleReset]);
+
+  // Handle typing input
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (isFinished) return;
+    const val = e.target.value;
+    if (!startTime && val.length > 0) {
+      setStartTime(Date.now());
+    }
+
+    if (val.length <= textToType.length) {
+      setTypedInput(val);
+
+      if (val.length === textToType.length) {
+        setIsFinished(true);
+      }
+    }
+  }
+
+  function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      handleReset();
     }
   }
 
@@ -166,70 +243,157 @@ export function RaceArena({
   }, [competitors]);
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6">
-      {/* Top Race HUD Bar */}
-      <div className="border-slate-dark arcade-shadow flex flex-wrap items-center justify-between gap-4 rounded-3xl border-3 bg-white p-5 transition-colors duration-150 sm:p-6 dark:border-zinc-700 dark:bg-zinc-900">
-        <div className="flex items-center gap-3">
-          <Badge variant="lime" className="gap-1.5 px-3 py-1">
-            <span className="h-2 w-2 animate-ping rounded-full bg-slate-900" />
-            {t("race.liveBadge")}
-          </Badge>
-          <span className="font-mono text-xs font-black tracking-wider text-zinc-500 uppercase dark:text-zinc-400">
-            {t("race.lobbyRef")} #{initialCode}
+    <div className="flex w-full max-w-5xl flex-col items-center">
+      {/* Race Page Top Navigation & Preferences Bar */}
+      <div className="mb-2 flex w-full items-center justify-between px-1 sm:mb-2.5">
+        {/* Brand Home Link */}
+        <Link href="/" className="group flex items-center gap-2.5">
+          <div className="bg-electric-lime border-slate-dark arcade-shadow flex h-9 w-9 items-center justify-center rounded-xl border-2 transition-transform duration-200 group-hover:rotate-12 dark:border-zinc-700">
+            <TireIcon size={22} spinOnHover />
+          </div>
+          <span className="text-slate-dark text-lg font-black tracking-wider uppercase dark:text-white">
+            Code<span className="text-azure-blue">Racer</span>
           </span>
-        </div>
+        </Link>
 
-        {/* Live Gauges */}
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-          {/* Position */}
-          <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-3 py-1 text-xs font-black dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
-            <Trophy className="text-tangerine-orange h-4 w-4" />
-            <span>
-              {currentRank === 1 ? "1er" : `${currentRank}e`} / {competitors.length}
+        {/* Preferences: FR / EN Language Toggle + Dark / Light Theme Toggle */}
+        <div className="flex items-center gap-2">
+          {/* Language Toggle Button (FR / EN) */}
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            title={language === "fr" ? "Passer en anglais" : "Switch to French"}
+            className="border-slate-dark arcade-shadow flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-2 bg-white px-3 py-1 text-xs font-black transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+          >
+            <Globe className="text-azure-blue h-3.5 w-3.5" />
+            <span
+              className={
+                language === "fr"
+                  ? "text-azure-blue font-black"
+                  : "font-semibold text-zinc-400 dark:text-zinc-500"
+              }
+            >
+              FR
             </span>
-          </div>
-
-          {/* Live WPM Speedometer */}
-          <div className="bg-electric-lime border-slate-dark arcade-shadow flex items-center gap-1.5 rounded-full border-2 px-3.5 py-1 text-xs font-black text-[#111112] dark:border-zinc-700 dark:text-[#111112]">
-            <Flame className="h-4 w-4 fill-[#111112] text-[#111112]" />
-            <span>{liveWpm} WPM</span>
-          </div>
-
-          {/* Accuracy Gauge */}
-          <div className="border-slate-dark bg-victory-teal/20 dark:bg-victory-teal/30 flex items-center gap-1.5 rounded-full border-2 px-3 py-1 text-xs font-black text-slate-900 dark:border-zinc-700 dark:text-zinc-100">
-            <Gauge className="text-victory-teal h-4 w-4" />
-            <span>{accuracy}% ACC</span>
-          </div>
-
-          {/* Time Elapsed */}
-          <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-3 py-1 font-mono text-xs font-black text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-            <Clock className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
-            <span>
-              {Math.floor(elapsedSec / 60)
-                .toString()
-                .padStart(2, "0")}
-              :{(elapsedSec % 60).toString().padStart(2, "0")}
+            <span className="text-zinc-300 dark:text-zinc-600">/</span>
+            <span
+              className={
+                language === "en"
+                  ? "text-azure-blue font-black"
+                  : "font-semibold text-zinc-400 dark:text-zinc-500"
+              }
+            >
+              EN
             </span>
-          </div>
+          </button>
+
+          {/* Theme Toggle Button (Light / Dark) */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            title={theme === "light" ? t("nav.themeDark") : t("nav.themeLight")}
+            aria-label={theme === "light" ? "Activer le thème sombre" : "Activer le thème clair"}
+            className="border-slate-dark arcade-shadow flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 bg-white transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+          >
+            {theme === "light" ? (
+              <Moon className="text-slate-dark h-4 w-4" />
+            ) : (
+              <Sun className="text-electric-lime fill-electric-lime/30 h-4 w-4" />
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Realtime Multi-Lane Track Arena */}
-      <Card className="overflow-hidden bg-white dark:bg-zinc-900">
-        <CardContent className="p-4 sm:p-6">
-          <div className="mb-4 flex items-center justify-between border-b-2 border-zinc-100 pb-3 dark:border-zinc-800">
-            <div className="flex items-center gap-2 font-black text-slate-900 uppercase dark:text-white">
-              <Flag className="text-azure-blue h-5 w-5" />
-              <span>{t("race.trackTitle")}</span>
+      {/* The Single Consolidated Race Card */}
+      <div className="border-slate-dark arcade-shadow relative flex max-h-[88vh] w-full flex-col justify-between overflow-hidden rounded-3xl border-3 bg-white p-4 transition-colors duration-150 sm:p-5 dark:border-zinc-700 dark:bg-zinc-900">
+        {/* 1. Integrated Header: Navigation + Live Telemetry Gauges + Restart Button */}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-zinc-100 pb-3 dark:border-zinc-800">
+          {/* Left: Exit button & Live badge */}
+          <div className="flex items-center gap-2">
+            <Link href={`/lobby/${initialCode}`}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 px-3 text-xs font-black"
+                title={t("race.backToLobby")}
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>{t("race.backToLobby")}</span>
+              </Button>
+            </Link>
+            <Badge variant="lime" className="gap-1 px-2.5 py-0.5 text-[11px]">
+              <span className="h-2 w-2 animate-ping rounded-full bg-slate-900" />
+              {t("race.liveBadge")}
+            </Badge>
+            <span className="font-mono text-xs font-black text-zinc-400 dark:text-zinc-500">
+              #{initialCode}
+            </span>
+          </div>
+
+          {/* Center: Live Race Telemetry Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Position */}
+            <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-2.5 py-0.5 text-xs font-black dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+              <Trophy className="text-tangerine-orange h-3.5 w-3.5" />
+              <span>
+                {currentRank === 1 ? "1er" : `${currentRank}e`} / {competitors.length}
+              </span>
             </div>
-            <div className="flex items-center gap-3 font-mono text-xs font-bold text-zinc-400 dark:text-zinc-500">
-              <span>{t("race.finishLine")}</span>
-              <div className="h-4 w-4 rounded-xs border border-slate-900 bg-[repeating-conic-gradient(#111112_0_25%,#ffffff_0_50%)] bg-[length:4px_4px]" />
+
+            {/* Speedometer (WPM) */}
+            <div className="bg-electric-lime border-slate-dark arcade-shadow flex items-center gap-1.5 rounded-full border-2 px-3 py-0.5 text-xs font-black text-[#111112] dark:border-zinc-700 dark:text-[#111112]">
+              <Flame className="h-3.5 w-3.5 fill-[#111112] text-[#111112]" />
+              <span>{liveWpm} WPM</span>
+            </div>
+
+            {/* Accuracy (% ACC) */}
+            <div className="border-slate-dark bg-victory-teal/20 dark:bg-victory-teal/30 flex items-center gap-1.5 rounded-full border-2 px-2.5 py-0.5 text-xs font-black text-slate-900 dark:border-zinc-700 dark:text-zinc-100">
+              <Gauge className="text-victory-teal h-3.5 w-3.5" />
+              <span>{accuracy}% ACC</span>
+            </div>
+
+            {/* Timer */}
+            <div className="border-slate-dark flex items-center gap-1 rounded-full border-2 bg-zinc-50 px-2.5 py-0.5 font-mono text-xs font-black text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+              <Clock className="h-3 w-3 text-zinc-400 dark:text-zinc-500" />
+              <span>
+                {Math.floor(elapsedSec / 60)
+                  .toString()
+                  .padStart(2, "0")}
+                :{(elapsedSec % 60).toString().padStart(2, "0")}
+              </span>
             </div>
           </div>
 
-          {/* 4 Competitor Track Lanes */}
-          <div className="space-y-3">
+          {/* Right: Quick Restart Button */}
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              className="h-8 gap-1.5 px-3 text-xs font-black"
+              title={t("race.reset")}
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{t("race.restart")}</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* 2. Streamlined 4-Lane Race Track Visualizer */}
+        <div className="my-2 space-y-2">
+          <div className="flex items-center justify-between px-1 text-xs font-black text-slate-900 uppercase dark:text-white">
+            <div className="flex items-center gap-1.5">
+              <Flag className="text-azure-blue h-4 w-4" />
+              <span className="text-xs">{t("race.trackTitle")}</span>
+            </div>
+            <div className="flex items-center gap-2 font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
+              <span>{t("race.finishLine")}</span>
+              <div className="h-3.5 w-3.5 rounded-xs border border-slate-900 bg-[repeating-conic-gradient(#111112_0_25%,#ffffff_0_50%)] bg-[length:4px_4px]" />
+            </div>
+          </div>
+
+          {/* 4 Competitor Tracks */}
+          <div className="grid grid-cols-1 gap-1.5">
             {competitors.map((racer) => {
               const currentProgress = racer.isSelf ? playerProgress : racer.progress;
               const racerWpm = racer.isSelf ? liveWpm : racer.wpm;
@@ -237,17 +401,17 @@ export function RaceArena({
               return (
                 <div
                   key={racer.id}
-                  className={`border-slate-dark relative rounded-2xl border-2 p-2 transition-all dark:border-zinc-700 ${
+                  className={`border-slate-dark relative rounded-xl border-2 px-2 py-1 transition-all dark:border-zinc-700 ${
                     racer.isSelf
                       ? "border-azure-blue bg-azure-blue/5 dark:bg-azure-blue/10"
-                      : "bg-zinc-50/60 dark:bg-zinc-800/60"
+                      : "bg-zinc-50/60 dark:bg-zinc-800/40"
                   }`}
                 >
-                  {/* Racer Tag & Stats above the track */}
-                  <div className="mb-1 flex items-center justify-between px-2 text-xs font-black">
-                    <span className="flex items-center gap-1.5">
+                  {/* Racer info label above road */}
+                  <div className="mb-0.5 flex items-center justify-between text-[11px] font-black">
+                    <span className="flex items-center gap-1.5 truncate">
                       <span
-                        className={`h-2.5 w-2.5 rounded-full ${
+                        className={`h-2 w-2 rounded-full ${
                           racer.color === "azure"
                             ? "bg-azure-blue"
                             : racer.color === "tangerine"
@@ -257,21 +421,20 @@ export function RaceArena({
                                 : "bg-victory-teal"
                         }`}
                       />
-                      <span className="text-slate-dark dark:text-zinc-100">{racer.name}</span>
+                      <span className="text-slate-dark dark:text-zinc-200">{racer.name}</span>
                     </span>
-                    <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                    <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400">
                       {racerWpm} WPM • {Math.round(currentProgress)}%
                     </span>
                   </div>
 
-                  {/* Track Surface with moving car */}
-                  <div className="relative flex h-11 w-full items-center select-none">
-                    {/* Road surface */}
-                    <div className="border-slate-dark/30 absolute top-1/2 right-7 left-2 h-3.5 -translate-y-1/2 overflow-hidden rounded-full border bg-[#1e2026]">
-                      {/* Untraversed dashed center line */}
-                      <div className="pointer-events-none absolute inset-x-0 top-1/2 h-[1px] -translate-y-1/2 bg-[repeating-linear-gradient(90deg,#ffffff_0_5px,transparent_5px_10px)] opacity-40" />
+                  {/* Track road surface */}
+                  <div className="relative flex h-8 w-full items-center select-none">
+                    <div className="border-slate-dark/30 absolute top-1/2 right-6 left-1 h-2.5 -translate-y-1/2 overflow-hidden rounded-full border bg-[#1c1d22]">
+                      {/* Road dashed center line */}
+                      <div className="pointer-events-none absolute inset-x-0 top-1/2 h-[1px] -translate-y-1/2 bg-[repeating-linear-gradient(90deg,#ffffff_0_4px,transparent_4px_8px)] opacity-35" />
 
-                      {/* Traversed road segment */}
+                      {/* Traversed Road segment */}
                       <motion.div
                         className={`absolute top-0 bottom-0 left-0 overflow-hidden rounded-l-full ${
                           racer.color === "azure"
@@ -287,26 +450,26 @@ export function RaceArena({
                       />
                     </div>
 
-                    {/* Finish Line */}
+                    {/* Finish line marker */}
                     <div
-                      className="border-slate-dark/70 absolute top-1/2 z-10 w-3 -translate-y-1/2 rounded-xs border bg-[repeating-conic-gradient(#111112_0_25%,#ffffff_0_50%)] bg-[length:4px_4px]"
-                      style={{ right: "26px", height: "20px" }}
+                      className="border-slate-dark/70 absolute top-1/2 z-10 w-2.5 -translate-y-1/2 rounded-xs border bg-[repeating-conic-gradient(#111112_0_25%,#ffffff_0_50%)] bg-[length:3px_3px]"
+                      style={{ right: "24px", height: "16px" }}
                     />
 
-                    {/* Car Sprite */}
+                    {/* Car sprite */}
                     <motion.div
                       className="absolute top-0 bottom-0 z-20 flex items-center"
                       style={{
-                        left: `calc(2px + (${currentProgress} / 100) * (100% - 70px))`,
+                        left: `calc(1px + (${currentProgress} / 100) * (100% - 58px))`,
                       }}
                       transition={{ type: "spring", stiffness: 240, damping: 25 }}
                     >
                       <RacerCar
                         color={racer.color}
                         wpm={racerWpm}
-                        width={64}
-                        height={32}
-                        showSmoke={currentProgress > 2}
+                        width={52}
+                        height={26}
+                        showSmoke={currentProgress > 3}
                         showHeadlight={true}
                       />
                     </motion.div>
@@ -315,129 +478,179 @@ export function RaceArena({
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Typing Arena: Snippet Display + Realtime Input Box */}
-      <Card className="bg-white dark:bg-zinc-900">
-        <CardContent className="space-y-5 p-6">
-          <div className="flex items-center justify-between border-b-2 border-zinc-100 pb-3 dark:border-zinc-800">
-            <span className="text-slate-dark text-xs font-black tracking-wider uppercase dark:text-zinc-200">
-              {t("race.textToType")}
-            </span>
-            <Badge variant="outline" className="text-[11px]">
-              {t("race.antiCheatActive")}
-            </Badge>
-          </div>
-
-          {/* Interactive Monospace Code Box */}
-          <div className="border-slate-dark/20 rounded-2xl border-2 bg-zinc-50/80 p-5 font-mono text-base leading-loose select-none sm:text-lg dark:border-zinc-700 dark:bg-zinc-800/80">
-            {/* Correctly typed portion */}
-            <span className="text-victory-teal bg-victory-teal/10 rounded-sm font-bold">
-              {textToType.slice(0, typedInput.length)}
-            </span>
-
-            {/* Current cursor indicator */}
-            {!isFinished && (
-              <motion.span
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity }}
-                className="bg-azure-blue mx-0.5 inline-block h-5 w-2.5 rounded-xs align-middle"
-              />
-            )}
-
-            {/* Remaining text to type */}
-            <span className="text-zinc-400 dark:text-zinc-500">
-              {textToType.slice(typedInput.length)}
-            </span>
-          </div>
-
-          {/* Big Tactile Typing Input Field */}
-          <div className="space-y-2">
-            <label className="text-slate-dark block text-xs font-black tracking-wider uppercase dark:text-zinc-200">
-              {t("race.yourInput")}
-            </label>
+        {/* 3. Integrated Monospace Typing Arena (Monkeytype Style) */}
+        <div className="space-y-2 border-t-2 border-zinc-100 pt-2.5 dark:border-zinc-800">
+          {/* Interactive Text Display & Hidden Input Stream */}
+          <div
+            onClick={() => inputRef.current?.focus()}
+            className="border-slate-dark/25 relative min-h-[110px] cursor-text rounded-2xl border-2 bg-zinc-50/80 p-4 font-mono text-base leading-relaxed transition-all select-none sm:p-5 sm:text-lg md:text-xl dark:border-zinc-700 dark:bg-zinc-800/60"
+          >
+            {/* Invisible Native Input (Captures keystrokes, disables paste) */}
             <input
               ref={inputRef}
               type="text"
-              autoFocus
-              disabled={isFinished}
               value={typedInput}
               onChange={handleInputChange}
-              onPaste={(e) => e.preventDefault()} // Anti-cheat rule strictly enforced
-              placeholder={isFinished ? t("race.inputFinished") : t("race.inputPlaceholder")}
-              className="text-slate-dark border-slate-dark arcade-shadow focus:border-azure-blue focus:ring-azure-blue/20 w-full rounded-2xl border-3 bg-white px-5 py-3 font-mono text-base font-bold placeholder:font-sans placeholder:font-normal placeholder:text-zinc-400 focus:ring-4 focus:outline-none disabled:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:disabled:bg-zinc-800/50"
+              onKeyDown={handleInputKeyDown}
+              onPaste={(e) => e.preventDefault()}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              disabled={isFinished}
+              autoFocus
+              aria-label="Monospace Typing Stream"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
+              className="absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
             />
+
+            {/* Rendered Words & Characters */}
+            <div className="relative z-0 flex flex-wrap content-start items-center">
+              {words.map((w, wIdx) => (
+                <span key={wIdx} className="inline-flex items-center whitespace-nowrap">
+                  {w.chars.map(({ char, index }) => {
+                    const isTyped = index < typedInput.length;
+                    const isCurrent = index === typedInput.length;
+                    const isCorrect = isTyped && typedInput[index] === char;
+                    const isError = isTyped && typedInput[index] !== char;
+
+                    return (
+                      <span
+                        key={index}
+                        className={`relative transition-colors duration-75 ${
+                          isCorrect
+                            ? "font-bold text-emerald-500 dark:text-emerald-400"
+                            : isError
+                              ? "rounded-xs bg-rose-500/20 font-bold text-rose-500 underline decoration-rose-500 decoration-2 dark:bg-rose-500/30 dark:text-rose-400"
+                              : "font-normal text-zinc-400 dark:text-zinc-500"
+                        }`}
+                      >
+                        {isCurrent && !isFinished && (
+                          <motion.span
+                            animate={{ opacity: isFocused ? [1, 0, 1] : 0 }}
+                            transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                            className="bg-electric-lime pointer-events-none absolute top-[10%] bottom-[10%] -left-[1.5px] z-20 w-[2.5px] rounded-full border border-slate-900 shadow-[0_0_8px_rgba(210,255,0,0.8)]"
+                          />
+                        )}
+                        {char}
+                      </span>
+                    );
+                  })}
+
+                  {w.spaceIndex !== null &&
+                    (() => {
+                      const sIdx = w.spaceIndex;
+                      const isTyped = sIdx < typedInput.length;
+                      const isCurrent = sIdx === typedInput.length;
+                      const isError = isTyped && typedInput[sIdx] !== " ";
+
+                      return (
+                        <span
+                          key={sIdx}
+                          className={`relative inline-block transition-colors duration-75 ${
+                            isError
+                              ? "rounded-xs bg-rose-500/20 font-bold text-rose-500 underline decoration-rose-500 decoration-2 dark:bg-rose-500/30 dark:text-rose-400"
+                              : ""
+                          }`}
+                        >
+                          {isCurrent && !isFinished && (
+                            <motion.span
+                              animate={{ opacity: isFocused ? [1, 0, 1] : 0 }}
+                              transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                              className="bg-electric-lime pointer-events-none absolute top-[10%] bottom-[10%] -left-[1.5px] z-20 w-[2.5px] rounded-full border border-slate-900 shadow-[0_0_8px_rgba(210,255,0,0.8)]"
+                            />
+                          )}
+                          {isError ? "_" : "\u00A0"}
+                        </span>
+                      );
+                    })()}
+                </span>
+              ))}
+
+              {/* Caret if at very end of entire text */}
+              {typedInput.length === textToType.length && !isFinished && (
+                <motion.span
+                  animate={{ opacity: isFocused ? [1, 0, 1] : 0 }}
+                  transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                  className="bg-electric-lime pointer-events-none inline-block h-5 w-[2.5px] rounded-full border border-slate-900 align-middle shadow-[0_0_8px_rgba(210,255,0,0.8)]"
+                />
+              )}
+            </div>
+
+            {/* Out of focus prompt */}
+            {!isFocused && !isFinished && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-white/70 backdrop-blur-xs transition-all dark:bg-zinc-900/70">
+                <div className="border-slate-dark arcade-shadow flex items-center gap-2 rounded-full border-2 bg-white px-4 py-1.5 font-sans text-xs font-black text-slate-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+                  <span className="bg-electric-lime h-2 w-2 animate-ping rounded-full" />
+                  {t("race.clickToFocus")}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Finish Race Victory Card */}
-          <AnimatePresence>
-            {isFinished && (
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="border-slate-dark arcade-shadow bg-electric-lime/30 dark:bg-electric-lime/20 flex flex-col items-center justify-between gap-4 rounded-2xl border-3 p-5 sm:flex-row dark:border-zinc-700"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="border-slate-dark flex h-12 w-12 items-center justify-center rounded-2xl border-2 bg-white dark:border-zinc-700 dark:bg-zinc-800">
-                    <Trophy className="text-tangerine-orange h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-slate-dark text-lg font-black uppercase dark:text-white">
-                      {currentRank === 1
-                        ? t("race.victory")
-                        : t("race.finishedRank", { rank: currentRank })}
-                    </h3>
-                    <p className="text-xs font-bold text-zinc-600 dark:text-zinc-300">
-                      {t("race.finalSpeed")}{" "}
-                      <span className="font-mono font-black">{liveWpm} WPM</span> •{" "}
-                      {t("race.accuracy")} <span className="font-mono font-black">{accuracy}%</span>
-                    </p>
-                  </div>
-                </div>
+          {/* Footer info & hotkey hints */}
+          <div className="flex items-center justify-between px-1 text-[11px] font-bold text-zinc-400 dark:text-zinc-500">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="text-victory-teal h-3 w-3" />
+              {t("race.antiCheatActive")}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <kbd className="border-slate-dark/30 rounded border bg-zinc-100 px-1.5 py-0.5 font-mono text-[10px] text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+                Tab / Esc
+              </kbd>
+              <span>{t("race.restart")}</span>
+            </span>
+          </div>
+        </div>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleReset}
-                    className="gap-1.5 text-xs"
-                  >
-                    <RotateCcw className="h-4 w-4" /> {t("race.restart")}
+        {/* 4. Victory / Finish Inline Banner Overlay */}
+        <AnimatePresence>
+          {isFinished && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="border-slate-dark arcade-shadow bg-electric-lime/25 dark:bg-electric-lime/20 absolute inset-x-4 bottom-4 z-30 flex flex-col items-center justify-between gap-3 rounded-2xl border-3 p-4 sm:flex-row dark:border-zinc-700"
+            >
+              <div className="flex items-center gap-3">
+                <div className="border-slate-dark flex h-10 w-10 items-center justify-center rounded-xl border-2 bg-white dark:border-zinc-700 dark:bg-zinc-800">
+                  <Trophy className="text-tangerine-orange h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-slate-dark text-base font-black uppercase dark:text-white">
+                    {currentRank === 1
+                      ? t("race.victory")
+                      : t("race.finishedRank", { rank: currentRank })}
+                  </h3>
+                  <p className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
+                    {t("race.finalSpeed")}{" "}
+                    <span className="font-mono font-black">{liveWpm} WPM</span> •{" "}
+                    {t("race.accuracy")} <span className="font-mono font-black">{accuracy}%</span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReset}
+                  className="h-9 gap-1.5 text-xs"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" /> {t("race.restart")}
+                </Button>
+                <Link href={`/lobby/${initialCode}`}>
+                  <Button variant="azure" size="sm" className="h-9 gap-1.5 text-xs">
+                    {t("race.backToLobby")}
                   </Button>
-                  <Link href={`/lobby/${initialCode}`}>
-                    <Button variant="azure" size="sm" className="gap-1.5 text-xs">
-                      {t("race.backToLobby")}
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
-
-      {/* Bottom Race Controls */}
-      <div className="border-slate-dark arcade-shadow flex flex-wrap items-center justify-between gap-4 rounded-3xl border-3 bg-white p-4 transition-colors duration-150 sm:p-5 dark:border-zinc-700 dark:bg-zinc-900">
-        <div className="flex items-center gap-2">
-          <Link href="/">
-            <Button variant="outline" size="md" className="gap-1.5 text-xs">
-              <ArrowLeft className="h-4 w-4" /> {t("race.quit")}
-            </Button>
-          </Link>
-          <Link href={`/lobby/${initialCode}`}>
-            <Button variant="outline" size="md" className="gap-1.5 text-xs">
-              <DoorOpen className="h-4 w-4" /> {t("race.backToLobby")}
-            </Button>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="md" onClick={handleReset} className="gap-2 text-xs">
-            <RotateCcw className="h-4 w-4" /> {t("race.reset")}
-          </Button>
-        </div>
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

@@ -94,8 +94,8 @@ export const translations = {
     "race.accuracy": "Précision :",
     "race.restart": "Recommencer",
     "race.backToLobby": "Retour au Salon",
-    "race.quit": "Quitter",
     "race.reset": "Réinitialiser la Course",
+    "race.clickToFocus": "Cliquez ou appuyez sur une touche pour taper",
 
     // Profile
     "profile.previewTag": "Aperçu de la vue profil :",
@@ -229,8 +229,8 @@ export const translations = {
     "race.accuracy": "Accuracy:",
     "race.restart": "Restart",
     "race.backToLobby": "Back to Lobby",
-    "race.quit": "Quit",
     "race.reset": "Reset Race",
+    "race.clickToFocus": "Click or press any key to type",
 
     // Profile
     "profile.previewTag": "Profile perspective preview:",
