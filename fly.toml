@@ -1,5 +1,5 @@
 app = "coderacer"
-primary_region = "cdg"
+primary_region = "yyz"
 
 [build]
   dockerfile = "Dockerfile"
