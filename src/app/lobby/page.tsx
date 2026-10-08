@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
-import { LobbyArena } from "@/components/lobby/LobbyArena";
+import { LobbyHub } from "@/components/lobby/LobbyHub";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
 
 export default function LobbyDefaultPage() {
@@ -9,8 +9,8 @@ export default function LobbyDefaultPage() {
       <ArcadeBackground />
       <Navbar />
 
-      <main className="relative z-10 flex flex-1 flex-col justify-start">
-        <LobbyArena />
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center py-8">
+        <LobbyHub />
       </main>
 
       <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">

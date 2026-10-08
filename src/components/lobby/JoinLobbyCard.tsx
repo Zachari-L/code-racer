@@ -51,6 +51,9 @@ export function JoinLobbyCard() {
     setIsLoading(false);
 
     if (result.success && result.code) {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(`coderacer_host_${result.code}`, "false");
+      }
       router.push(`/lobby/${result.code}`);
     } else {
       setError(result.error ?? "Impossible de rejoindre cette course.");
@@ -88,6 +91,9 @@ export function JoinLobbyCard() {
     setIsLoading(false);
 
     if (result.success && result.code) {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(`coderacer_host_${result.code}`, "true");
+      }
       router.push(`/lobby/${result.code}`);
     } else {
       setError(result.error ?? "Impossible de créer la course.");

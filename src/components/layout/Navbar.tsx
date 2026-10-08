@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Users, Flame, User, Sun, Moon, Globe, LogIn, LogOut } from "lucide-react";
+import { Users, User, Sun, Moon, Globe, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TireIcon } from "@/components/animated/TireIcon";
 import { useTheme } from "@/context/ThemeContext";
@@ -39,12 +39,6 @@ export function Navbar() {
               <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2">
                 <Users className="text-azure-blue h-4 w-4" />
                 <span className="hidden sm:inline">{t("nav.lobbies")}</span>
-              </Button>
-            </Link>
-            <Link href="/race">
-              <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2">
-                <Flame className="text-tangerine-orange h-4 w-4" />
-                <span className="hidden sm:inline">{t("nav.race")}</span>
               </Button>
             </Link>
             <Link href="/profile">

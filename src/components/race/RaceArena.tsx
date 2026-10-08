@@ -14,16 +14,43 @@ import {
   Moon,
   Globe,
   CheckCircle2,
+  Play,
+  Hourglass,
+  Crown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RacerCar } from "@/components/animated/RacerCar";
 import { TireIcon } from "@/components/animated/TireIcon";
+import { useSession } from "next-auth/react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
-import { saveRaceResult } from "@/server/actions/race";
+import { saveRaceResult, startRace, getRaceStatus } from "@/server/actions/race";
 import type { PlayerColor } from "@/types/race";
+
+function playBeep(freq: number, durationMs: number = 150) {
+  if (typeof window === "undefined") return;
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durationMs / 1000);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + durationMs / 1000);
+  } catch {
+    // Autoplay restrictions safely caught
+  }
+}
 
 interface Competitor {
   id: string;
@@ -38,6 +65,8 @@ interface Competitor {
 interface RaceArenaProps {
   initialCode?: string;
   initialText?: string;
+  initialIsHost?: boolean;
+  initialStatus?: "WAITING" | "COUNTDOWN" | "IN_PROGRESS" | "FINISHED" | "CANCELLED";
 }
 
 const DEFAULT_SAMPLE_TEXT =
@@ -46,9 +75,34 @@ const DEFAULT_SAMPLE_TEXT =
 export function RaceArena({
   initialCode = "482910",
   initialText = DEFAULT_SAMPLE_TEXT,
+  initialIsHost,
+  initialStatus,
 }: RaceArenaProps) {
+  const { data: session } = useSession();
   const { t, language, toggleLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+
+  const [isHost, setIsHost] = React.useState<boolean>(() => {
+    if (typeof initialIsHost === "boolean") return initialIsHost;
+    if (typeof window !== "undefined") {
+      const stored = sessionStorage.getItem(`coderacer_host_${initialCode}`);
+      if (stored === "true") return true;
+      if (stored === "false") return false;
+    }
+    return false;
+  });
+
+  const [racePhase, setRacePhase] = React.useState<
+    "WAITING_FOR_HOST" | "COUNTDOWN" | "RACING" | "FINISHED"
+  >(() => {
+    if (initialStatus === "IN_PROGRESS" || initialStatus === "COUNTDOWN") {
+      return "COUNTDOWN";
+    }
+    return "WAITING_FOR_HOST";
+  });
+
+  const [countdown, setCountdown] = React.useState(3);
+  const [isStartingHost, setIsStartingHost] = React.useState(false);
 
   const [textToType] = React.useState(initialText);
   const [typedInput, setTypedInput] = React.useState("");
@@ -60,6 +114,65 @@ export function RaceArena({
     "idle" | "saving" | "saved" | "guest" | "error"
   >("idle");
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Synchronize host rights and race start across participants via polling
+  React.useEffect(() => {
+    if (racePhase !== "WAITING_FOR_HOST") return;
+    let isCancelled = false;
+
+    async function checkStatus() {
+      const res = await getRaceStatus(initialCode);
+      if (isCancelled) return;
+      if (res.success && res.race) {
+        if (session?.user?.id && res.race.hostId === session.user.id) {
+          setIsHost(true);
+        }
+        if (res.race.status === "IN_PROGRESS" || res.race.status === "COUNTDOWN") {
+          setRacePhase("COUNTDOWN");
+          setCountdown(3);
+        }
+      }
+    }
+
+    checkStatus();
+    const interval = setInterval(checkStatus, 1200);
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
+  }, [racePhase, initialCode, session?.user?.id]);
+
+  // Visual countdown 3-2-1-GO! effect (CONFIG-7)
+  React.useEffect(() => {
+    if (racePhase !== "COUNTDOWN") return;
+
+    playBeep(countdown > 0 ? 440 : 880);
+
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      const timer = setTimeout(() => {
+        setRacePhase("RACING");
+        setStartTime(Date.now());
+        setElapsedSec(0);
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 50);
+      }, 650);
+      return () => clearTimeout(timer);
+    }
+  }, [racePhase, countdown]);
+
+  async function handleHostStartRace() {
+    setIsStartingHost(true);
+    await startRace(initialCode, session?.user?.id);
+    setIsStartingHost(false);
+    setRacePhase("COUNTDOWN");
+    setCountdown(3);
+  }
 
   // Group text into words while keeping character indices
   const words = React.useMemo(() => {
@@ -366,10 +479,21 @@ export function RaceArena({
                 <span>{t("race.backToLobby")}</span>
               </Button>
             </Link>
-            <Badge variant="lime" className="gap-1 px-2.5 py-0.5 text-[11px]">
-              <span className="h-2 w-2 animate-ping rounded-full bg-slate-900" />
-              {t("race.liveBadge")}
-            </Badge>
+            {racePhase === "WAITING_FOR_HOST" ? (
+              <Badge variant="outline" className="gap-1 px-2.5 py-0.5 text-[11px]">
+                <Hourglass className="text-tangerine-orange h-3 w-3 animate-spin" />
+                {t("lobby.waiting")}
+              </Badge>
+            ) : racePhase === "COUNTDOWN" ? (
+              <Badge variant="azure" className="gap-1 px-2.5 py-0.5 text-[11px]">
+                {t("race.countdownReady")}
+              </Badge>
+            ) : (
+              <Badge variant="lime" className="gap-1 px-2.5 py-0.5 text-[11px]">
+                <span className="h-2 w-2 animate-ping rounded-full bg-slate-900" />
+                {t("race.liveBadge")}
+              </Badge>
+            )}
             <span className="font-mono text-xs font-black text-zinc-400 dark:text-zinc-500">
               #{initialCode}
             </span>
@@ -542,8 +666,8 @@ export function RaceArena({
               onPaste={(e) => e.preventDefault()}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              disabled={isFinished}
-              autoFocus
+              disabled={racePhase !== "RACING" || isFinished}
+              autoFocus={racePhase === "RACING"}
               aria-label="Monospace Typing Stream"
               autoComplete="off"
               autoCapitalize="off"
@@ -626,7 +750,7 @@ export function RaceArena({
             </div>
 
             {/* Out of focus prompt */}
-            {!isFocused && !isFinished && (
+            {racePhase === "RACING" && !isFocused && !isFinished && (
               <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-white/70 backdrop-blur-xs transition-all dark:bg-zinc-900/70">
                 <div className="border-slate-dark arcade-shadow flex items-center gap-2 rounded-full border-2 bg-white px-4 py-1.5 font-sans text-xs font-black text-slate-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
                   <span className="bg-electric-lime h-2 w-2 animate-ping rounded-full" />
@@ -634,6 +758,140 @@ export function RaceArena({
                 </div>
               </div>
             )}
+
+            {/* Waiting for host start overlay */}
+            <AnimatePresence>
+              {racePhase === "WAITING_FOR_HOST" && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-25 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-white/95 p-5 text-center backdrop-blur-xs dark:border-zinc-700 dark:bg-zinc-900/95"
+                >
+                  {isHost ? (
+                    <div className="flex max-w-md flex-col items-center gap-3">
+                      <Badge variant="lime" className="gap-1.5 px-3 py-1 text-xs">
+                        <Crown className="text-slate-dark h-3.5 w-3.5" />
+                        {t("lobby.host")}
+                      </Badge>
+                      <h3 className="text-slate-dark text-xl font-black uppercase sm:text-2xl dark:text-white">
+                        Prêt pour le départ
+                      </h3>
+                      <p className="text-xs font-bold text-zinc-600 dark:text-zinc-300">
+                        Vous êtes l&apos;hôte de ce salon. Lancez le départ pour démarrer le compte
+                        à rebours de tous les participants !
+                      </p>
+                      <Button
+                        type="button"
+                        variant="lime"
+                        size="lg"
+                        pulse={true}
+                        disabled={isStartingHost}
+                        onClick={handleHostStartRace}
+                        className="mt-1 gap-2 px-8 text-base font-black shadow-lg"
+                      >
+                        <Play className="fill-slate-dark h-5 w-5" />
+                        {isStartingHost ? t("card.connecting") : t("race.hostStartBtn")}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex max-w-md flex-col items-center gap-3">
+                      <div className="bg-azure-blue/15 border-azure-blue mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border-2">
+                        <Hourglass className="text-azure-blue h-6 w-6 animate-spin" />
+                      </div>
+                      <h3 className="text-slate-dark text-xl font-black uppercase sm:text-2xl dark:text-white">
+                        {t("race.waitingForHost")}
+                      </h3>
+                      <p className="text-xs font-bold text-zinc-600 dark:text-zinc-300">
+                        L&apos;hôte n&apos;a pas encore donné le signal. Tenez-vous prêt sur la
+                        grille, la course démarrera dès le lancement !
+                      </p>
+                      <Link href={`/lobby/${initialCode}`}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-1 gap-1.5 text-xs font-black"
+                        >
+                          <ArrowLeft className="h-3.5 w-3.5" />
+                          <span>{t("race.backToLobby")}</span>
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Visual 3-2-1-GO! Countdown overlay (CONFIG-7) */}
+            <AnimatePresence>
+              {racePhase === "COUNTDOWN" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="border-slate-dark arcade-shadow absolute inset-0 z-30 flex flex-col items-center justify-center rounded-2xl border-2 bg-white/95 p-5 backdrop-blur-xs dark:border-zinc-700 dark:bg-zinc-900/95"
+                >
+                  {/* Traffic lights row */}
+                  <div className="border-slate-dark arcade-shadow mb-3 flex items-center gap-3 rounded-full border-3 bg-[#111112] px-6 py-2.5">
+                    <div
+                      className={`h-6 w-6 rounded-full border-2 border-slate-900 transition-all duration-200 ${
+                        countdown >= 3
+                          ? "scale-115 bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.95)]"
+                          : "bg-rose-950 opacity-30"
+                      }`}
+                    />
+                    <div
+                      className={`h-6 w-6 rounded-full border-2 border-slate-900 transition-all duration-200 ${
+                        countdown === 2
+                          ? "scale-115 bg-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.95)]"
+                          : "bg-amber-950 opacity-30"
+                      }`}
+                    />
+                    <div
+                      className={`h-6 w-6 rounded-full border-2 border-slate-900 transition-all duration-200 ${
+                        countdown === 1
+                          ? "scale-115 bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.95)]"
+                          : "bg-orange-950 opacity-30"
+                      }`}
+                    />
+                    <div
+                      className={`h-6 w-6 rounded-full border-2 border-slate-900 transition-all duration-200 ${
+                        countdown === 0
+                          ? "bg-electric-lime scale-125 shadow-[0_0_20px_rgba(210,255,0,1)]"
+                          : "bg-emerald-950 opacity-30"
+                      }`}
+                    />
+                  </div>
+
+                  {/* Big Number / "PARTEZ !" */}
+                  <div className="text-center font-mono">
+                    {countdown > 0 ? (
+                      <motion.div
+                        key={countdown}
+                        initial={{ scale: 0.6, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 1.4, opacity: 0 }}
+                        className="text-slate-dark text-7xl font-black sm:text-8xl dark:text-white"
+                      >
+                        {countdown}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        initial={{ scale: 0.7, opacity: 0 }}
+                        animate={{ scale: [1, 1.15, 1], opacity: 1 }}
+                        className="text-electric-lime text-5xl font-black tracking-widest uppercase sm:text-7xl"
+                      >
+                        {t("race.countdownGo")}
+                      </motion.div>
+                    )}
+                  </div>
+
+                  <p className="mt-2 text-xs font-black tracking-widest text-zinc-500 uppercase dark:text-zinc-400">
+                    {countdown > 0 ? t("race.countdownReady") : t("race.lockedUntilStart")}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Footer info & hotkey hints */}

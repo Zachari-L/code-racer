@@ -24,7 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { RacerCar } from "@/components/animated/RacerCar";
+import { useSession } from "next-auth/react";
 import { useLanguage } from "@/context/LanguageContext";
+import { startRace, getRaceStatus } from "@/server/actions/race";
 import type { PlayerColor, BotDifficulty } from "@/types/race";
 
 interface LobbyParticipant {
@@ -39,6 +41,7 @@ interface LobbyParticipant {
 
 interface LobbyArenaProps {
   initialCode?: string;
+  initialIsHost?: boolean;
 }
 
 const DEFAULT_CODE = "482910";
@@ -51,22 +54,34 @@ const PREVIEW_TEXTS = {
     "Le petit chat est mort. Que voulez-vous que je dise de plus ? La fortune se joue ainsi de nos desseins.",
 };
 
-export function LobbyArena({ initialCode }: LobbyArenaProps) {
+export function LobbyArena({ initialCode, initialIsHost }: LobbyArenaProps) {
   const router = useRouter();
+  const { data: session } = useSession();
   const { t } = useLanguage();
   const code = initialCode || DEFAULT_CODE;
   const [copied, setCopied] = React.useState(false);
   const [isSelfReady, setIsSelfReady] = React.useState(true);
+  const [isStarting, setIsStarting] = React.useState(false);
   const [selectedCategory, setSelectedCategory] = React.useState<"quotes" | "code" | "moliere">(
     "quotes"
   );
   const [strictMode, setStrictMode] = React.useState(false);
 
+  const [isHost, setIsHost] = React.useState<boolean>(() => {
+    if (typeof initialIsHost === "boolean") return initialIsHost;
+    if (typeof window !== "undefined") {
+      const stored = sessionStorage.getItem(`coderacer_host_${code}`);
+      if (stored === "true") return true;
+      if (stored === "false") return false;
+    }
+    return true; // Default fallback
+  });
+
   const [participants, setParticipants] = React.useState<LobbyParticipant[]>([
     {
       id: "p1",
       nickname: `TurboTypist ${t("lobby.you")}`,
-      role: "HOST",
+      role: isHost ? "HOST" : "PARTICIPANT",
       carColor: "azure",
       isReady: true,
     },
@@ -95,6 +110,38 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
     },
   ]);
 
+  // Dynamically compute player 1's role based on isHost
+  const effectiveParticipants = React.useMemo(() => {
+    return participants.map((p) =>
+      p.id === "p1" ? { ...p, role: isHost ? "HOST" : "PARTICIPANT" } : p
+    );
+  }, [participants, isHost]);
+
+  // Real-time status polling for participants: when host starts the race, route to /race/[code]
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    async function checkStatus() {
+      const res = await getRaceStatus(code);
+      if (isCancelled) return;
+      if (res.success && res.race) {
+        if (session?.user?.id && res.race.hostId === session.user.id) {
+          setIsHost(true);
+        }
+        if (res.race.status === "IN_PROGRESS" || res.race.status === "COUNTDOWN") {
+          router.push(`/race/${code}`);
+        }
+      }
+    }
+
+    checkStatus();
+    const interval = setInterval(checkStatus, 1500);
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
+  }, [code, router, session?.user?.id]);
+
   function handleCopyCode() {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(code);
@@ -112,6 +159,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
   }
 
   function handleAddBot(difficulty: BotDifficulty) {
+    if (!isHost) return;
     const diffLabels: Record<BotDifficulty, string> = {
       EASY: `${t("lobby.botEasy")} (~30 WPM)`,
       MEDIUM: `${t("lobby.botMedium")} (~60 WPM)`,
@@ -134,7 +182,10 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
     setParticipants((prev) => [...prev, newBot]);
   }
 
-  function handleStartRace() {
+  async function handleStartRace() {
+    if (!isHost) return;
+    setIsStarting(true);
+    await startRace(code, session?.user?.id);
     router.push(`/race/${code}`);
   }
 
@@ -150,7 +201,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
             </Badge>
             <Badge variant="azure" className="gap-1.5 px-3 py-1 text-xs">
               <Users className="h-3.5 w-3.5" />
-              {participants.length} / 100 {t("lobby.playersCount")}
+              {effectiveParticipants.length} / 100 {t("lobby.playersCount")}
             </Badge>
           </div>
 
@@ -206,8 +257,8 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                 <CardDescription>{t("lobby.gridDesc")}</CardDescription>
               </div>
               <Badge variant="outline" className="font-mono text-xs">
-                {participants.filter((p) => p.isReady).length}/{participants.length}{" "}
-                {t("lobby.readyCount")}
+                {effectiveParticipants.filter((p) => p.isReady).length}/
+                {effectiveParticipants.length} {t("lobby.readyCount")}
               </Badge>
             </CardHeader>
 
@@ -215,7 +266,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
               {/* Participant Cards */}
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <AnimatePresence>
-                  {participants.map((player) => {
+                  {effectiveParticipants.map((player) => {
                     const isSelf = player.id === "p1";
                     return (
                       <motion.div
@@ -290,7 +341,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     {t("lobby.addBotsTitle")}
                   </span>
                   <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500">
-                    {t("lobby.addBotsDesc")}
+                    {isHost ? t("lobby.addBotsDesc") : t("lobby.onlyHostCanStart")}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -298,6 +349,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     type="button"
                     variant="outline"
                     size="sm"
+                    disabled={!isHost}
                     onClick={() => handleAddBot("EASY")}
                     className="gap-1 text-xs"
                   >
@@ -307,6 +359,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     type="button"
                     variant="outline"
                     size="sm"
+                    disabled={!isHost}
                     onClick={() => handleAddBot("MEDIUM")}
                     className="gap-1 text-xs"
                   >
@@ -316,6 +369,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     type="button"
                     variant="outline"
                     size="sm"
+                    disabled={!isHost}
                     onClick={() => handleAddBot("HARD")}
                     className="gap-1 text-xs"
                   >
@@ -325,6 +379,7 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                     type="button"
                     variant="magenta"
                     size="sm"
+                    disabled={!isHost}
                     onClick={() => handleAddBot("IMPOSSIBLE")}
                     className="gap-1 text-xs"
                   >
@@ -340,10 +395,17 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
         <div className="flex flex-col gap-6">
           <Card className="bg-white dark:bg-zinc-900">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Settings className="text-tangerine-orange h-5 w-5" />
-                {t("lobby.settingsTitle")}
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Settings className="text-tangerine-orange h-5 w-5" />
+                  {t("lobby.settingsTitle")}
+                </CardTitle>
+                {!isHost && (
+                  <Badge variant="outline" className="text-[10px] text-zinc-400">
+                    {t("lobby.onlyHostCanStart")}
+                  </Badge>
+                )}
+              </div>
               <CardDescription>{t("lobby.settingsDesc")}</CardDescription>
             </CardHeader>
 
@@ -355,34 +417,37 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
+                    disabled={!isHost}
                     onClick={() => setSelectedCategory("quotes")}
                     className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "quotes"
                         ? "bg-electric-lime text-[#111112] shadow-xs dark:text-[#111112]"
                         : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                    }`}
+                    } ${!isHost ? "cursor-not-allowed opacity-75" : ""}`}
                   >
                     {t("lobby.catQuotes")}
                   </button>
                   <button
                     type="button"
+                    disabled={!isHost}
                     onClick={() => setSelectedCategory("code")}
                     className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "code"
                         ? "bg-electric-lime text-[#111112] shadow-xs dark:text-[#111112]"
                         : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                    }`}
+                    } ${!isHost ? "cursor-not-allowed opacity-75" : ""}`}
                   >
                     {t("lobby.catCode")}
                   </button>
                   <button
                     type="button"
+                    disabled={!isHost}
                     onClick={() => setSelectedCategory("moliere")}
                     className={`border-slate-dark rounded-xl border-2 px-2 py-1.5 text-xs font-black transition-all dark:border-zinc-700 ${
                       selectedCategory === "moliere"
                         ? "bg-electric-lime text-[#111112] shadow-xs dark:text-[#111112]"
                         : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                    }`}
+                    } ${!isHost ? "cursor-not-allowed opacity-75" : ""}`}
                   >
                     {t("lobby.catMoliere")}
                   </button>
@@ -396,12 +461,13 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
+                    disabled={!isHost}
                     onClick={() => setStrictMode(false)}
                     className={`border-slate-dark rounded-xl border-2 px-3 py-2 text-left text-xs font-black transition-all dark:border-zinc-700 ${
                       !strictMode
                         ? "bg-azure-blue/15 border-azure-blue text-azure-blue shadow-xs"
                         : "bg-white text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
-                    }`}
+                    } ${!isHost ? "cursor-not-allowed opacity-75" : ""}`}
                   >
                     <div className="font-black">{t("lobby.modePermissive")}</div>
                     <div className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400">
@@ -410,12 +476,13 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
                   </button>
                   <button
                     type="button"
+                    disabled={!isHost}
                     onClick={() => setStrictMode(true)}
                     className={`border-slate-dark rounded-xl border-2 px-3 py-2 text-left text-xs font-black transition-all dark:border-zinc-700 ${
                       strictMode
                         ? "bg-arcade-magenta/15 border-arcade-magenta text-arcade-magenta shadow-xs"
                         : "bg-white text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
-                    }`}
+                    } ${!isHost ? "cursor-not-allowed opacity-75" : ""}`}
                   >
                     <div className="font-black">{t("lobby.modeStrict")}</div>
                     <div className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400">
@@ -476,17 +543,25 @@ export function LobbyArena({ initialCode }: LobbyArenaProps) {
         </div>
 
         <div className="flex w-full items-center justify-end gap-3 sm:w-auto">
-          <Button
-            type="button"
-            variant="lime"
-            size="lg"
-            pulse={true}
-            onClick={handleStartRace}
-            className="w-full gap-2 text-base sm:w-auto"
-          >
-            <Play className="fill-slate-dark h-5 w-5" />
-            {t("lobby.startRace")}
-          </Button>
+          {isHost ? (
+            <Button
+              type="button"
+              variant="lime"
+              size="lg"
+              pulse={true}
+              disabled={isStarting}
+              onClick={handleStartRace}
+              className="w-full gap-2 text-base sm:w-auto"
+            >
+              <Play className="fill-slate-dark h-5 w-5" />
+              {isStarting ? t("card.connecting") : t("lobby.startRace")}
+            </Button>
+          ) : (
+            <div className="border-slate-dark arcade-shadow flex items-center gap-2.5 rounded-full border-2 bg-zinc-100 px-5 py-2.5 text-xs font-black text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+              <Hourglass className="text-azure-blue h-4 w-4 animate-spin" />
+              <span>{t("lobby.waitingForHost")}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

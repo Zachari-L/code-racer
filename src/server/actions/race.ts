@@ -189,6 +189,93 @@ export async function getRaceByCode(code: string) {
   }
 }
 
+export async function startRace(code: string, hostUserId?: string) {
+  try {
+    const race = await prisma.race.findUnique({
+      where: { code },
+      include: { participants: true },
+    });
+
+    if (!race) {
+      return { success: false, error: "Course introuvable." };
+    }
+
+    if (race.status === "IN_PROGRESS" || race.status === "COUNTDOWN") {
+      return { success: true, code: race.code, status: race.status };
+    }
+
+    const session = await auth();
+    const currentUserId = hostUserId || session?.user?.id;
+
+    // Check host permissions if authenticated user ID is present
+    if (currentUserId && race.hostId && race.hostId !== currentUserId) {
+      const isHostParticipant = race.participants.some(
+        (p) => p.userId === currentUserId && p.role === "HOST"
+      );
+      if (!isHostParticipant) {
+        return { success: false, error: "Seul l'hôte peut démarrer la course." };
+      }
+    }
+
+    const updated = await prisma.race.update({
+      where: { code },
+      data: {
+        status: "IN_PROGRESS",
+        startedAt: new Date(),
+      },
+    });
+
+    return {
+      success: true,
+      code: updated.code,
+      status: updated.status,
+      startedAt: updated.startedAt,
+    };
+  } catch (error) {
+    console.error("Erreur lors du démarrage de la course:", error);
+    return { success: false, error: "Impossible de démarrer la course." };
+  }
+}
+
+export async function getRaceStatus(code: string) {
+  try {
+    const race = await prisma.race.findUnique({
+      where: { code },
+      select: {
+        id: true,
+        code: true,
+        status: true,
+        startedAt: true,
+        hostId: true,
+        textCategory: true,
+        textLanguage: true,
+        strictMode: true,
+        maxDurationSec: true,
+        participants: {
+          select: {
+            id: true,
+            userId: true,
+            guestNickname: true,
+            role: true,
+            carColor: true,
+            isBot: true,
+            botDifficulty: true,
+          },
+        },
+      },
+    });
+
+    if (!race) {
+      return { success: false, error: "Course introuvable." };
+    }
+
+    return { success: true, race };
+  } catch (error) {
+    console.error("Erreur lors de la récupération du statut:", error);
+    return { success: false, error: "Impossible de récupérer le statut de la course." };
+  }
+}
+
 export async function saveRaceResult(input: SaveRaceResultInput) {
   const result = saveRaceResultSchema.safeParse(input);
   if (!result.success) {

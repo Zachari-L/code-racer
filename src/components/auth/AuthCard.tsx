@@ -384,6 +384,20 @@ export function AuthCard() {
                     </>
                   )}
                 </Button>
+
+                {/* Lien bascule rapide Connexion <-> Inscription */}
+                <div className="pt-1 text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode(mode === "login" ? "register" : "login");
+                      setError(null);
+                    }}
+                    className="cursor-pointer text-xs font-black text-zinc-500 underline underline-offset-4 transition-colors hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white"
+                  >
+                    {mode === "login" ? t("auth.noAccountPrompt") : t("auth.hasAccountPrompt")}
+                  </button>
+                </div>
               </form>
             </motion.div>
           )}
