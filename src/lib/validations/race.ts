@@ -30,6 +30,21 @@ export const typingUpdateSchema = z.object({
   timeElapsedSec: z.number().nonnegative(),
 });
 
+export const saveRaceResultSchema = z.object({
+  code: z.string().optional(),
+  raceId: z.string().optional(),
+  wpm: z.number().nonnegative(),
+  rawWpm: z.number().nonnegative(),
+  accuracy: z.number().min(0).max(100),
+  errorsCount: z.number().nonnegative(),
+  durationMs: z.number().nonnegative(),
+  rank: z.number().min(1),
+  category: z.string().default("quotes"),
+  language: z.string().default("fr"),
+  heatmapData: z.record(z.string(), z.number()).optional(),
+});
+
 export type JoinLobbyInput = z.infer<typeof joinLobbySchema>;
 export type CreateLobbyInput = z.infer<typeof createLobbySchema>;
 export type TypingUpdateInput = z.infer<typeof typingUpdateSchema>;
+export type SaveRaceResultInput = z.infer<typeof saveRaceResultSchema>;

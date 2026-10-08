@@ -1,12 +1,15 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { generateLobbyCode } from "@/lib/utils";
 import {
   createLobbySchema,
   joinLobbySchema,
+  saveRaceResultSchema,
   type CreateLobbyInput,
   type JoinLobbyInput,
+  type SaveRaceResultInput,
 } from "@/lib/validations/race";
 import type { PlayerColor } from "@/types/race";
 
@@ -183,5 +186,220 @@ export async function getRaceByCode(code: string) {
   } catch (error) {
     console.error("Erreur lors de la récupération de la course:", error);
     return null;
+  }
+}
+
+export async function saveRaceResult(input: SaveRaceResultInput) {
+  const result = saveRaceResultSchema.safeParse(input);
+  if (!result.success) {
+    return {
+      success: false,
+      error: result.error.issues[0]?.message ?? "Données de résultat invalides",
+    };
+  }
+
+  const session = await auth();
+  const userId = session?.user?.id;
+  const username = session?.user?.username ?? session?.user?.name ?? "Invité";
+
+  // Per specifications (PLAY-9):
+  // Authenticated users get their results permanently stored and tracked.
+  // Guests are only tracked during the current active session.
+  if (!userId) {
+    return {
+      success: true,
+      saved: false,
+      isGuest: true,
+      message: "Utilisateur invité : résultat non conservé en profil",
+    };
+  }
+
+  const {
+    code = "482910",
+    raceId: givenRaceId,
+    wpm,
+    rawWpm,
+    accuracy,
+    errorsCount,
+    durationMs,
+    rank,
+    category,
+    language,
+    heatmapData,
+  } = result.data;
+
+  try {
+    // 1. Ensure a Race record exists
+    let race = givenRaceId
+      ? await prisma.race.findUnique({ where: { id: givenRaceId } })
+      : await prisma.race.findUnique({ where: { code } });
+
+    if (!race) {
+      race = await prisma.race.create({
+        data: {
+          code,
+          hostId: userId,
+          visibility: "SEMI_PUBLIC",
+          status: "FINISHED",
+          textCategory: category,
+          textLanguage: language,
+          text: "Course enregistrée",
+        },
+      });
+    }
+
+    // 2. Ensure a Participant record exists for this user in this race
+    let participant = await prisma.participant.findFirst({
+      where: {
+        raceId: race.id,
+        userId,
+      },
+    });
+
+    if (!participant) {
+      participant = await prisma.participant.create({
+        data: {
+          raceId: race.id,
+          userId,
+          role: "PARTICIPANT",
+          carColor: "azure",
+          progress: 100,
+          currentWpm: wpm,
+          isFinished: true,
+        },
+      });
+    }
+
+    // 3. Create RaceResult
+    const raceResult = await prisma.raceResult.create({
+      data: {
+        raceId: race.id,
+        participantId: participant.id,
+        userId,
+        nickname: username,
+        rank,
+        wpm,
+        rawWpm,
+        accuracy,
+        errorsCount,
+        durationMs,
+        heatmapData: heatmapData ?? undefined,
+      },
+    });
+
+    // 4. Update or create UserStats
+    const currentStats = await prisma.userStats.findUnique({
+      where: { userId },
+    });
+
+    const prevRaces = currentStats?.totalRaces ?? 0;
+    const prevWins = currentStats?.totalWins ?? 0;
+    const prevBestWpm = currentStats?.bestWpm ?? 0;
+    const prevAvgWpm = currentStats?.averageWpm ?? 0;
+    const prevAvgAcc = currentStats?.averageAccuracy ?? 0;
+    const prevPlayTime = currentStats?.totalPlayTimeSec ?? 0;
+
+    const newRaces = prevRaces + 1;
+    const newWins = rank === 1 ? prevWins + 1 : prevWins;
+    const newBestWpm = Math.max(prevBestWpm, wpm);
+    const newAvgWpm = Number(((prevAvgWpm * prevRaces + wpm) / newRaces).toFixed(1));
+    const newAvgAcc = Number(((prevAvgAcc * prevRaces + accuracy) / newRaces).toFixed(1));
+    const newPlayTime = prevPlayTime + Math.round(durationMs / 1000);
+
+    await prisma.userStats.upsert({
+      where: { userId },
+      create: {
+        userId,
+        totalRaces: newRaces,
+        totalWins: newWins,
+        bestWpm: newBestWpm,
+        averageWpm: newAvgWpm,
+        averageAccuracy: newAvgAcc,
+        totalPlayTimeSec: newPlayTime,
+      },
+      update: {
+        totalRaces: newRaces,
+        totalWins: newWins,
+        bestWpm: newBestWpm,
+        averageWpm: newAvgWpm,
+        averageAccuracy: newAvgAcc,
+        totalPlayTimeSec: newPlayTime,
+      },
+    });
+
+    // 5. Automatic Badge Unlocks (PLAY-10)
+    const badgesToUnlock: {
+      code: string;
+      name: string;
+      description: string;
+      iconName: string;
+    }[] = [];
+    if (wpm >= 100) {
+      badgesToUnlock.push({
+        code: "SPEED_100",
+        name: "Club 100 WPM",
+        description: "Dépassé les 100 WPM en course",
+        iconName: "Flame",
+      });
+    }
+    if (accuracy >= 100) {
+      badgesToUnlock.push({
+        code: "PERFECT_ACCURACY",
+        name: "Précision Parfaite",
+        description: "100% de précision sans aucune faute",
+        iconName: "ShieldCheck",
+      });
+    }
+    if (rank === 1) {
+      badgesToUnlock.push({
+        code: "FIRST_VICTORY",
+        name: "Premier Triomphe",
+        description: "Remporter la 1ère place sur une course",
+        iconName: "Trophy",
+      });
+    }
+    if (newRaces >= 5) {
+      badgesToUnlock.push({
+        code: "VETERAN_5",
+        name: "Pilote Assidu",
+        description: "Achever 5 courses",
+        iconName: "Flag",
+      });
+    }
+
+    for (const b of badgesToUnlock) {
+      const badge = await prisma.badge.upsert({
+        where: { code: b.code },
+        create: b,
+        update: {},
+      });
+
+      await prisma.userBadge.upsert({
+        where: {
+          userId_badgeId: {
+            userId,
+            badgeId: badge.id,
+          },
+        },
+        create: {
+          userId,
+          badgeId: badge.id,
+        },
+        update: {},
+      });
+    }
+
+    return {
+      success: true,
+      saved: true,
+      isGuest: false,
+      resultId: raceResult.id,
+    };
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement du résultat:", error);
+    return {
+      success: false,
+      error: "Impossible d'enregistrer le résultat de course pour le moment",
+    };
   }
 }

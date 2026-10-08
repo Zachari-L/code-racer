@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { ProfileView } from "@/components/profile/ProfileView";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
+import { getUserProfile } from "@/server/actions/profile";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -9,6 +10,7 @@ interface PageProps {
 export default async function ProfileUsernamePage({ params }: PageProps) {
   const { username } = await params;
   const decodedUsername = decodeURIComponent(username);
+  const profileResult = await getUserProfile(decodedUsername);
 
   return (
     <div className="bg-canvas text-slate-dark selection:bg-electric-lime selection:text-slate-dark relative flex min-h-screen flex-col transition-colors duration-150 dark:bg-[#111112] dark:text-zinc-100">
@@ -17,7 +19,7 @@ export default async function ProfileUsernamePage({ params }: PageProps) {
       <Navbar />
 
       <main className="relative z-10 flex flex-1 flex-col justify-start">
-        <ProfileView initialUsername={decodedUsername} />
+        <ProfileView initialUsername={decodedUsername} initialProfileResult={profileResult} />
       </main>
 
       <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">

@@ -22,6 +22,7 @@ import { RacerCar } from "@/components/animated/RacerCar";
 import { TireIcon } from "@/components/animated/TireIcon";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
+import { saveRaceResult } from "@/server/actions/race";
 import type { PlayerColor } from "@/types/race";
 
 interface Competitor {
@@ -55,6 +56,9 @@ export function RaceArena({
   const [elapsedSec, setElapsedSec] = React.useState(0);
   const [isFinished, setIsFinished] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(true);
+  const [saveStatus, setSaveStatus] = React.useState<
+    "idle" | "saving" | "saved" | "guest" | "error"
+  >("idle");
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Group text into words while keeping character indices
@@ -165,6 +169,7 @@ export function RaceArena({
     setStartTime(null);
     setElapsedSec(0);
     setIsFinished(false);
+    setSaveStatus("idle");
     setCompetitors([
       {
         id: "c1",
@@ -212,6 +217,52 @@ export function RaceArena({
   }, [isFinished, handleReset]);
 
   // Handle typing input
+  // Calculate current rank
+  const currentRank = React.useMemo(() => {
+    const sorted = [...competitors].sort((a, b) => b.progress - a.progress);
+    const index = sorted.findIndex((c) => c.isSelf);
+    return index >= 0 ? index + 1 : 1;
+  }, [competitors]);
+
+  const handleFinish = React.useCallback(
+    (finalVal: string) => {
+      setSaveStatus("saving");
+      const elapsed = elapsedSec || 1;
+      let correct = 0;
+      for (let i = 0; i < finalVal.length; i++) {
+        if (finalVal[i] === textToType[i]) correct++;
+      }
+      const finalAccuracy = Math.max(0, Math.round((correct / finalVal.length) * 100));
+      const finalWpm = Math.max(0, Math.round(correct / 5 / (elapsed / 60)));
+      const rawWpm = Math.max(0, Math.round(finalVal.length / 5 / (elapsed / 60)));
+
+      saveRaceResult({
+        code: initialCode,
+        wpm: finalWpm,
+        rawWpm,
+        accuracy: finalAccuracy,
+        errorsCount: Math.max(0, finalVal.length - correct),
+        durationMs: elapsed * 1000,
+        rank: currentRank,
+        category: "code",
+        language,
+      })
+        .then((res) => {
+          if (res.success && res.saved) {
+            setSaveStatus("saved");
+          } else if (res.success && res.isGuest) {
+            setSaveStatus("guest");
+          } else {
+            setSaveStatus("error");
+          }
+        })
+        .catch(() => {
+          setSaveStatus("error");
+        });
+    },
+    [elapsedSec, textToType, initialCode, currentRank, language]
+  );
+
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (isFinished) return;
     const val = e.target.value;
@@ -224,6 +275,7 @@ export function RaceArena({
 
       if (val.length === textToType.length) {
         setIsFinished(true);
+        handleFinish(val);
       }
     }
   }
@@ -234,13 +286,6 @@ export function RaceArena({
       handleReset();
     }
   }
-
-  // Calculate current rank
-  const currentRank = React.useMemo(() => {
-    const sorted = [...competitors].sort((a, b) => b.progress - a.progress);
-    const index = sorted.findIndex((c) => c.isSelf);
-    return index >= 0 ? index + 1 : 1;
-  }, [competitors]);
 
   return (
     <div className="flex w-full max-w-5xl flex-col items-center">
@@ -615,22 +660,54 @@ export function RaceArena({
               exit={{ opacity: 0 }}
               className="border-slate-dark arcade-shadow absolute inset-x-4 bottom-4 z-30 flex flex-col items-center justify-between gap-3 rounded-2xl border-3 bg-white p-4 shadow-xl sm:flex-row dark:border-zinc-700 dark:bg-zinc-900"
             >
-              <div className="flex items-center gap-3">
-                <div className="border-slate-dark flex h-10 w-10 items-center justify-center rounded-xl border-2 bg-white dark:border-zinc-700 dark:bg-zinc-800">
-                  <Trophy className="text-tangerine-orange h-5 w-5" />
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="border-slate-dark flex h-10 w-10 items-center justify-center rounded-xl border-2 bg-white dark:border-zinc-700 dark:bg-zinc-800">
+                    <Trophy className="text-tangerine-orange h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-slate-dark text-base font-black uppercase dark:text-white">
+                      {currentRank === 1
+                        ? t("race.victory")
+                        : t("race.finishedRank", { rank: currentRank })}
+                    </h3>
+                    <p className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
+                      {t("race.finalSpeed")}{" "}
+                      <span className="font-mono font-black">{liveWpm} WPM</span> •{" "}
+                      {t("race.accuracy")} <span className="font-mono font-black">{accuracy}%</span>
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-slate-dark text-base font-black uppercase dark:text-white">
-                    {currentRank === 1
-                      ? t("race.victory")
-                      : t("race.finishedRank", { rank: currentRank })}
-                  </h3>
-                  <p className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
-                    {t("race.finalSpeed")}{" "}
-                    <span className="font-mono font-black">{liveWpm} WPM</span> •{" "}
-                    {t("race.accuracy")} <span className="font-mono font-black">{accuracy}%</span>
-                  </p>
-                </div>
+
+                {saveStatus === "saved" && (
+                  <div className="flex items-center gap-2 rounded-xl border-2 border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-black text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    <span>{t("race.resultSaved")}</span>
+                    <Link href="/profile">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-1 h-6 px-2 text-[10px] font-black"
+                      >
+                        {t("race.viewProfile")}
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+                {saveStatus === "guest" && (
+                  <div className="border-electric-lime/50 bg-electric-lime/20 flex items-center gap-2 rounded-xl border-2 px-3 py-1 text-xs font-black text-[#111112] dark:border-zinc-700 dark:text-zinc-100">
+                    <span>{t("race.guestNotice")}</span>
+                    <Link href="/login">
+                      <Button
+                        variant="lime"
+                        size="sm"
+                        className="ml-1 h-6 px-2 text-[10px] font-black"
+                      >
+                        {t("race.loginToSave")}
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2">

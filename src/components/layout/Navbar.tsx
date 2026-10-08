@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Flame, User, Sun, Moon, Globe } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import { Users, Flame, User, Sun, Moon, Globe, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TireIcon } from "@/components/animated/TireIcon";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
 
 export function Navbar() {
+  const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
   const { language, toggleLanguage, t } = useLanguage();
 
@@ -46,7 +48,7 @@ export function Navbar() {
               </Button>
             </Link>
             <Link href="/profile">
-              <Button variant="azure" size="sm" className="gap-1.5 sm:gap-2">
+              <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">{t("nav.profile")}</span>
               </Button>
@@ -54,6 +56,40 @@ export function Navbar() {
           </nav>
 
           <div className="mx-1 h-6 w-[2px] bg-zinc-200 dark:bg-zinc-700" />
+
+          {/* User Session Auth Button */}
+          {session?.user ? (
+            <div className="flex items-center gap-1.5">
+              <Link href="/profile">
+                <div className="border-slate-dark arcade-shadow flex h-9 items-center gap-1.5 rounded-full border-2 bg-white px-2.5 text-xs font-black transition-all hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white">
+                  <div className="bg-azure-blue flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white">
+                    {session.user.name?.[0]?.toUpperCase() ?? "U"}
+                  </div>
+                  <span className="max-w-[80px] truncate sm:max-w-[120px]">
+                    {session.user.name ?? session.user.username}
+                  </span>
+                </div>
+              </Link>
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                title={t("nav.signOut")}
+                aria-label={t("nav.signOut")}
+                className="border-slate-dark arcade-shadow hover:text-arcade-magenta flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 bg-white text-zinc-600 transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <Link href="/login">
+              <Button variant="lime" size="sm" className="gap-1.5 text-xs font-black">
+                <LogIn className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{t("nav.signIn")}</span>
+              </Button>
+            </Link>
+          )}
+
+          <div className="mx-0.5 hidden h-6 w-[2px] bg-zinc-200 sm:block dark:bg-zinc-700" />
 
           {/* Language Toggle Button (FR / EN) */}
           <button
