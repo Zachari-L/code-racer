@@ -1,4 +1,5 @@
 import { prisma } from "../src/lib/prisma";
+import { BADGES, BADGE_CODES, toBadgeRecord } from "../src/lib/badges";
 
 const SAMPLE_TEXTS = [
   {
@@ -43,33 +44,6 @@ const SAMPLE_TEXTS = [
   },
 ];
 
-const INITIAL_BADGES = [
-  {
-    code: "FIRST_RACE",
-    name: "Premier Tour de Piste",
-    description: "Terminer sa toute première course sur CodeRacer.",
-    iconName: "flag",
-  },
-  {
-    code: "SPEED_DEMON_50",
-    name: "Bolide 50 WPM",
-    description: "Atteindre une vitesse de 50 mots par minute dans une course.",
-    iconName: "zap",
-  },
-  {
-    code: "SPEED_DEMON_100",
-    name: "Supersonique 100 WPM",
-    description: "Franchir la barre légendaire des 100 mots par minute.",
-    iconName: "flame",
-  },
-  {
-    code: "PERFECT_ACCURACY",
-    name: "Précision Chirurgicale",
-    description: "Terminer une course avec 100% de précision sans aucune faute.",
-    iconName: "target",
-  },
-];
-
 async function main() {
   console.log("🌱 Début du seed CodeRacer...");
 
@@ -86,13 +60,19 @@ async function main() {
     });
   }
 
-  for (const badge of INITIAL_BADGES) {
+  for (const badge of BADGES) {
+    const record = toBadgeRecord(badge);
     await prisma.badge.upsert({
-      where: { code: badge.code },
-      update: {},
-      create: badge,
+      where: { code: record.code },
+      update: record,
+      create: record,
     });
   }
+
+  // Drop legacy badges (e.g. SPEED_DEMON_100) that left the registry and nobody holds.
+  await prisma.badge.deleteMany({
+    where: { code: { notIn: [...BADGE_CODES] }, users: { none: {} } },
+  });
 
   console.log("✅ Seed terminé avec succès !");
 }

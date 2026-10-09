@@ -185,14 +185,6 @@ export const fr = {
   "profile.thRank": "Rang",
   "profile.achievementsTitle": "Succès & Trophées Débloqués",
   "profile.achievementsDesc": "Exploits accomplis sur CodeRacer",
-  "profile.ach100Title": "Club 100 WPM",
-  "profile.ach100Desc": "Dépassé les 100 WPM",
-  "profile.achAccTitle": "Précision Parfaite",
-  "profile.achAccDesc": "100% sans aucune faute",
-  "profile.achKingTitle": "Roi de l'Arène",
-  "profile.achKingDesc": "50 victoires multijoueur",
-  "profile.achDedTitle": "Pilote Assidu",
-  "profile.achDedDesc": "Plus de 200 courses",
   "profile.emptyHistoryTitle": "Aucune course enregistrée pour le moment",
   "profile.emptyHistoryDesc":
     "Prenez le départ d'une course pour enregistrer vos premiers temps et records !",
@@ -205,6 +197,20 @@ export const fr = {
 
   // Footer
   "footer.text": "CodeRacer © {year} — Conçu pour les classes et les passionnés de code.",
+
+  // Badges (rules live in src/lib/badges.ts)
+  "badge.firstRace.title": "Premier Tour de Piste",
+  "badge.firstRace.desc": "Terminer sa première course",
+  "badge.speed50.title": "Bolide 50 WPM",
+  "badge.speed50.desc": "Atteindre 50 WPM en course",
+  "badge.speed100.title": "Club 100 WPM",
+  "badge.speed100.desc": "Atteindre 100 WPM en course",
+  "badge.perfectAccuracy.title": "Précision Parfaite",
+  "badge.perfectAccuracy.desc": "100% sans aucune faute",
+  "badge.firstVictory.title": "Roi de l'Arène",
+  "badge.firstVictory.desc": "Remporter une course",
+  "badge.veteran5.title": "Pilote Assidu",
+  "badge.veteran5.desc": "Terminer 5 courses",
 
   // Metadata
   "meta.title": "CodeRacer — La Course de Dactylographie Multijoueur",

@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { generateLobbyCode } from "@/lib/utils";
+import { getEarnedBadges, toBadgeRecord } from "@/lib/badges";
 import {
   createLobbySchema,
   joinLobbySchema,
@@ -425,50 +426,14 @@ export async function saveRaceResult(input: SaveRaceResultInput) {
     });
 
     // 5. Automatic Badge Unlocks (PLAY-10)
-    const badgesToUnlock: {
-      code: string;
-      name: string;
-      description: string;
-      iconName: string;
-    }[] = [];
-    if (wpm >= 100) {
-      badgesToUnlock.push({
-        code: "SPEED_100",
-        name: "Club 100 WPM",
-        description: "Dépassé les 100 WPM en course",
-        iconName: "Flame",
-      });
-    }
-    if (accuracy >= 100) {
-      badgesToUnlock.push({
-        code: "PERFECT_ACCURACY",
-        name: "Précision Parfaite",
-        description: "100% de précision sans aucune faute",
-        iconName: "ShieldCheck",
-      });
-    }
-    if (rank === 1) {
-      badgesToUnlock.push({
-        code: "FIRST_VICTORY",
-        name: "Premier Triomphe",
-        description: "Remporter la 1ère place sur une course",
-        iconName: "Trophy",
-      });
-    }
-    if (newRaces >= 5) {
-      badgesToUnlock.push({
-        code: "VETERAN_5",
-        name: "Pilote Assidu",
-        description: "Achever 5 courses",
-        iconName: "Flag",
-      });
-    }
+    const earnedBadges = getEarnedBadges({ wpm, accuracy, rank, totalRaces: newRaces });
 
-    for (const b of badgesToUnlock) {
+    for (const earned of earnedBadges) {
+      const record = toBadgeRecord(earned);
       const badge = await prisma.badge.upsert({
-        where: { code: b.code },
-        create: b,
-        update: {},
+        where: { code: record.code },
+        create: record,
+        update: record,
       });
 
       await prisma.userBadge.upsert({

@@ -19,13 +19,6 @@ export interface ProfileRacerResult {
   errorsCount: number;
 }
 
-export interface ProfileBadgeInfo {
-  code: string;
-  name: string;
-  description: string;
-  iconName: string;
-}
-
 export interface UserProfileData {
   username: string;
   isSelf: boolean;
@@ -41,7 +34,8 @@ export interface UserProfileData {
   podiums: number;
   carColor: PlayerColor;
   recentRaces: ProfileRacerResult[];
-  badges: ProfileBadgeInfo[];
+  /** Codes of unlocked badges; see `BADGES` in `@/lib/badges` for display data. */
+  unlockedBadges: string[];
 }
 
 import { calculateDriverLevel, getDriverTitleKey } from "@/lib/progression";
@@ -127,12 +121,7 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
       errorsCount: r.errorsCount,
     }));
 
-    const badges: ProfileBadgeInfo[] = user.badges.map((ub) => ({
-      code: ub.badge.code,
-      name: ub.badge.name,
-      description: ub.badge.description,
-      iconName: ub.badge.iconName,
-    }));
+    const unlockedBadges = user.badges.map((ub) => ub.badge.code);
 
     return {
       success: true,
@@ -151,7 +140,7 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
         podiums,
         carColor: "azure",
         recentRaces,
-        badges,
+        unlockedBadges,
       },
     };
   } catch (error) {

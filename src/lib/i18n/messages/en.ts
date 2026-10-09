@@ -186,14 +186,6 @@ export const en: Record<TranslationKey, string> = {
   "profile.thRank": "Rank",
   "profile.achievementsTitle": "Unlocked Achievements & Trophies",
   "profile.achievementsDesc": "Feats accomplished on CodeRacer",
-  "profile.ach100Title": "100 WPM Club",
-  "profile.ach100Desc": "Surpassed 100 WPM",
-  "profile.achAccTitle": "Flawless Accuracy",
-  "profile.achAccDesc": "100% without a single typo",
-  "profile.achKingTitle": "King of the Arena",
-  "profile.achKingDesc": "50 multiplayer victories",
-  "profile.achDedTitle": "Dedicated Driver",
-  "profile.achDedDesc": "Over 200 completed races",
   "profile.emptyHistoryTitle": "No races recorded yet",
   "profile.emptyHistoryDesc": "Take the start of a race to record your first times and records!",
   "profile.guestBannerTitle": "You are browsing as a guest",
@@ -205,6 +197,20 @@ export const en: Record<TranslationKey, string> = {
 
   // Footer
   "footer.text": "CodeRacer © {year} — Designed for classrooms and coding enthusiasts.",
+
+  // Badges (rules live in src/lib/badges.ts)
+  "badge.firstRace.title": "First Lap",
+  "badge.firstRace.desc": "Finish your first race",
+  "badge.speed50.title": "50 WPM Racer",
+  "badge.speed50.desc": "Reach 50 WPM in a race",
+  "badge.speed100.title": "100 WPM Club",
+  "badge.speed100.desc": "Reach 100 WPM in a race",
+  "badge.perfectAccuracy.title": "Flawless Accuracy",
+  "badge.perfectAccuracy.desc": "100% without a single typo",
+  "badge.firstVictory.title": "King of the Arena",
+  "badge.firstVictory.desc": "Win a race",
+  "badge.veteran5.title": "Dedicated Driver",
+  "badge.veteran5.desc": "Finish 5 races",
 
   // Metadata
   "meta.title": "CodeRacer — The Multiplayer Typing Race",

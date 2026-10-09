@@ -24,6 +24,7 @@ import { RacerCar } from "@/components/animated/RacerCar";
 import { useLanguage } from "@/context/LanguageContext";
 import { formatMonthYear, formatOrdinal, formatRelativeTime, isTranslationKey } from "@/lib/i18n";
 import { getDriverTitleKey } from "@/lib/progression";
+import { BADGES } from "@/lib/badges";
 import {
   type UserProfileData,
   type ProfileRacerResult,
@@ -90,31 +91,13 @@ const DEMO_SELF_PROFILE: UserProfileData = {
       errorsCount: 4,
     },
   ],
-  badges: [
-    {
-      code: "SPEED_100",
-      name: "Club 100 WPM",
-      description: "Dépassé les 100 WPM",
-      iconName: "Flame",
-    },
-    {
-      code: "PERFECT_ACCURACY",
-      name: "Précision Parfaite",
-      description: "100% de précision",
-      iconName: "ShieldCheck",
-    },
-    {
-      code: "FIRST_VICTORY",
-      name: "Roi de l'Arène",
-      description: "Première victoire",
-      iconName: "Trophy",
-    },
-    {
-      code: "VETERAN_5",
-      name: "Pilote Assidu",
-      description: "5 courses complétées",
-      iconName: "Flag",
-    },
+  unlockedBadges: [
+    "FIRST_RACE",
+    "SPEED_50",
+    "SPEED_100",
+    "PERFECT_ACCURACY",
+    "FIRST_VICTORY",
+    "VETERAN_5",
   ],
 };
 
@@ -173,20 +156,7 @@ const DEMO_OTHER_PROFILE: UserProfileData = {
       errorsCount: 5,
     },
   ],
-  badges: [
-    {
-      code: "PERFECT_ACCURACY",
-      name: "Précision Parfaite",
-      description: "100% de précision",
-      iconName: "ShieldCheck",
-    },
-    {
-      code: "FIRST_VICTORY",
-      name: "Roi de l'Arène",
-      description: "Première victoire",
-      iconName: "Trophy",
-    },
-  ],
+  unlockedBadges: ["FIRST_RACE", "SPEED_50", "PERFECT_ACCURACY", "FIRST_VICTORY", "VETERAN_5"],
 };
 
 interface ProfileViewProps {
@@ -583,36 +553,9 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
           <CardDescription>{t("profile.achievementsDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {(
-              [
-                {
-                  code: "SPEED_100",
-                  icon: "⚡",
-                  title: t("profile.ach100Title"),
-                  desc: t("profile.ach100Desc"),
-                },
-                {
-                  code: "PERFECT_ACCURACY",
-                  icon: "🎯",
-                  title: t("profile.achAccTitle"),
-                  desc: t("profile.achAccDesc"),
-                },
-                {
-                  code: "FIRST_VICTORY",
-                  icon: "🏆",
-                  title: t("profile.achKingTitle"),
-                  desc: t("profile.achKingDesc"),
-                },
-                {
-                  code: "VETERAN_5",
-                  icon: "🏎️",
-                  title: t("profile.achDedTitle"),
-                  desc: t("profile.achDedDesc"),
-                },
-              ] as const
-            ).map((ach) => {
-              const isUnlocked = activeProfile.badges.some((b) => b.code === ach.code);
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {BADGES.map((ach) => {
+              const isUnlocked = activeProfile.unlockedBadges.includes(ach.code);
 
               return (
                 <div
@@ -626,12 +569,12 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
                   <span className="text-2xl">{ach.icon}</span>
                   <div className="mt-1 flex items-center gap-1">
                     <span className="text-slate-dark text-xs font-black uppercase dark:text-zinc-100">
-                      {ach.title}
+                      {t(ach.titleKey)}
                     </span>
                     {!isUnlocked && <HelpCircle className="h-3 w-3 text-zinc-400" />}
                   </div>
                   <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
-                    {ach.desc}
+                    {t(ach.descriptionKey)}
                   </span>
                   <Badge
                     variant={isUnlocked ? "lime" : "outline"}
