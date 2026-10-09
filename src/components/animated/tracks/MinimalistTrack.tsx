@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion } from "motion/react";
 import { RacerCar } from "@/components/animated/RacerCar";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface TrackProps {
   progressPercent: number;
@@ -12,6 +13,7 @@ interface TrackProps {
 const CAR_WIDTH = 68;
 
 export function MinimalistTrack({ progressPercent, wpm }: TrackProps) {
+  const { t } = useLanguage();
   return (
     <div className="relative w-full py-1 select-none">
       {/* Floating Track Container */}
@@ -36,7 +38,7 @@ export function MinimalistTrack({ progressPercent, wpm }: TrackProps) {
         <div
           className="border-slate-dark/70 absolute top-1/2 z-10 w-3 -translate-y-1/2 rounded-xs border bg-[repeating-conic-gradient(#111112_0_25%,#ffffff_0_50%)] bg-[length:4px_4px] shadow-xs"
           style={{ right: "28px", height: "18px" }}
-          title="Ligne d'arrivée"
+          title={t("race.finishLine")}
         />
 
         {/* Bulky 2D Car positioned on the small road */}

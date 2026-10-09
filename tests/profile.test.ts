@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { saveRaceResultSchema } from "../src/lib/validations/race";
-import { calculateDriverLevel, getDriverTitle } from "../src/lib/progression";
+import { calculateDriverLevel, getDriverTitleKey } from "../src/lib/progression";
 
 describe("Profile & Race Persistence (AUTH-4, PLAY-9)", () => {
   describe("saveRaceResultSchema", () => {
@@ -75,11 +75,11 @@ describe("Profile & Race Persistence (AUTH-4, PLAY-9)", () => {
     });
 
     it("assigns appropriate prestige titles according to level", () => {
-      expect(getDriverTitle(1)).toBe("Apprenti du Clavier");
-      expect(getDriverTitle(3)).toBe("Pilote Vitesse");
-      expect(getDriverTitle(7)).toBe("As de la Piste");
-      expect(getDriverTitle(12)).toBe("Virtuose des Touches");
-      expect(getDriverTitle(18)).toBe("Légende Vitesse Grand V");
+      expect(getDriverTitleKey(1)).toBe("title.apprentice");
+      expect(getDriverTitleKey(3)).toBe("title.speedDriver");
+      expect(getDriverTitleKey(7)).toBe("title.trackAce");
+      expect(getDriverTitleKey(12)).toBe("title.keyVirtuoso");
+      expect(getDriverTitleKey(18)).toBe("title.legend");
     });
   });
 

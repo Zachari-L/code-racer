@@ -3,11 +3,14 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
+import { translateZodError } from "@/lib/i18n";
+import { getTranslator } from "@/lib/i18n/server";
 
 export async function registerUser(input: RegisterInput) {
+  const t = await getTranslator();
   const result = registerSchema.safeParse(input);
   if (!result.success) {
-    return { success: false, error: result.error.issues[0]?.message ?? "Données invalides" };
+    return { success: false, error: translateZodError(t, result.error, "errors.invalidData") };
   }
 
   const { username, password } = result.data;
@@ -18,7 +21,7 @@ export async function registerUser(input: RegisterInput) {
     });
 
     if (existingUser) {
-      return { success: false, error: "Ce nom d'utilisateur est déjà utilisé" };
+      return { success: false, error: t("errors.usernameTaken") };
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -40,6 +43,6 @@ export async function registerUser(input: RegisterInput) {
     return { success: true, user };
   } catch (error) {
     console.error("Erreur lors de la création du compte:", error);
-    return { success: false, error: "Impossible de créer le compte pour le moment" };
+    return { success: false, error: t("errors.accountCreateFailed") };
   }
 }

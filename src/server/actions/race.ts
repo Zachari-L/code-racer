@@ -11,6 +11,8 @@ import {
   type JoinLobbyInput,
   type SaveRaceResultInput,
 } from "@/lib/validations/race";
+import { translateZodError } from "@/lib/i18n";
+import { getTranslator } from "@/lib/i18n/server";
 import type { PlayerColor } from "@/types/race";
 
 const CAR_COLORS: PlayerColor[] = ["azure", "tangerine", "magenta", "teal"];
@@ -26,11 +28,12 @@ const DEFAULT_SAMPLE_TEXTS: Record<string, string> = {
 };
 
 export async function createLobby(input: CreateLobbyInput, hostUserId?: string) {
+  const t = await getTranslator();
   const result = createLobbySchema.safeParse(input);
   if (!result.success) {
     return {
       success: false,
-      error: result.error.issues[0]?.message ?? "Configuration de salon invalide",
+      error: translateZodError(t, result.error, "errors.invalidLobbyConfig"),
     };
   }
 
@@ -91,14 +94,18 @@ export async function createLobby(input: CreateLobbyInput, hostUserId?: string) 
     return { success: true, code: race.code, raceId: race.id };
   } catch (error) {
     console.error("Erreur lors de la création du salon:", error);
-    return { success: false, error: "Impossible de créer le salon" };
+    return { success: false, error: t("errors.lobbyCreateFailed") };
   }
 }
 
 export async function joinLobby(input: JoinLobbyInput, userId?: string) {
+  const t = await getTranslator();
   const result = joinLobbySchema.safeParse(input);
   if (!result.success) {
-    return { success: false, error: result.error.issues[0]?.message ?? "Paramètres invalides" };
+    return {
+      success: false,
+      error: translateZodError(t, result.error, "errors.invalidParams"),
+    };
   }
 
   const { code, nickname, isSpectator } = result.data;
@@ -112,18 +119,18 @@ export async function joinLobby(input: JoinLobbyInput, userId?: string) {
     });
 
     if (!race) {
-      return { success: false, error: "Salon introuvable. Vérifiez le code à 6 chiffres." };
+      return { success: false, error: t("errors.lobbyNotFound") };
     }
 
     if (race.status === "FINISHED" || race.status === "CANCELLED") {
-      return { success: false, error: "Cette course est déjà terminée." };
+      return { success: false, error: t("errors.raceAlreadyFinished") };
     }
 
     // Max 100 players according to specs
     if (race.participants.length >= 100) {
       return {
         success: false,
-        error: "Ce salon a atteint la capacité maximale de 100 participants.",
+        error: t("errors.lobbyFull"),
       };
     }
 
@@ -155,7 +162,7 @@ export async function joinLobby(input: JoinLobbyInput, userId?: string) {
     };
   } catch (error) {
     console.error("Erreur pour rejoindre le salon:", error);
-    return { success: false, error: "Impossible de rejoindre le salon" };
+    return { success: false, error: t("errors.lobbyJoinFailed") };
   }
 }
 
@@ -190,6 +197,7 @@ export async function getRaceByCode(code: string) {
 }
 
 export async function startRace(code: string, hostUserId?: string) {
+  const t = await getTranslator();
   try {
     const race = await prisma.race.findUnique({
       where: { code },
@@ -197,7 +205,7 @@ export async function startRace(code: string, hostUserId?: string) {
     });
 
     if (!race) {
-      return { success: false, error: "Course introuvable." };
+      return { success: false, error: t("errors.raceNotFound") };
     }
 
     if (race.status === "IN_PROGRESS" || race.status === "COUNTDOWN") {
@@ -213,7 +221,7 @@ export async function startRace(code: string, hostUserId?: string) {
         (p) => p.userId === currentUserId && p.role === "HOST"
       );
       if (!isHostParticipant) {
-        return { success: false, error: "Seul l'hôte peut démarrer la course." };
+        return { success: false, error: t("errors.onlyHostCanStart") };
       }
     }
 
@@ -233,11 +241,12 @@ export async function startRace(code: string, hostUserId?: string) {
     };
   } catch (error) {
     console.error("Erreur lors du démarrage de la course:", error);
-    return { success: false, error: "Impossible de démarrer la course." };
+    return { success: false, error: t("errors.raceStartFailed") };
   }
 }
 
 export async function getRaceStatus(code: string) {
+  const t = await getTranslator();
   try {
     const race = await prisma.race.findUnique({
       where: { code },
@@ -266,22 +275,23 @@ export async function getRaceStatus(code: string) {
     });
 
     if (!race) {
-      return { success: false, error: "Course introuvable." };
+      return { success: false, error: t("errors.raceNotFound") };
     }
 
     return { success: true, race };
   } catch (error) {
     console.error("Erreur lors de la récupération du statut:", error);
-    return { success: false, error: "Impossible de récupérer le statut de la course." };
+    return { success: false, error: t("errors.raceStatusFailed") };
   }
 }
 
 export async function saveRaceResult(input: SaveRaceResultInput) {
+  const t = await getTranslator();
   const result = saveRaceResultSchema.safeParse(input);
   if (!result.success) {
     return {
       success: false,
-      error: result.error.issues[0]?.message ?? "Données de résultat invalides",
+      error: translateZodError(t, result.error, "errors.invalidResult"),
     };
   }
 
@@ -297,7 +307,7 @@ export async function saveRaceResult(input: SaveRaceResultInput) {
       success: true,
       saved: false,
       isGuest: true,
-      message: "Utilisateur invité : résultat non conservé en profil",
+      message: t("errors.guestResultNotSaved"),
     };
   }
 
@@ -486,7 +496,7 @@ export async function saveRaceResult(input: SaveRaceResultInput) {
     console.error("Erreur lors de l'enregistrement du résultat:", error);
     return {
       success: false,
-      error: "Impossible d'enregistrer le résultat de course pour le moment",
+      error: t("errors.resultSaveFailed"),
     };
   }
 }

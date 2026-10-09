@@ -1,15 +1,14 @@
-"use client";
-
 import { Navbar } from "@/components/layout/Navbar";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { JoinLobbyCard } from "@/components/lobby/JoinLobbyCard";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
 import { ScrollReveal } from "@/components/animated/ScrollReveal";
 import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useLanguage } from "@/context/LanguageContext";
+import { getTranslator } from "@/lib/i18n/server";
 
-export default function Home() {
-  const { t } = useLanguage();
+export default async function Home() {
+  const t = await getTranslator();
 
   return (
     <div className="bg-canvas text-slate-dark selection:bg-electric-lime selection:text-slate-dark relative flex min-h-screen flex-col transition-colors duration-150 dark:bg-[#111112] dark:text-zinc-100">
@@ -49,9 +48,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
-        {t("footer.text", { year: new Date().getFullYear() })}
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

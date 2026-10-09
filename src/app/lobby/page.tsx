@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { LobbyHub } from "@/components/lobby/LobbyHub";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
 
@@ -13,9 +14,7 @@ export default function LobbyDefaultPage() {
         <LobbyHub />
       </main>
 
-      <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
-        CodeRacer © {new Date().getFullYear()} — CodeRacer Arena.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

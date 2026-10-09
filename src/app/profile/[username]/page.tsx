@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProfileView } from "@/components/profile/ProfileView";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
 import { getUserProfile } from "@/server/actions/profile";
@@ -22,9 +23,7 @@ export default async function ProfileUsernamePage({ params }: PageProps) {
         <ProfileView initialUsername={decodedUsername} initialProfileResult={profileResult} />
       </main>
 
-      <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
-        CodeRacer © {new Date().getFullYear()} — CodeRacer Driver Profile.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

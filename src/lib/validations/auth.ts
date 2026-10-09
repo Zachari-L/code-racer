@@ -1,20 +1,21 @@
 import { z } from "zod";
+import { i18nKey } from "@/lib/i18n";
 
 export const registerSchema = z.object({
   username: z
     .string()
-    .min(3, "Le nom d'utilisateur doit contenir au moins 3 caractères")
-    .max(20, "Le nom d'utilisateur ne peut pas dépasser 20 caractères")
-    .regex(/^[a-zA-Z0-9_-]+$/, "Lettres, chiffres, tirets et underscores uniquement"),
+    .min(3, i18nKey("validation.usernameMin"))
+    .max(20, i18nKey("validation.usernameMax"))
+    .regex(/^[a-zA-Z0-9_-]+$/, i18nKey("validation.usernameChars")),
   password: z
     .string()
-    .min(6, "Le mot de passe doit contenir au moins 6 caractères")
-    .max(100, "Le mot de passe est trop long"),
+    .min(6, i18nKey("validation.passwordMin"))
+    .max(100, i18nKey("validation.passwordMax")),
 });
 
 export const loginSchema = z.object({
-  username: z.string().min(1, "Veuillez entrer votre nom d'utilisateur"),
-  password: z.string().min(1, "Veuillez entrer votre mot de passe"),
+  username: z.string().min(1, i18nKey("validation.usernameRequired")),
+  password: z.string().min(1, i18nKey("validation.passwordRequired")),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

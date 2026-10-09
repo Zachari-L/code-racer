@@ -1,70 +1,59 @@
 "use client";
 
 import * as React from "react";
-import { translations, type Language, type TranslationKey } from "@/lib/i18n";
+import { createTranslator, type Locale, type Translator } from "@/lib/i18n";
+import { setLocale } from "@/server/actions/locale";
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: Locale;
+  setLanguage: (lang: Locale) => void;
   toggleLanguage: () => void;
-  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
+  t: Translator;
 }
 
 const LanguageContext = React.createContext<LanguageContextType | undefined>(undefined);
 
-function getLangSnapshot(): Language {
-  if (typeof window === "undefined") return "fr";
-  const saved = localStorage.getItem("coderacer_lang") as Language | null;
-  return saved === "en" ? "en" : "fr";
-}
-
-function getServerSnapshot(): Language {
-  return "fr";
-}
-
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const language = React.useSyncExternalStore(subscribe, getLangSnapshot, getServerSnapshot);
+/**
+ * `locale` comes from the server (cookie / Accept-Language), so the first render
+ * already matches the visitor's language. Switching sets the cookie through a
+ * Server Action, which re-renders server components in the new locale.
+ */
+export function LanguageProvider({
+  locale,
+  children,
+}: {
+  locale: Locale;
+  children: React.ReactNode;
+}) {
+  const [language, setOptimisticLanguage] = React.useOptimistic(locale);
+  const [, startTransition] = React.useTransition();
 
   React.useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
 
-  const setLanguage = React.useCallback((newLang: Language) => {
-    localStorage.setItem("coderacer_lang", newLang);
-    document.documentElement.lang = newLang;
-    window.dispatchEvent(new Event("storage"));
-  }, []);
+  const setLanguage = React.useCallback(
+    (newLang: Locale) => {
+      startTransition(async () => {
+        setOptimisticLanguage(newLang);
+        await setLocale(newLang);
+      });
+    },
+    [setOptimisticLanguage]
+  );
 
   const toggleLanguage = React.useCallback(() => {
     setLanguage(language === "fr" ? "en" : "fr");
   }, [language, setLanguage]);
 
-  const t = React.useCallback(
-    (key: TranslationKey, params?: Record<string, string | number>): string => {
-      const dict = translations[language] || translations.fr;
-      let val: string = dict[key] || translations.fr[key] || key;
+  const t = React.useMemo(() => createTranslator(language), [language]);
 
-      if (params) {
-        Object.entries(params).forEach(([paramKey, paramVal]) => {
-          val = val.replace(new RegExp(`\\{${paramKey}\\}`, "g"), String(paramVal));
-        });
-      }
-
-      return val;
-    },
-    [language]
+  const value = React.useMemo(
+    () => ({ language, setLanguage, toggleLanguage, t }),
+    [language, setLanguage, toggleLanguage, t]
   );
 
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>
-      {children}
-    </LanguageContext.Provider>
-  );
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
 export function useLanguage() {

@@ -2,11 +2,15 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { getTranslator } from "@/lib/i18n/server";
+import type { TranslationKey } from "@/lib/i18n";
 import type { PlayerColor } from "@/types/race";
 
 export interface ProfileRacerResult {
   id: string;
-  date: string;
+  /** ISO timestamp, formatted in the viewer's locale by the client. */
+  playedAt: string;
+  /** Text category code (`quotes`, `code`, `moliere`, `sentences`). */
   category: string;
   wpm: number;
   accuracy: number;
@@ -26,7 +30,8 @@ export interface UserProfileData {
   username: string;
   isSelf: boolean;
   level: number;
-  title: string;
+  titleKey: TranslationKey;
+  /** ISO timestamp of account creation. */
   memberSince: string;
   bestWpm: number;
   averageWpm: number;
@@ -39,7 +44,7 @@ export interface UserProfileData {
   badges: ProfileBadgeInfo[];
 }
 
-import { calculateDriverLevel, getDriverTitle } from "@/lib/progression";
+import { calculateDriverLevel, getDriverTitleKey } from "@/lib/progression";
 
 export interface GetUserProfileResult {
   success: boolean;
@@ -48,38 +53,8 @@ export interface GetUserProfileResult {
   data?: UserProfileData;
 }
 
-function formatDateFr(date: Date): string {
-  const months = [
-    "Janvier",
-    "Février",
-    "Mars",
-    "Avril",
-    "Mai",
-    "Juin",
-    "Juillet",
-    "Août",
-    "Septembre",
-    "Octobre",
-    "Novembre",
-    "Décembre",
-  ];
-  return `${months[date.getMonth()]} ${date.getFullYear()}`;
-}
-
-function formatRelativeDate(date: Date): string {
-  const diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (diffSec < 60) return "À l'instant";
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `Il y a ${diffMin} min`;
-  const diffHours = Math.floor(diffMin / 60);
-  if (diffHours < 24) return `Il y a ${diffHours} h`;
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays === 1) return "Hier";
-  if (diffDays < 7) return `Il y a ${diffDays} jours`;
-  return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
-}
-
 export async function getUserProfile(requestedUsername?: string): Promise<GetUserProfileResult> {
+  const t = await getTranslator();
   try {
     const session = await auth();
     const currentUserId = session?.user?.id;
@@ -125,7 +100,7 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
     if (!user) {
       return {
         success: false,
-        error: "Pilote introuvable dans les archives CodeRacer",
+        error: t("errors.driverNotFound"),
       };
     }
 
@@ -139,26 +114,18 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
     const victories = stats?.totalWins ?? user.results.filter((r) => r.rank === 1).length;
     const podiums = user.results.filter((r) => r.rank <= 3).length;
     const level = calculateDriverLevel(totalRaces, victories);
-    const title = getDriverTitle(level);
+    const titleKey = getDriverTitleKey(level);
 
-    const recentRaces: ProfileRacerResult[] = user.results.map((r) => {
-      const catMap: Record<string, string> = {
-        quotes: "Citations",
-        code: "Code TypeScript",
-        moliere: "Théâtre Molière",
-        sentences: "Phrases Rapides",
-      };
-      return {
-        id: r.id,
-        date: formatRelativeDate(r.createdAt),
-        category: catMap[r.race?.textCategory ?? "quotes"] ?? "Citations",
-        wpm: Math.round(r.wpm),
-        accuracy: Number(r.accuracy.toFixed(1)),
-        rank: r.rank,
-        durationMs: r.durationMs,
-        errorsCount: r.errorsCount,
-      };
-    });
+    const recentRaces: ProfileRacerResult[] = user.results.map((r) => ({
+      id: r.id,
+      playedAt: r.createdAt.toISOString(),
+      category: r.race?.textCategory ?? "quotes",
+      wpm: Math.round(r.wpm),
+      accuracy: Number(r.accuracy.toFixed(1)),
+      rank: r.rank,
+      durationMs: r.durationMs,
+      errorsCount: r.errorsCount,
+    }));
 
     const badges: ProfileBadgeInfo[] = user.badges.map((ub) => ({
       code: ub.badge.code,
@@ -174,8 +141,8 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
         username: user.username,
         isSelf,
         level,
-        title,
-        memberSince: formatDateFr(user.createdAt),
+        titleKey,
+        memberSince: user.createdAt.toISOString(),
         bestWpm: Math.round(stats?.bestWpm ?? 0),
         averageWpm: Math.round(stats?.averageWpm ?? 0),
         accuracy: Number((stats?.averageAccuracy ?? 100).toFixed(1)),
@@ -191,7 +158,7 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
     console.error("Erreur lors de la récupération du profil:", error);
     return {
       success: false,
-      error: "Impossible de charger les données du profil",
+      error: t("errors.profileLoadFailed"),
     };
   }
 }

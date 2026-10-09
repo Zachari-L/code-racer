@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Users, User, Sun, Moon, Globe, LogIn, LogOut } from "lucide-react";
+import { Users, User, Sun, Moon, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TireIcon } from "@/components/animated/TireIcon";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { LanguageToggle } from "@/components/layout/LanguageToggle";
 
 export function Navbar() {
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
-  const { language, toggleLanguage, t } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <header className="border-slate-dark sticky top-0 z-40 w-full border-b-3 bg-white/90 backdrop-blur-md transition-colors duration-150 dark:border-zinc-700 dark:bg-zinc-900/90">
@@ -85,41 +86,14 @@ export function Navbar() {
 
           <div className="mx-0.5 hidden h-6 w-[2px] bg-zinc-200 sm:block dark:bg-zinc-700" />
 
-          {/* Language Toggle Button (FR / EN) */}
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            title={language === "fr" ? "Passer en anglais" : "Switch to French"}
-            className="border-slate-dark arcade-shadow flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-2 bg-white px-2.5 py-1 text-xs font-black transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
-          >
-            <Globe className="text-azure-blue h-3.5 w-3.5" />
-            <span
-              className={
-                language === "fr"
-                  ? "text-azure-blue font-black"
-                  : "font-semibold text-zinc-400 dark:text-zinc-500"
-              }
-            >
-              FR
-            </span>
-            <span className="text-zinc-300 dark:text-zinc-600">/</span>
-            <span
-              className={
-                language === "en"
-                  ? "text-azure-blue font-black"
-                  : "font-semibold text-zinc-400 dark:text-zinc-500"
-              }
-            >
-              EN
-            </span>
-          </button>
+          <LanguageToggle className="px-2.5" />
 
           {/* Theme Toggle Button (Light / Dark) */}
           <button
             type="button"
             onClick={toggleTheme}
             title={theme === "light" ? t("nav.themeDark") : t("nav.themeLight")}
-            aria-label={theme === "light" ? "Activer le thème sombre" : "Activer le thème clair"}
+            aria-label={theme === "light" ? t("nav.themeDark") : t("nav.themeLight")}
             className="border-slate-dark arcade-shadow flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 bg-white transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700"
           >
             {theme === "light" ? (

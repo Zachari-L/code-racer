@@ -26,6 +26,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { RacerCar } from "@/components/animated/RacerCar";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/context/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n";
 import { startRace, getRaceStatus } from "@/server/actions/race";
 import type { PlayerColor, BotDifficulty } from "@/types/race";
 
@@ -45,6 +46,13 @@ interface LobbyArenaProps {
 }
 
 const DEFAULT_CODE = "482910";
+
+const BOT_TIERS: Record<BotDifficulty, { labelKey: TranslationKey; wpm: number }> = {
+  EASY: { labelKey: "lobby.botEasy", wpm: 30 },
+  MEDIUM: { labelKey: "lobby.botMedium", wpm: 60 },
+  HARD: { labelKey: "lobby.botHard", wpm: 90 },
+  IMPOSSIBLE: { labelKey: "lobby.botPro", wpm: 130 },
+};
 
 const PREVIEW_TEXTS = {
   quotes:
@@ -80,7 +88,7 @@ export function LobbyArena({ initialCode, initialIsHost }: LobbyArenaProps) {
   const [participants, setParticipants] = React.useState<LobbyParticipant[]>([
     {
       id: "p1",
-      nickname: `TurboTypist ${t("lobby.you")}`,
+      nickname: "TurboTypist",
       role: isHost ? "HOST" : "PARTICIPANT",
       carColor: "azure",
       isReady: true,
@@ -101,7 +109,7 @@ export function LobbyArena({ initialCode, initialIsHost }: LobbyArenaProps) {
     },
     {
       id: "p4",
-      nickname: "Bot_Flash (~60 WPM)",
+      nickname: "Bot_Flash",
       role: "PARTICIPANT",
       carColor: "teal",
       isReady: true,
@@ -160,18 +168,12 @@ export function LobbyArena({ initialCode, initialIsHost }: LobbyArenaProps) {
 
   function handleAddBot(difficulty: BotDifficulty) {
     if (!isHost) return;
-    const diffLabels: Record<BotDifficulty, string> = {
-      EASY: `${t("lobby.botEasy")} (~30 WPM)`,
-      MEDIUM: `${t("lobby.botMedium")} (~60 WPM)`,
-      HARD: `${t("lobby.botHard")} (~90 WPM)`,
-      IMPOSSIBLE: `${t("lobby.botPro")} (~130 WPM)`,
-    };
     const colors: PlayerColor[] = ["azure", "tangerine", "magenta", "teal"];
     const nextColor = colors[participants.length % colors.length];
 
     const newBot: LobbyParticipant = {
       id: `bot_${Date.now()}`,
-      nickname: `Bot_${difficulty.slice(0, 3)} (${diffLabels[difficulty]})`,
+      nickname: `Bot_${difficulty.slice(0, 3)}`,
       role: "PARTICIPANT",
       carColor: nextColor,
       isReady: true,
@@ -296,6 +298,12 @@ export function LobbyArena({ initialCode, initialIsHost }: LobbyArenaProps) {
                               <div className="flex items-center gap-1.5">
                                 <span className="text-slate-dark truncate text-sm font-black dark:text-zinc-100">
                                   {player.nickname}
+                                  {isSelf && ` ${t("lobby.you")}`}
+                                  {player.botDifficulty &&
+                                    ` (${t("lobby.botLabel", {
+                                      difficulty: t(BOT_TIERS[player.botDifficulty].labelKey),
+                                      wpm: BOT_TIERS[player.botDifficulty].wpm,
+                                    })})`}
                                 </span>
                                 {player.role === "HOST" && (
                                   <Crown className="text-tangerine-orange h-4 w-4 shrink-0" />

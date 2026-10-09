@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { LobbyArena } from "@/components/lobby/LobbyArena";
 import { ArcadeBackground } from "@/components/animated/ArcadeBackground";
 import { getRaceByCode } from "@/server/actions/race";
@@ -27,9 +28,7 @@ export default async function LobbyCodePage({ params }: PageProps) {
         <LobbyArena initialCode={code} initialIsHost={race ? isHost : undefined} />
       </main>
 
-      <footer className="border-slate-dark relative z-10 w-full border-t-3 bg-white py-6 text-center text-xs font-bold text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
-        CodeRacer © {new Date().getFullYear()} — CodeRacer Arena #{code}.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

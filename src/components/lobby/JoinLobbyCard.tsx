@@ -56,7 +56,7 @@ export function JoinLobbyCard() {
       }
       router.push(`/lobby/${result.code}`);
     } else {
-      setError(result.error ?? "Impossible de rejoindre cette course.");
+      setError(result.error ?? t("card.joinFailed"));
     }
   }
 
@@ -71,7 +71,7 @@ export function JoinLobbyCard() {
       nickname.trim() ||
       session.user.name ||
       session.user.username ||
-      `Hôte_${Math.floor(100 + Math.random() * 900)}`;
+      t("card.defaultHostName", { n: Math.floor(100 + Math.random() * 900) });
 
     setIsLoading(true);
     setError(null);
@@ -96,7 +96,7 @@ export function JoinLobbyCard() {
       }
       router.push(`/lobby/${result.code}`);
     } else {
-      setError(result.error ?? "Impossible de créer la course.");
+      setError(result.error ?? t("card.createFailed"));
     }
   }
 

@@ -22,6 +22,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { RacerCar } from "@/components/animated/RacerCar";
 import { useLanguage } from "@/context/LanguageContext";
+import { formatMonthYear, formatOrdinal, formatRelativeTime, isTranslationKey } from "@/lib/i18n";
+import { getDriverTitleKey } from "@/lib/progression";
 import {
   type UserProfileData,
   type ProfileRacerResult,
@@ -29,12 +31,16 @@ import {
 } from "@/server/actions/profile";
 import type { PlayerColor } from "@/types/race";
 
+function hoursAgo(hours: number): string {
+  return new Date(Date.now() - hours * 3_600_000).toISOString();
+}
+
 const DEMO_SELF_PROFILE: UserProfileData = {
   username: "TurboTypist",
   isSelf: true,
   level: 18,
-  title: "Pilote Vitesse Grand V",
-  memberSince: "Février 2025",
+  titleKey: getDriverTitleKey(18),
+  memberSince: "2025-02-01T12:00:00.000Z",
   bestWpm: 108,
   averageWpm: 76,
   accuracy: 98.4,
@@ -45,8 +51,8 @@ const DEMO_SELF_PROFILE: UserProfileData = {
   recentRaces: [
     {
       id: "r1",
-      date: "Il y a 2h",
-      category: "Code TypeScript",
+      playedAt: hoursAgo(2),
+      category: "code",
       wpm: 104,
       accuracy: 99.2,
       rank: 1,
@@ -55,8 +61,8 @@ const DEMO_SELF_PROFILE: UserProfileData = {
     },
     {
       id: "r2",
-      date: "Il y a 5h",
-      category: "Citations",
+      playedAt: hoursAgo(5),
+      category: "quotes",
       wpm: 88,
       accuracy: 97.8,
       rank: 2,
@@ -65,8 +71,8 @@ const DEMO_SELF_PROFILE: UserProfileData = {
     },
     {
       id: "r3",
-      date: "Hier",
-      category: "Théâtre Molière",
+      playedAt: hoursAgo(26),
+      category: "moliere",
       wpm: 82,
       accuracy: 98.5,
       rank: 1,
@@ -75,8 +81,8 @@ const DEMO_SELF_PROFILE: UserProfileData = {
     },
     {
       id: "r4",
-      date: "Il y a 2 jours",
-      category: "Code TypeScript",
+      playedAt: hoursAgo(48),
+      category: "code",
       wpm: 96,
       accuracy: 96.9,
       rank: 3,
@@ -116,8 +122,8 @@ const DEMO_OTHER_PROFILE: UserProfileData = {
   username: "PixelDriver",
   isSelf: false,
   level: 14,
-  title: "As du Clavier",
-  memberSince: "Janvier 2025",
+  titleKey: getDriverTitleKey(14),
+  memberSince: "2025-01-01T12:00:00.000Z",
   bestWpm: 92,
   averageWpm: 68,
   accuracy: 97.1,
@@ -128,8 +134,8 @@ const DEMO_OTHER_PROFILE: UserProfileData = {
   recentRaces: [
     {
       id: "r1",
-      date: "Il y a 1h",
-      category: "Citations",
+      playedAt: hoursAgo(1),
+      category: "quotes",
       wpm: 75,
       accuracy: 96.5,
       rank: 2,
@@ -138,8 +144,8 @@ const DEMO_OTHER_PROFILE: UserProfileData = {
     },
     {
       id: "r2",
-      date: "Il y a 3h",
-      category: "Code TypeScript",
+      playedAt: hoursAgo(3),
+      category: "code",
       wpm: 88,
       accuracy: 98.0,
       rank: 1,
@@ -148,8 +154,8 @@ const DEMO_OTHER_PROFILE: UserProfileData = {
     },
     {
       id: "r3",
-      date: "Hier",
-      category: "Phrases Rapides",
+      playedAt: hoursAgo(26),
+      category: "sentences",
       wpm: 70,
       accuracy: 97.2,
       rank: 2,
@@ -158,8 +164,8 @@ const DEMO_OTHER_PROFILE: UserProfileData = {
     },
     {
       id: "r4",
-      date: "Il y a 3 jours",
-      category: "Citations",
+      playedAt: hoursAgo(72),
+      category: "quotes",
       wpm: 78,
       accuracy: 95.8,
       rank: 4,
@@ -189,17 +195,15 @@ interface ProfileViewProps {
 }
 
 export function ProfileView({ initialProfileResult }: ProfileViewProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
-  const [profileData] = React.useState<UserProfileData | null>(initialProfileResult?.data ?? null);
-  const [isGuest] = React.useState<boolean>(
-    initialProfileResult?.isGuest ?? !initialProfileResult?.data
-  );
-  const [errorMessage] = React.useState<string | null>(
+  // Derived from props (not state) so a locale switch re-render picks up the new server data.
+  const profileData = initialProfileResult?.data ?? null;
+  const isGuest = initialProfileResult?.isGuest ?? !initialProfileResult?.data;
+  const errorMessage =
     initialProfileResult?.success === false
-      ? (initialProfileResult.error ?? "Erreur lors du chargement")
-      : null
-  );
+      ? (initialProfileResult.error ?? t("profile.loadError"))
+      : null;
   const [demoMode, setDemoMode] = React.useState<"none" | "self" | "other">("none");
   const [equippedColor, setEquippedColor] = React.useState<PlayerColor>(
     initialProfileResult?.data?.carColor ?? "azure"
@@ -212,6 +216,11 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
     if (profileData) return profileData;
     return DEMO_SELF_PROFILE;
   }, [demoMode, profileData]);
+
+  function categoryLabel(category: string): string {
+    const key = `category.${category}`;
+    return isTranslationKey(key) ? t(key) : category;
+  }
 
   const isShowingDemo = demoMode !== "none" || (!profileData && !errorMessage);
 
@@ -230,7 +239,7 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
           </Button>
           <Link href="/">
             <Button variant="outline" size="md">
-              Retour à l&apos;accueil
+              {t("profile.backHome")}
             </Button>
           </Link>
         </div>
@@ -337,13 +346,13 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
             </div>
 
             <p className="text-slate-dark text-sm font-black dark:text-zinc-200">
-              {activeProfile.title}
+              {t(activeProfile.titleKey)}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-bold text-zinc-500 sm:justify-start dark:text-zinc-400">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-                {t("profile.memberSince")} {activeProfile.memberSince}
+                {t("profile.memberSince")} {formatMonthYear(language, activeProfile.memberSince)}
               </span>
               <span className="flex items-center gap-1">
                 <ShieldCheck className="text-victory-teal h-3.5 w-3.5" />
@@ -450,10 +459,10 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               {(
                 [
-                  { id: "azure", name: "Bolide Azure", color: "azure" },
-                  { id: "tangerine", name: "Turbo Tangerine", color: "tangerine" },
-                  { id: "magenta", name: "Fantôme Magenta", color: "magenta" },
-                  { id: "teal", name: "Foudre Teal", color: "teal" },
+                  { id: "azure", nameKey: "profile.carAzure", color: "azure" },
+                  { id: "tangerine", nameKey: "profile.carTangerine", color: "tangerine" },
+                  { id: "magenta", nameKey: "profile.carMagenta", color: "magenta" },
+                  { id: "teal", nameKey: "profile.carTeal", color: "teal" },
                 ] as const
               ).map((car) => {
                 const isSelected = equippedColor === car.color;
@@ -478,7 +487,7 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
                       />
                     </div>
                     <span className="text-slate-dark text-xs font-black uppercase dark:text-zinc-100">
-                      {car.name}
+                      {t(car.nameKey)}
                     </span>
                     <Badge variant={isSelected ? "lime" : "outline"} className="mt-2 text-[10px]">
                       {isSelected ? t("profile.equipped") : t("profile.equip")}
@@ -534,9 +543,11 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
                 <tbody className="divide-y divide-zinc-100 font-bold dark:divide-zinc-800">
                   {activeProfile.recentRaces.map((race: ProfileRacerResult) => (
                     <tr key={race.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                      <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">{race.date}</td>
+                      <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">
+                        {formatRelativeTime(language, race.playedAt)}
+                      </td>
                       <td className="py-3 pr-4 font-black text-slate-900 dark:text-white">
-                        {race.category}
+                        {categoryLabel(race.category)}
                       </td>
                       <td className="py-3 pr-4 font-mono font-black text-slate-900 dark:text-white">
                         <span className="text-azure-blue">{race.wpm}</span> WPM
@@ -549,11 +560,8 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
                           variant={race.rank === 1 ? "lime" : race.rank === 2 ? "azure" : "outline"}
                           className="text-[11px]"
                         >
-                          {race.rank === 1
-                            ? "1er 🥇"
-                            : race.rank === 2
-                              ? "2e 🥈"
-                              : `${race.rank}e 🥉`}
+                          {formatOrdinal(language, race.rank)}{" "}
+                          {race.rank === 1 ? "🥇" : race.rank === 2 ? "🥈" : "🥉"}
                         </Badge>
                       </td>
                     </tr>
@@ -629,7 +637,7 @@ export function ProfileView({ initialProfileResult }: ProfileViewProps) {
                     variant={isUnlocked ? "lime" : "outline"}
                     className="mt-2 text-[9px] uppercase"
                   >
-                    {isUnlocked ? "Débloqué" : "Verrouillé"}
+                    {isUnlocked ? t("profile.unlocked") : t("profile.locked")}
                   </Badge>
                 </div>
               );

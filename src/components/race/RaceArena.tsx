@@ -12,7 +12,6 @@ import {
   Clock,
   Sun,
   Moon,
-  Globe,
   CheckCircle2,
   Play,
   Hourglass,
@@ -25,7 +24,9 @@ import { RacerCar } from "@/components/animated/RacerCar";
 import { TireIcon } from "@/components/animated/TireIcon";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/context/LanguageContext";
+import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { useTheme } from "@/context/ThemeContext";
+import { formatOrdinal } from "@/lib/i18n";
 import { saveRaceResult, startRace, getRaceStatus } from "@/server/actions/race";
 import type { PlayerColor } from "@/types/race";
 
@@ -79,7 +80,7 @@ export function RaceArena({
   initialStatus,
 }: RaceArenaProps) {
   const { data: session } = useSession();
-  const { t, language, toggleLanguage } = useLanguage();
+  const { t, language } = useLanguage();
   const { theme, toggleTheme } = useTheme();
 
   const [isHost, setIsHost] = React.useState<boolean>(() => {
@@ -203,7 +204,7 @@ export function RaceArena({
   const [competitors, setCompetitors] = React.useState<Competitor[]>([
     {
       id: "c1",
-      name: `TurboTypist ${t("lobby.you")}`,
+      name: "TurboTypist",
       color: "azure",
       progress: 0,
       wpm: 0,
@@ -286,7 +287,7 @@ export function RaceArena({
     setCompetitors([
       {
         id: "c1",
-        name: `TurboTypist ${t("lobby.you")}`,
+        name: "TurboTypist",
         color: "azure",
         progress: 0,
         wpm: 0,
@@ -299,7 +300,7 @@ export function RaceArena({
     setTimeout(() => {
       inputRef.current?.focus();
     }, 10);
-  }, [t]);
+  }, []);
 
   // Auto-focus input on mount
   React.useEffect(() => {
@@ -416,41 +417,14 @@ export function RaceArena({
 
         {/* Preferences: FR / EN Language Toggle + Dark / Light Theme Toggle */}
         <div className="flex items-center gap-2">
-          {/* Language Toggle Button (FR / EN) */}
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            title={language === "fr" ? "Passer en anglais" : "Switch to French"}
-            className="border-slate-dark arcade-shadow flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-2 bg-white px-3 py-1 text-xs font-black transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
-          >
-            <Globe className="text-azure-blue h-3.5 w-3.5" />
-            <span
-              className={
-                language === "fr"
-                  ? "text-azure-blue font-black"
-                  : "font-semibold text-zinc-400 dark:text-zinc-500"
-              }
-            >
-              FR
-            </span>
-            <span className="text-zinc-300 dark:text-zinc-600">/</span>
-            <span
-              className={
-                language === "en"
-                  ? "text-azure-blue font-black"
-                  : "font-semibold text-zinc-400 dark:text-zinc-500"
-              }
-            >
-              EN
-            </span>
-          </button>
+          <LanguageToggle className="px-3" />
 
           {/* Theme Toggle Button (Light / Dark) */}
           <button
             type="button"
             onClick={toggleTheme}
             title={theme === "light" ? t("nav.themeDark") : t("nav.themeLight")}
-            aria-label={theme === "light" ? "Activer le thème sombre" : "Activer le thème clair"}
+            aria-label={theme === "light" ? t("nav.themeDark") : t("nav.themeLight")}
             className="border-slate-dark arcade-shadow flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 bg-white transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700"
           >
             {theme === "light" ? (
@@ -505,7 +479,7 @@ export function RaceArena({
             <div className="border-slate-dark flex items-center gap-1.5 rounded-full border-2 bg-zinc-50 px-2.5 py-0.5 text-xs font-black dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
               <Trophy className="text-tangerine-orange h-3.5 w-3.5" />
               <span>
-                {currentRank === 1 ? "1er" : `${currentRank}e`} / {competitors.length}
+                {formatOrdinal(language, currentRank)} / {competitors.length}
               </span>
             </div>
 
@@ -590,7 +564,9 @@ export function RaceArena({
                                 : "bg-victory-teal"
                         }`}
                       />
-                      <span className="text-slate-dark dark:text-zinc-200">{racer.name}</span>
+                      <span className="text-slate-dark dark:text-zinc-200">
+                        {racer.isSelf ? `${racer.name} ${t("lobby.you")}` : racer.name}
+                      </span>
                     </span>
                     <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400">
                       {racerWpm} WPM • {Math.round(currentProgress)}%
@@ -668,7 +644,7 @@ export function RaceArena({
               onBlur={() => setIsFocused(false)}
               disabled={racePhase !== "RACING" || isFinished}
               autoFocus={racePhase === "RACING"}
-              aria-label="Monospace Typing Stream"
+              aria-label={t("race.typingInputAria")}
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
@@ -775,11 +751,10 @@ export function RaceArena({
                         {t("lobby.host")}
                       </Badge>
                       <h3 className="text-slate-dark text-xl font-black uppercase sm:text-2xl dark:text-white">
-                        Prêt pour le départ
+                        {t("race.hostReadyTitle")}
                       </h3>
                       <p className="text-xs font-bold text-zinc-600 dark:text-zinc-300">
-                        Vous êtes l&apos;hôte de ce salon. Lancez le départ pour démarrer le compte
-                        à rebours de tous les participants !
+                        {t("race.hostReadyDesc")}
                       </p>
                       <Button
                         type="button"
@@ -803,8 +778,7 @@ export function RaceArena({
                         {t("race.waitingForHost")}
                       </h3>
                       <p className="text-xs font-bold text-zinc-600 dark:text-zinc-300">
-                        L&apos;hôte n&apos;a pas encore donné le signal. Tenez-vous prêt sur la
-                        grille, la course démarrera dès le lancement !
+                        {t("race.waitingForHostDesc")}
                       </p>
                       <Link href={`/lobby/${initialCode}`}>
                         <Button
@@ -927,7 +901,7 @@ export function RaceArena({
                     <h3 className="text-slate-dark text-base font-black uppercase dark:text-white">
                       {currentRank === 1
                         ? t("race.victory")
-                        : t("race.finishedRank", { rank: currentRank })}
+                        : t("race.finishedRank", { rank: formatOrdinal(language, currentRank) })}
                     </h3>
                     <p className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
                       {t("race.finalSpeed")}{" "}

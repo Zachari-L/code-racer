@@ -5,10 +5,12 @@ import { motion } from "motion/react";
 import { Gauge, Flag, Flame, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { MinimalistTrack } from "@/components/animated/tracks/MinimalistTrack";
+import { useLanguage } from "@/context/LanguageContext";
 
 const DEMO_TEXT = "function startRace() { return 'TURBO_SPEED'; }";
 
 export function LiveTypingTeaser() {
+  const { t } = useLanguage();
   const [typedIndex, setTypedIndex] = React.useState(0);
   const [wpm, setWpm] = React.useState(85);
 
@@ -58,16 +60,16 @@ export function LiveTypingTeaser() {
             {isFinished ? (
               <>
                 <CheckCircle2 className="text-slate-dark h-3 w-3" />
-                Ligne Franchie !
+                {t("race.teaserFinished")}
               </>
             ) : (
               <>
                 <span className="h-2 w-2 animate-ping rounded-full bg-white" />
-                Direct Arène
+                {t("race.teaserLive")}
               </>
             )}
           </Badge>
-          <span className="font-mono text-xs font-bold text-zinc-500">Piste #01 — Course</span>
+          <span className="font-mono text-xs font-bold text-zinc-500">{t("race.teaserTrack")}</span>
         </div>
 
         <div className="text-slate-dark flex items-center gap-3 font-mono font-black">
@@ -99,7 +101,7 @@ export function LiveTypingTeaser() {
       <div className="mt-3 flex items-center justify-between text-[11px] font-bold text-zinc-400">
         <span className="flex items-center gap-1.5">
           <Gauge className="text-azure-blue h-3.5 w-3.5" />
-          Vitesse d&apos;animation adaptative selon votre rythme de frappe
+          {t("race.teaserFooter")}
         </span>
         <span className="text-slate-dark flex items-center gap-1 font-mono font-black">
           <Flag className="text-tangerine-orange h-3.5 w-3.5" />

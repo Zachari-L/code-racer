@@ -1,14 +1,15 @@
 import { z } from "zod";
+import { i18nKey } from "@/lib/i18n";
 
 export const joinLobbySchema = z.object({
   code: z
     .string()
-    .length(6, "Le code de salon doit comporter exactement 6 chiffres")
-    .regex(/^\d{6}$/, "Le code de salon doit être composé de 6 chiffres"),
+    .length(6, i18nKey("validation.codeLength"))
+    .regex(/^\d{6}$/, i18nKey("validation.codeDigits")),
   nickname: z
     .string()
-    .min(2, "Le pseudonyme doit comporter au moins 2 caractères")
-    .max(20, "Le pseudonyme ne peut pas dépasser 20 caractères"),
+    .min(2, i18nKey("validation.nicknameMin"))
+    .max(20, i18nKey("validation.nicknameMax")),
   isSpectator: z.boolean().default(false),
 });
 
