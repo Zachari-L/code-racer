@@ -27,6 +27,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { useTheme } from "@/context/ThemeContext";
 import { formatOrdinal } from "@/lib/i18n";
+import { computeTypingStats } from "@/lib/utils";
 import { saveRaceResult, startRace, getRaceStatus } from "@/server/actions/race";
 import type { PlayerColor } from "@/types/race";
 
@@ -216,26 +217,10 @@ export function RaceArena({
   ]);
 
   // Telemetry calculation
-  const correctChars = React.useMemo(() => {
-    let count = 0;
-    for (let i = 0; i < typedInput.length; i++) {
-      if (typedInput[i] === textToType[i]) {
-        count++;
-      }
-    }
-    return count;
-  }, [typedInput, textToType]);
-
-  const accuracy = React.useMemo(() => {
-    if (typedInput.length === 0) return 100;
-    return Math.max(0, Math.round((correctChars / typedInput.length) * 100));
-  }, [correctChars, typedInput.length]);
-
-  const liveWpm = React.useMemo(() => {
-    if (!startTime || elapsedSec <= 0) return 0;
-    const minutes = elapsedSec / 60;
-    return Math.max(0, Math.round(correctChars / 5 / minutes));
-  }, [startTime, elapsedSec, correctChars]);
+  const { wpm: liveWpm, accuracy } = React.useMemo(
+    () => computeTypingStats(typedInput, textToType, elapsedSec),
+    [typedInput, textToType, elapsedSec]
+  );
 
   const playerProgress = React.useMemo(() => {
     return Math.min(100, Math.round((typedInput.length / textToType.length) * 100));
@@ -341,22 +326,15 @@ export function RaceArena({
   const handleFinish = React.useCallback(
     (finalVal: string) => {
       setSaveStatus("saving");
-      const elapsed = elapsedSec || 1;
-      let correct = 0;
-      for (let i = 0; i < finalVal.length; i++) {
-        if (finalVal[i] === textToType[i]) correct++;
-      }
-      const finalAccuracy = Math.max(0, Math.round((correct / finalVal.length) * 100));
-      const finalWpm = Math.max(0, Math.round(correct / 5 / (elapsed / 60)));
-      const rawWpm = Math.max(0, Math.round(finalVal.length / 5 / (elapsed / 60)));
+      const stats = computeTypingStats(finalVal, textToType, Math.max(elapsedSec, 1));
 
       saveRaceResult({
         code: initialCode,
-        wpm: finalWpm,
-        rawWpm,
-        accuracy: finalAccuracy,
-        errorsCount: Math.max(0, finalVal.length - correct),
-        durationMs: elapsed * 1000,
+        wpm: stats.wpm,
+        rawWpm: stats.rawWpm,
+        accuracy: stats.accuracy,
+        errorsCount: stats.errorsCount,
+        durationMs: Math.max(elapsedSec, 1) * 1000,
         rank: currentRank,
         category: "code",
         language,
