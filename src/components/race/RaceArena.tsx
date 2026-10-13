@@ -66,17 +66,14 @@ interface Competitor {
 
 interface RaceArenaProps {
   initialCode?: string;
-  initialText?: string;
+  initialText: string;
   initialIsHost?: boolean;
   initialStatus?: "WAITING" | "COUNTDOWN" | "IN_PROGRESS" | "FINISHED" | "CANCELLED";
 }
 
-const DEFAULT_SAMPLE_TEXT =
-  "function launchTurboRacer(speed: number): string { return speed > 100 ? 'VICTOIRE ECLATANTE' : 'ACCELERE ENCORE'; }";
-
 export function RaceArena({
   initialCode = "482910",
-  initialText = DEFAULT_SAMPLE_TEXT,
+  initialText,
   initialIsHost,
   initialStatus,
 }: RaceArenaProps) {

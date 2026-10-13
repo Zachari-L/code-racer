@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { generateLobbyCode } from "@/lib/utils";
 import { getEarnedBadges, toBadgeRecord } from "@/lib/badges";
+import { getRaceText } from "@/lib/race-texts";
 import {
   createLobbySchema,
   joinLobbySchema,
@@ -17,16 +18,6 @@ import { getTranslator } from "@/lib/i18n/server";
 import type { PlayerColor } from "@/types/race";
 
 const CAR_COLORS: PlayerColor[] = ["azure", "tangerine", "magenta", "teal"];
-
-const DEFAULT_SAMPLE_TEXTS: Record<string, string> = {
-  quotes:
-    "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte.",
-  code: "function calculateWpm(chars: number, minutes: number): number { return Math.round((chars / 5) / minutes); }",
-  moliere:
-    "Le petit chat est mort. Que voulez-vous que je dise de plus ? La fortune se joue ainsi de nos desseins.",
-  sentences:
-    "Les bolides rugissent sur la piste tandis que les doigts pianotent à la vitesse de l'éclair pour décrocher la victoire.",
-};
 
 export async function createLobby(input: CreateLobbyInput, hostUserId?: string) {
   const t = await getTranslator();
@@ -64,7 +55,7 @@ export async function createLobby(input: CreateLobbyInput, hostUserId?: string) 
       userId = anonHost.id;
     }
 
-    const textToType = DEFAULT_SAMPLE_TEXTS[textCategory] || DEFAULT_SAMPLE_TEXTS.quotes;
+    const textToType = getRaceText(textCategory, textLanguage).content;
 
     const race = await prisma.race.create({
       data: {

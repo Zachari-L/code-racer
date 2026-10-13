@@ -1,63 +1,17 @@
 import { prisma } from "../src/lib/prisma";
 import { BADGES, BADGE_CODES, toBadgeRecord } from "../src/lib/badges";
-
-const SAMPLE_TEXTS = [
-  {
-    title: "Molière — L'Avare",
-    content:
-      "Au voleur ! au voleur ! à l'assassin ! au meurtrier ! Justice, juste Ciel ! je suis perdu, je suis assassiné, on m'a coupé la gorge, on m'a dérobé mon argent.",
-    language: "fr",
-    category: "moliere",
-    difficulty: "MEDIUM",
-  },
-  {
-    title: "Code TypeScript — Algorithme de Course",
-    content:
-      "function updatePosition(progress: number, wpm: number): { x: number; y: number } { return { x: progress * 10, y: Math.sin(progress) * 2 }; }",
-    language: "fr",
-    category: "code",
-    difficulty: "HARD",
-  },
-  {
-    title: "Citation — Motivation et Persévérance",
-    content:
-      "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte pour franchir la ligne d'arrivée.",
-    language: "fr",
-    category: "quotes",
-    difficulty: "EASY",
-  },
-  {
-    title: "Phrases d'échauffement",
-    content:
-      "Portez ce vieux whisky au juge blond qui fume. Les bolides vrombissent sur l'asphalte tandis que le départ est donné.",
-    language: "fr",
-    category: "sentences",
-    difficulty: "MEDIUM",
-  },
-  {
-    title: "Python Code — Async Racing Loop",
-    content:
-      "async def start_countdown(seconds: int):\n    for s in range(seconds, 0, -1):\n        await broadcast({'event': 'tick', 'remaining': s})",
-    language: "en",
-    category: "code",
-    difficulty: "HARD",
-  },
-];
+import { RACE_TEXTS } from "../src/lib/race-texts";
 
 async function main() {
   console.log("🌱 Début du seed CodeRacer...");
 
-  for (const text of SAMPLE_TEXTS) {
-    const wordCount = text.content.split(/\s+/).length;
-    const charCount = text.content.length;
-
-    await prisma.textSnippet.create({
-      data: {
-        ...text,
-        wordCount,
-        charCount,
-      },
-    });
+  for (const { id, ...text } of RACE_TEXTS) {
+    const data = {
+      ...text,
+      wordCount: text.content.split(/\s+/).length,
+      charCount: text.content.length,
+    };
+    await prisma.textSnippet.upsert({ where: { id }, update: data, create: { id, ...data } });
   }
 
   for (const badge of BADGES) {

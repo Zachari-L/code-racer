@@ -25,7 +25,11 @@ export default async function LobbyCodePage({ params }: PageProps) {
       <Navbar />
 
       <main className="relative z-10 flex flex-1 flex-col justify-start">
-        <LobbyArena initialCode={code} initialIsHost={race ? isHost : undefined} />
+        <LobbyArena
+          initialCode={code}
+          initialIsHost={race ? isHost : undefined}
+          initialTextLanguage={race?.textLanguage}
+        />
       </main>
 
       <SiteFooter />

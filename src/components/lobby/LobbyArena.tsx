@@ -26,7 +26,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { RacerCar } from "@/components/animated/RacerCar";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/context/LanguageContext";
-import type { TranslationKey } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type TranslationKey } from "@/lib/i18n";
+import { getRaceText } from "@/lib/race-texts";
 import { startRace, getRaceStatus } from "@/server/actions/race";
 import type { PlayerColor, BotDifficulty } from "@/types/race";
 
@@ -43,6 +44,8 @@ interface LobbyParticipant {
 interface LobbyArenaProps {
   initialCode?: string;
   initialIsHost?: boolean;
+  /** Language of the race text (not the UI locale), used for the preview. */
+  initialTextLanguage?: string;
 }
 
 const DEFAULT_CODE = "482910";
@@ -54,15 +57,8 @@ const BOT_TIERS: Record<BotDifficulty, { labelKey: TranslationKey; wpm: number }
   IMPOSSIBLE: { labelKey: "lobby.botPro", wpm: 130 },
 };
 
-const PREVIEW_TEXTS = {
-  quotes:
-    "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte.",
-  code: "function calculateWpm(chars: number, minutes: number): number { return Math.round((chars / 5) / minutes); }",
-  moliere:
-    "Le petit chat est mort. Que voulez-vous que je dise de plus ? La fortune se joue ainsi de nos desseins.",
-};
-
-export function LobbyArena({ initialCode, initialIsHost }: LobbyArenaProps) {
+export function LobbyArena({ initialCode, initialIsHost, initialTextLanguage }: LobbyArenaProps) {
+  const textLanguage = isLocale(initialTextLanguage) ? initialTextLanguage : DEFAULT_LOCALE;
   const router = useRouter();
   const { data: session } = useSession();
   const { t } = useLanguage();
@@ -522,7 +518,7 @@ export function LobbyArena({ initialCode, initialIsHost }: LobbyArenaProps) {
                   <BookOpen className="h-3.5 w-3.5" /> {t("lobby.previewText")}
                 </div>
                 <p className="font-mono text-xs leading-relaxed text-zinc-700 italic dark:text-zinc-300">
-                  &ldquo;{PREVIEW_TEXTS[selectedCategory]}&rdquo;
+                  &ldquo;{getRaceText(selectedCategory, textLanguage).content}&rdquo;
                 </p>
               </div>
             </CardContent>
