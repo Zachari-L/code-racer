@@ -165,3 +165,41 @@ a.arcade-shadow:active,
   background-size: 25.46px 25.46px;
   animation: road-diagonal-ltr var(--road-speed, 0.6s) linear infinite;
 }
+
+/* Strict mode: the cursor flashes red when a wrong key is refused (CONF-08) */
+@keyframes error-flash {
+  from {
+    background-color: rgb(244 63 94 / 0.55);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.animate-error-flash {
+  animation: error-flash 0.35s ease-out;
+}
+
+/* Chart series colours: the competitor palette, re-stepped for the dark
+   surface (validated for colour-vision deficiencies in both modes). */
+:root {
+  --chart-1: #007bff;
+  --chart-2: #ff7a00;
+  --chart-3: #d9008d;
+  --chart-4: #00bfa5;
+  --chart-muted: #a1a1aa;
+  --chart-ink: #111112;
+  --chart-grid: #e4e4e7;
+  --chart-surface: #ffffff;
+}
+
+.dark {
+  --chart-1: #007bff;
+  --chart-2: #e06800;
+  --chart-3: #c2007e;
+  --chart-4: #00ac94;
+  --chart-muted: #52525b;
+  --chart-ink: #f4f4ed;
+  --chart-grid: #3f3f46;
+  --chart-surface: #18181b;
+}
