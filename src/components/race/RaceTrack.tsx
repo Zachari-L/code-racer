@@ -65,18 +65,16 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
         </span>
       </div>
 
-      <ol className="border-slate-dark relative space-y-1 rounded-2xl border-3 bg-[#1c1d22] p-2 dark:border-zinc-700">
-        {/* Bonus checkpoints, shared by every lane. */}
-        <div aria-hidden className="pointer-events-none absolute inset-y-2 right-14 left-52">
-          {CHECKPOINTS.map((checkpoint) => (
-            <div
-              key={checkpoint}
-              className="absolute inset-y-0 border-l-2 border-dashed border-white/25"
-              style={{ left: `${checkpoint * 100}%` }}
-            />
-          ))}
-        </div>
-
+      {/* A crowded track scrolls on its own so the typing zone stays in view;
+          the local player's lane stays pinned on top. */}
+      <ol
+        tabIndex={compact ? 0 : undefined}
+        aria-label={compact ? t("race.trackTitle") : undefined}
+        className={cn(
+          "border-slate-dark relative space-y-1 rounded-2xl border-3 bg-[#1c1d22] p-2 dark:border-zinc-700",
+          compact && "max-h-[38vh] overflow-y-auto"
+        )}
+      >
         {racers.map((racer) => {
           const entry = byId.get(racer.id);
           const progress = entry?.progress ?? 0;
@@ -92,6 +90,7 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
                 "relative flex items-center gap-2 rounded-xl px-2",
                 compact ? "h-8" : "h-12",
                 isYou ? "bg-electric-lime/15 ring-electric-lime ring-2" : "bg-white/5",
+                isYou && compact && "sticky top-0 z-40 bg-[#2b3010]",
                 entry?.status === "ABANDONED" && "opacity-60"
               )}
             >
@@ -126,6 +125,15 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
 
               {/* Road */}
               <div className="relative h-full flex-1">
+                {/* Bonus checkpoints at 25, 50 and 75 % of the text. */}
+                {CHECKPOINTS.map((checkpoint) => (
+                  <div
+                    key={checkpoint}
+                    aria-hidden
+                    className="absolute inset-y-0 border-l-2 border-dashed border-white/25"
+                    style={{ left: `${checkpoint * 100}%` }}
+                  />
+                ))}
                 <div className="absolute inset-x-0 top-1/2 h-2.5 -translate-y-1/2 overflow-hidden rounded-full bg-black/40">
                   <div
                     className={cn(
