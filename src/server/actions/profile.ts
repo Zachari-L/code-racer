@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { getTranslator } from "@/lib/i18n/server";
 import type { TranslationKey } from "@/lib/i18n";
+import { parseStoredConfig } from "@/lib/game/config";
 import type { PlayerColor } from "@/lib/game/colors";
 
 export interface ProfileRacerResult {
@@ -75,12 +76,11 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
         ? { username: { equals: targetUsername, mode: "insensitive" } }
         : { id: currentUserId },
       include: {
-        stats: true,
         results: {
           orderBy: { createdAt: "desc" },
           take: 20,
           include: {
-            race: true,
+            race: { select: { config: true } },
           },
         },
         badges: {
@@ -103,17 +103,24 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
       (currentUsername && user.username.toLowerCase() === currentUsername.toLowerCase())
     );
 
-    const stats = user.stats;
-    const totalRaces = stats?.totalRaces ?? user.results.length;
-    const victories = stats?.totalWins ?? user.results.filter((r) => r.rank === 1).length;
-    const podiums = user.results.filter((r) => r.rank <= 3).length;
+    const [stats, victories, podiums] = await Promise.all([
+      prisma.raceResult.aggregate({
+        where: { userId: user.id },
+        _count: true,
+        _max: { wpm: true },
+        _avg: { wpm: true, accuracy: true },
+      }),
+      prisma.raceResult.count({ where: { userId: user.id, rank: 1 } }),
+      prisma.raceResult.count({ where: { userId: user.id, rank: { lte: 3 } } }),
+    ]);
+    const totalRaces = stats._count;
     const level = calculateDriverLevel(totalRaces, victories);
     const titleKey = getDriverTitleKey(level);
 
     const recentRaces: ProfileRacerResult[] = user.results.map((r) => ({
       id: r.id,
       playedAt: r.createdAt.toISOString(),
-      category: r.race?.textCategory ?? "quotes",
+      category: parseStoredConfig(r.race.config).textMode.toLowerCase(),
       wpm: Math.round(r.wpm),
       accuracy: Number(r.accuracy.toFixed(1)),
       rank: r.rank,
@@ -132,9 +139,9 @@ export async function getUserProfile(requestedUsername?: string): Promise<GetUse
         level,
         titleKey,
         memberSince: user.createdAt.toISOString(),
-        bestWpm: Math.round(stats?.bestWpm ?? 0),
-        averageWpm: Math.round(stats?.averageWpm ?? 0),
-        accuracy: Number((stats?.averageAccuracy ?? 100).toFixed(1)),
+        bestWpm: Math.round(stats._max.wpm ?? 0),
+        averageWpm: Math.round(stats._avg.wpm ?? 0),
+        accuracy: Number((stats._avg.accuracy ?? 100).toFixed(1)),
         totalRaces,
         victories,
         podiums,

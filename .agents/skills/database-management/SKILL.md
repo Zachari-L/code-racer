@@ -41,9 +41,9 @@ When modifying `prisma/schema.prisma`:
    bun run db:generate
    ```
 
-3. **Push changes to development database:**
+3. **Create and apply a migration:**
    ```bash
-   bun run db:push
+   bun run db:migrate
    ```
 
 4. **Seed sample texts and badges:**

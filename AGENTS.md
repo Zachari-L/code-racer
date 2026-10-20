@@ -57,7 +57,7 @@ Every server action must:
 
 - Always use the Prisma singleton from `@/lib/prisma`.
 - Prisma 7 requires driver adapters (`@prisma/adapter-pg`). Never instantiate `new PrismaClient()` without the adapter.
-- Keep schema changes synchronized via `bun run db:generate` and `bun run db:push`.
+- Schema changes go through versioned migrations: `bun run db:migrate` (dev) and `bun run db:deploy` (production).
 
 ---
 

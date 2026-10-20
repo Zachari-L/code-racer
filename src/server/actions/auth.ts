@@ -30,9 +30,6 @@ export async function registerUser(input: RegisterInput) {
       data: {
         username,
         passwordHash,
-        stats: {
-          create: {},
-        },
       },
       select: {
         id: true,
