@@ -299,4 +299,5 @@ export const en: Record<TranslationKey, string> = {
   "errors.guestResultNotSaved": "Guest user: result not saved to a profile",
   "errors.resultSaveFailed": "Unable to save the race result right now",
   "errors.invalidLocale": "Unsupported language",
+  "validation.roomCode": "Room codes are 6 letters or digits (no 0, O, 1, I or L)",
 };

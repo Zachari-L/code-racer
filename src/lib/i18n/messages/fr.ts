@@ -299,6 +299,7 @@ export const fr = {
   "errors.guestResultNotSaved": "Utilisateur invité : résultat non conservé en profil",
   "errors.resultSaveFailed": "Impossible d'enregistrer le résultat de course pour le moment",
   "errors.invalidLocale": "Langue non prise en charge",
+  "validation.roomCode": "Le code de salle comporte 6 lettres ou chiffres (sans 0, O, 1, I ni L)",
 } as const satisfies Record<string, string>;
 
 export type TranslationKey = keyof typeof fr;
