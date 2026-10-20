@@ -38,7 +38,10 @@ export const INITIAL_ROOM_STATE: RoomState = {
 const MAX_NOTICES = 4;
 
 export type RoomAction =
-  ServerMessage | { type: "dismissNotice"; key: number } | { type: "clearErrors" };
+  | ServerMessage
+  | { type: "dismissNotice"; key: number }
+  | { type: "dismissOldestNotice" }
+  | { type: "clearErrors" };
 
 export function roomReducer(state: RoomState, action: RoomAction): RoomState {
   switch (action.type) {
@@ -67,6 +70,8 @@ export function roomReducer(state: RoomState, action: RoomAction): RoomState {
         notices: [...state.notices, { key, bonus: action.bonus }].slice(-MAX_NOTICES),
       };
     }
+    case "dismissOldestNotice":
+      return { ...state, notices: state.notices.slice(1) };
     case "dismissNotice":
       return { ...state, notices: state.notices.filter((n) => n.key !== action.key) };
     case "joinError":

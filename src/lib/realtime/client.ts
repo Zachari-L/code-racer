@@ -126,7 +126,7 @@ export class RealtimeClient {
  * Opens a connection for the lifetime of the component. `onMessage` always
  * sees the latest props thanks to a ref.
  */
-export function useRealtime(onMessage: Listener) {
+export function useRealtime(onMessage: (message: ServerMessage, client: RealtimeClient) => void) {
   const [client] = React.useState(() => new RealtimeClient());
   const [status, setStatus] = React.useState<ConnectionStatus>("connecting");
   const handler = React.useRef(onMessage);
@@ -136,7 +136,7 @@ export function useRealtime(onMessage: Listener) {
   });
 
   React.useEffect(() => {
-    const unsubscribe = client.subscribe((message) => handler.current(message));
+    const unsubscribe = client.subscribe((message) => handler.current(message, client));
     const unwatch = client.onStatus(setStatus);
     client.connect();
     return () => {
