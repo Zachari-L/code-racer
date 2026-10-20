@@ -25,7 +25,10 @@ export default async function RaceResultsPage({ params }: RacePageProps) {
   const result = await getRaceResultsForUser(raceId, session.user.id);
   if (!result) notFound();
   const t = await getTranslator();
-  const date = new Intl.DateTimeFormat(await getLocale(), { dateStyle: "full", timeStyle: "short" });
+  const date = new Intl.DateTimeFormat(await getLocale(), {
+    dateStyle: "full",
+    timeStyle: "short",
+  });
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-4 py-8 sm:px-6">

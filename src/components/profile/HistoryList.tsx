@@ -32,36 +32,63 @@ export function HistoryList({ entries, page, pageCount, total }: HistoryListProp
           <table className="w-full min-w-[36rem] text-left text-sm">
             <thead className="text-xs font-black uppercase">
               <tr>
-                <th scope="col" className="py-2">{t("history.date")}</th>
-                <th scope="col" className="py-2">{t("results.col.rank")}</th>
-                <th scope="col" className="py-2">{t("results.col.wpm")}</th>
-                <th scope="col" className="py-2">{t("results.col.accuracy")}</th>
-                <th scope="col" className="py-2">{t("results.col.status")}</th>
-                <th scope="col" className="py-2">{t("config.language")}</th>
+                <th scope="col" className="py-2">
+                  {t("history.date")}
+                </th>
+                <th scope="col" className="py-2">
+                  {t("results.col.rank")}
+                </th>
+                <th scope="col" className="py-2">
+                  {t("results.col.wpm")}
+                </th>
+                <th scope="col" className="py-2">
+                  {t("results.col.accuracy")}
+                </th>
+                <th scope="col" className="py-2">
+                  {t("results.col.status")}
+                </th>
+                <th scope="col" className="py-2">
+                  {t("config.language")}
+                </th>
               </tr>
             </thead>
             <tbody className="font-semibold">
               {entries.map((entry) => (
                 <tr key={entry.raceId} className="border-t border-zinc-200 dark:border-zinc-700">
                   <td className="py-2">
-                    <Link href={`/races/${entry.raceId}`} className="text-azure-blue font-black underline underline-offset-2">
+                    <Link
+                      href={`/races/${entry.raceId}`}
+                      className="text-azure-blue font-black underline underline-offset-2"
+                    >
                       {date.format(new Date(entry.playedAt))}
                     </Link>
                   </td>
                   <td className="py-2">
-                    {t("history.rankOf", { rank: formatOrdinal(language, entry.rank), count: entry.racers })}
+                    {t("history.rankOf", {
+                      rank: formatOrdinal(language, entry.rank),
+                      count: entry.racers,
+                    })}
                   </td>
                   <td className="py-2 font-mono">
                     <span className="flex items-center gap-1">
                       {number.format(entry.wpm)}
                       {entry.isPersonalBest && (
-                        <Trophy className="text-tangerine-orange h-4 w-4" aria-label={t("history.personalBest")} />
+                        <Trophy
+                          className="text-tangerine-orange h-4 w-4"
+                          aria-label={t("history.personalBest")}
+                        />
                       )}
                     </span>
                   </td>
-                  <td className="py-2 font-mono">{t("results.percent", { value: number.format(entry.accuracy) })}</td>
+                  <td className="py-2 font-mono">
+                    {t("results.percent", { value: number.format(entry.accuracy) })}
+                  </td>
                   <td className="py-2">{t(`race.status.${entry.status}`)}</td>
-                  <td className="py-2">{isLocale(entry.language) ? t(`config.languages.${entry.language}`) : entry.language}</td>
+                  <td className="py-2">
+                    {isLocale(entry.language)
+                      ? t(`config.languages.${entry.language}`)
+                      : entry.language}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -69,7 +96,10 @@ export function HistoryList({ entries, page, pageCount, total }: HistoryListProp
         </div>
       )}
       {pageCount > 1 && (
-        <nav aria-label={t("history.pagination")} className="mt-4 flex items-center justify-between gap-2">
+        <nav
+          aria-label={t("history.pagination")}
+          className="mt-4 flex items-center justify-between gap-2"
+        >
           {page > 1 ? (
             <LinkButton href={`/profile?page=${page - 1}`} variant="outline" size="sm">
               {t("history.previous")}
@@ -77,7 +107,9 @@ export function HistoryList({ entries, page, pageCount, total }: HistoryListProp
           ) : (
             <span />
           )}
-          <span className="text-sm font-black">{t("history.pageOf", { page, count: pageCount })}</span>
+          <span className="text-sm font-black">
+            {t("history.pageOf", { page, count: pageCount })}
+          </span>
           {page < pageCount ? (
             <LinkButton href={`/profile?page=${page + 1}`} variant="outline" size="sm">
               {t("history.next")}

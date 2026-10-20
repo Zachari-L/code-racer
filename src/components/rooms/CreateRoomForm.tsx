@@ -14,7 +14,10 @@ import { createRoom } from "@/server/actions/rooms";
 export function CreateRoomForm({ defaultLanguage }: { defaultLanguage: Locale }) {
   const { t } = useLanguage();
   const router = useRouter();
-  const [config, setConfig] = React.useState<RoomConfig>({ ...DEFAULT_ROOM_CONFIG, language: defaultLanguage });
+  const [config, setConfig] = React.useState<RoomConfig>({
+    ...DEFAULT_ROOM_CONFIG,
+    language: defaultLanguage,
+  });
   const [hostRole, setHostRole] = React.useState<"PARTICIPANT" | "SPECTATOR">("PARTICIPANT");
   const [error, setError] = React.useState<{ message: string; currentRoom?: string } | null>(null);
   const [pending, startTransition] = React.useTransition();
@@ -59,10 +62,19 @@ export function CreateRoomForm({ defaultLanguage }: { defaultLanguage: Locale })
         </Button>
       </Card>
       {error && (
-        <div role="alert" className="space-y-2 rounded-2xl bg-rose-100 p-4 text-sm font-bold text-rose-900 dark:bg-rose-950 dark:text-rose-100">
+        <div
+          role="alert"
+          className="space-y-2 rounded-2xl bg-rose-100 p-4 text-sm font-bold text-rose-900 dark:bg-rose-950 dark:text-rose-100"
+        >
           <p>{error.message}</p>
           {error.currentRoom && (
-            <Button type="button" variant="outline" size="sm" onClick={() => submit(true)} disabled={pending}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => submit(true)}
+              disabled={pending}
+            >
               {t("create.leaveAndCreate", { code: error.currentRoom })}
             </Button>
           )}

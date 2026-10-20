@@ -41,14 +41,19 @@ export function QuickRaceButton({ signedIn }: { signedIn: boolean }) {
         {t("home.quickRace")}
       </Button>
       {empty && (
-        <div role="status" className="space-y-2 rounded-2xl border-2 border-dashed border-zinc-400 p-4 text-center">
+        <div
+          role="status"
+          className="space-y-2 rounded-2xl border-2 border-dashed border-zinc-400 p-4 text-center"
+        >
           <p className="text-sm font-black">{t("home.noRoom")}</p>
           {signedIn ? (
             <Button variant="azure" size="sm" onClick={create} disabled={pending}>
               {t("home.createDefaultRoom")}
             </Button>
           ) : (
-            <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">{t("home.noRoomGuest")}</p>
+            <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+              {t("home.noRoomGuest")}
+            </p>
           )}
         </div>
       )}

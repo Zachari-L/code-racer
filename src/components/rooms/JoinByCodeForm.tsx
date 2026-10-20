@@ -53,7 +53,11 @@ export function JoinByCodeForm() {
         </Button>
       </div>
       {error && (
-        <p id="room-code-error" role="alert" className="text-sm font-bold text-rose-700 dark:text-rose-300">
+        <p
+          id="room-code-error"
+          role="alert"
+          className="text-sm font-bold text-rose-700 dark:text-rose-300"
+        >
           {t("validation.roomCode")}
         </p>
       )}

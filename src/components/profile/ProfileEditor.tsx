@@ -29,7 +29,13 @@ function FeedbackLine({ feedback }: { feedback: Feedback }) {
 }
 
 /** Display name (AUTH-05) and profile picture (AUTH-04) forms. */
-export function ProfileEditor({ displayName, hasAvatar }: { displayName: string; hasAvatar: boolean }) {
+export function ProfileEditor({
+  displayName,
+  hasAvatar,
+}: {
+  displayName: string;
+  hasAvatar: boolean;
+}) {
   const { t } = useLanguage();
   const router = useRouter();
   const { update } = useSession();
@@ -54,8 +60,17 @@ export function ProfileEditor({ displayName, hasAvatar }: { displayName: string;
         <label htmlFor="display-name" className="block text-sm font-black uppercase">
           {t("profile.displayName")}
         </label>
-        <Input id="display-name" name="displayName" defaultValue={displayName} minLength={3} maxLength={20} required />
-        <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">{t("guest.nicknameHint")}</p>
+        <Input
+          id="display-name"
+          name="displayName"
+          defaultValue={displayName}
+          minLength={3}
+          maxLength={20}
+          required
+        />
+        <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          {t("guest.nicknameHint")}
+        </p>
         <Button type="submit" variant="azure" size="sm" disabled={pending}>
           {t("profile.save")}
         </Button>
@@ -73,7 +88,9 @@ export function ProfileEditor({ displayName, hasAvatar }: { displayName: string;
             }
             const result = await uploadAvatar(formData);
             setAvatarFeedback(
-              result.success ? { kind: "ok", message: t("profile.saved") } : { kind: "error", message: result.error }
+              result.success
+                ? { kind: "ok", message: t("profile.saved") }
+                : { kind: "error", message: result.error }
             );
             if (result.success) router.refresh();
           })
@@ -88,9 +105,11 @@ export function ProfileEditor({ displayName, hasAvatar }: { displayName: string;
           type="file"
           accept="image/jpeg,image/png,image/webp"
           required
-          className="block w-full text-sm font-bold file:mr-3 file:rounded-full file:border-2 file:border-slate-dark file:bg-white file:px-4 file:py-1.5 file:font-black dark:file:bg-zinc-800 dark:file:text-zinc-100"
+          className="file:border-slate-dark block w-full text-sm font-bold file:mr-3 file:rounded-full file:border-2 file:bg-white file:px-4 file:py-1.5 file:font-black dark:file:bg-zinc-800 dark:file:text-zinc-100"
         />
-        <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">{t("profile.avatarHint")}</p>
+        <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          {t("profile.avatarHint")}
+        </p>
         <div className="flex flex-wrap gap-2">
           <Button type="submit" variant="azure" size="sm" disabled={pending}>
             {t("profile.upload")}

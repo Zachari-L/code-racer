@@ -35,7 +35,10 @@ export function ProfileOverview({ profile }: { profile: ProfileData }) {
   const tiles = [
     { label: t("profile.bestWpm"), value: number.format(stats.bestWpm) },
     { label: t("profile.avgWpm"), value: number.format(stats.averageWpm) },
-    { label: t("profile.avgAccuracy"), value: t("results.percent", { value: number.format(stats.averageAccuracy) }) },
+    {
+      label: t("profile.avgAccuracy"),
+      value: t("results.percent", { value: number.format(stats.averageAccuracy) }),
+    },
     { label: t("profile.races"), value: number.format(stats.races) },
     { label: t("profile.wins"), value: number.format(stats.wins) },
   ];
@@ -48,7 +51,8 @@ export function ProfileOverview({ profile }: { profile: ProfileData }) {
         <div>
           <h1 className="text-3xl font-black uppercase">{profile.displayName}</h1>
           <p className="text-sm font-bold text-zinc-700 dark:text-zinc-300">
-            @{profile.username} · {t("profile.memberSince", { date: formatMonthYear(language, profile.memberSince) })}
+            @{profile.username} ·{" "}
+            {t("profile.memberSince", { date: formatMonthYear(language, profile.memberSince) })}
           </p>
         </div>
       </header>
@@ -60,7 +64,9 @@ export function ProfileOverview({ profile }: { profile: ProfileData }) {
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {tiles.map((tile) => (
             <Card key={tile.label} className="p-4">
-              <dt className="text-xs font-black text-zinc-700 uppercase dark:text-zinc-300">{tile.label}</dt>
+              <dt className="text-xs font-black text-zinc-700 uppercase dark:text-zinc-300">
+                {tile.label}
+              </dt>
               <dd className="font-mono text-2xl font-black">{tile.value}</dd>
             </Card>
           ))}
@@ -104,7 +110,9 @@ export function ProfileOverview({ profile }: { profile: ProfileData }) {
                 <div>
                   <p className="text-sm font-black">{t(badge.titleKey)}</p>
                   <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                    {unlocked ? t(badge.descriptionKey) : t("profile.badgeLocked", { goal: t(badge.descriptionKey) })}
+                    {unlocked
+                      ? t(badge.descriptionKey)
+                      : t("profile.badgeLocked", { goal: t(badge.descriptionKey) })}
                   </p>
                 </div>
               </li>
