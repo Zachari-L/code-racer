@@ -155,7 +155,7 @@ export function measurePassage(text: string): PassageMetrics {
   const letters = words.map((w) => w.replace(/[^\p{L}]/gu, ""));
   const totalLetters = letters.reduce((sum, w) => sum + w.length, 0);
   const nonSpace = text.replace(/\s/g, "");
-  const special = nonSpace.replace(/[a-z]/g, "").length;
+  const special = nonSpace.replace(/\p{Ll}/gu, "").length;
   return {
     averageWordLength: words.length ? totalLetters / words.length : 0,
     longWordRatio: words.length ? letters.filter((w) => w.length >= 8).length / words.length : 0,
@@ -164,20 +164,25 @@ export function measurePassage(text: string): PassageMetrics {
 }
 
 /**
- * Complexity of a corpus passage (CONF-05), from its average word length, its
- * share of long words (8+ letters) and its share of "special" characters
- * (anything other than unaccented lowercase letters: capitals, accents,
- * punctuation, digits).
+ * Difficulty score of a passage (CONF-05):
+ *   average word length (letters)
+ *   + 10 x share of special characters (capitals, punctuation, digits; accented
+ *     lowercase letters are ordinary letters)
+ *   + 4 x share of long words (8+ letters).
  */
-export function classifyPassage(text: string): Complexity {
+export function passageScore(text: string): number {
   const m = measurePassage(text);
-  if (m.averageWordLength >= 5.2 || m.longWordRatio >= 0.2 || m.specialCharRatio >= 0.1) {
-    return "HARD";
-  }
-  if (m.averageWordLength <= 4.4 && m.longWordRatio <= 0.1 && m.specialCharRatio <= 0.06) {
-    return "EASY";
-  }
-  return "MEDIUM";
+  return m.averageWordLength + 10 * m.specialCharRatio + 4 * m.longWordRatio;
+}
+
+export const PASSAGE_SCORE_THRESHOLDS = { medium: 5.1, hard: 5.8 } as const;
+
+/** EASY below 5.1, HARD from 5.8, MEDIUM in between. */
+export function classifyPassage(text: string): Complexity {
+  const score = passageScore(text);
+  if (score >= PASSAGE_SCORE_THRESHOLDS.hard) return "HARD";
+  if (score >= PASSAGE_SCORE_THRESHOLDS.medium) return "MEDIUM";
+  return "EASY";
 }
 
 export interface Passage {
