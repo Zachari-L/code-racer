@@ -188,12 +188,14 @@ export function RoomClient({ code, invite }: RoomClientProps) {
                 ) : (
                   <p className="w-full text-center text-sm font-bold">{t("results.waitingHost")}</p>
                 )}
-                {results.raceId && (
-                  <LinkButton href={`/races/${results.raceId}`} variant="outline">
-                    <History className="mr-2 h-4 w-4" aria-hidden />
-                    {t("results.permalink")}
-                  </LinkButton>
-                )}
+                {/* Stored results are only kept in signed-in racers' history. */}
+                {results.raceId &&
+                  results.rows.some((r) => r.racerId === room.youId && r.userId) && (
+                    <LinkButton href={`/races/${results.raceId}`} variant="outline">
+                      <History className="mr-2 h-4 w-4" aria-hidden />
+                      {t("results.permalink")}
+                    </LinkButton>
+                  )}
                 <Button variant="ghost" onClick={() => send({ type: "leave" })}>
                   <LogOut className="mr-2 h-4 w-4" aria-hidden />
                   {t("lobby.leave")}
