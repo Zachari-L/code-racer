@@ -22,7 +22,7 @@ export const BOT_PROFILES: Record<BotLevel, BotProfile> = {
   BEGINNER: { minWpm: 20, maxWpm: 35, errorRate: 0.08 },
   INTERMEDIATE: { minWpm: 35, maxWpm: 60, errorRate: 0.05 },
   EXPERT: { minWpm: 70, maxWpm: 100, errorRate: 0.02 },
-  IMPOSSIBLE: { minWpm: 140, maxWpm: 170, errorRate: 0.005 },
+  IMPOSSIBLE: { minWpm: 145, maxWpm: 175, errorRate: 0.005 },
 };
 
 const WRONG_KEYS = "etaoinsrhldcu";
@@ -71,8 +71,14 @@ function currentWord(text: string, index: number): string {
   return text.slice(index, end === -1 ? undefined : end);
 }
 
+/**
+ * Keystroke rhythm is faster than the target speed: hesitations, hard words and
+ * errors cost about a quarter of it, so the measured net WPM lands in range.
+ */
+const RHYTHM_CALIBRATION = 0.76;
+
 function msPerChar(bot: BotState): number {
-  return 60000 / (bot.baseWpm * 5);
+  return (60000 / (bot.baseWpm * 5)) * RHYTHM_CALIBRATION;
 }
 
 /**
