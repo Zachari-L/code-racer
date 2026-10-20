@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Users, User, Sun, Moon, LogIn, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Users, User, Sun, Moon, LogIn, LogOut, Plus } from "lucide-react";
+import { LinkButton } from "@/components/ui/link-button";
 import { TireIcon } from "@/components/animated/TireIcon";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -35,19 +35,22 @@ export function Navbar() {
         {/* Navigation & Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Main Page Links */}
-          <nav className="flex items-center gap-1.5 sm:gap-2">
-            <Link href="/lobby">
-              <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2">
-                <Users className="text-azure-blue h-4 w-4" />
-                <span className="hidden sm:inline">{t("nav.lobbies")}</span>
-              </Button>
-            </Link>
-            <Link href="/profile">
-              <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2">
-                <User className="h-4 w-4" />
-                <span className="hidden sm:inline">{t("nav.profile")}</span>
-              </Button>
-            </Link>
+          <nav aria-label={t("nav.main")} className="flex items-center gap-1.5 sm:gap-2">
+            <LinkButton href="/rooms" variant="outline" size="sm" className="gap-1.5 sm:gap-2">
+              <Users className="text-azure-blue h-4 w-4" aria-hidden />
+              <span className="sr-only sm:not-sr-only">{t("nav.lobbies")}</span>
+            </LinkButton>
+            {session?.user && (
+              <LinkButton
+                href="/rooms/new"
+                variant="outline"
+                size="sm"
+                className="gap-1.5 sm:gap-2"
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+                <span className="sr-only sm:not-sr-only">{t("nav.create")}</span>
+              </LinkButton>
+            )}
           </nav>
 
           <div className="mx-1 h-6 w-[2px] bg-zinc-200 dark:bg-zinc-700" />
@@ -55,15 +58,15 @@ export function Navbar() {
           {/* User Session Auth Button */}
           {session?.user ? (
             <div className="flex items-center gap-1.5">
-              <Link href="/profile">
-                <div className="border-slate-dark arcade-shadow flex h-9 items-center gap-1.5 rounded-full border-2 bg-white px-2.5 text-xs font-black transition-all hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white">
-                  <div className="bg-azure-blue flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white">
-                    {session.user.name?.[0]?.toUpperCase() ?? "U"}
-                  </div>
-                  <span className="max-w-[80px] truncate sm:max-w-[120px]">
-                    {session.user.name ?? session.user.username}
-                  </span>
-                </div>
+              <Link
+                href="/profile"
+                aria-label={t("nav.profile")}
+                className="border-slate-dark arcade-shadow flex h-9 items-center gap-1.5 rounded-full border-2 bg-white px-2.5 text-xs font-black hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+              >
+                <User className="text-azure-blue h-4 w-4" aria-hidden />
+                <span className="hidden max-w-[120px] truncate sm:inline">
+                  {session.user.name ?? session.user.username}
+                </span>
               </Link>
               <button
                 type="button"
@@ -76,12 +79,15 @@ export function Navbar() {
               </button>
             </div>
           ) : (
-            <Link href="/login">
-              <Button variant="lime" size="sm" className="gap-1.5 text-xs font-black">
-                <LogIn className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{t("nav.signIn")}</span>
-              </Button>
-            </Link>
+            <LinkButton
+              href="/login"
+              variant="lime"
+              size="sm"
+              className="gap-1.5 text-xs font-black"
+            >
+              <LogIn className="h-3.5 w-3.5" aria-hidden />
+              <span className="sr-only sm:not-sr-only">{t("nav.signIn")}</span>
+            </LinkButton>
           )}
 
           <div className="mx-0.5 hidden h-6 w-[2px] bg-zinc-200 sm:block dark:bg-zinc-700" />
