@@ -8,9 +8,9 @@ export const buttonVariants = cva(
       variant: {
         lime: "bg-electric-lime text-[#111112] dark:text-[#111112] border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-105 active:shadow-none",
         azure:
-          "bg-azure-blue text-white border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
+          "bg-azure-deep text-white border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
         orange:
-          "bg-tangerine-orange text-white border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
+          "bg-tangerine-orange text-[#111112] dark:text-[#111112] border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
         magenta:
           "bg-arcade-magenta text-white border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-110 active:shadow-none",
         teal: "bg-victory-teal text-[#111112] dark:text-[#111112] border-3 border-slate-dark dark:border-zinc-700 arcade-shadow hover:brightness-105 active:shadow-none",

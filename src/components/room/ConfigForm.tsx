@@ -55,7 +55,7 @@ function Choice<T extends string>({
           className={cn(
             "arcade-clickable has-[:focus-visible]:outline-azure-blue cursor-pointer rounded-full border-2 px-3 py-1 text-xs font-black has-[:focus-visible]:outline-3",
             option === value
-              ? "border-slate-dark bg-azure-blue text-white"
+              ? "border-slate-dark bg-azure-deep text-white"
               : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
           )}
         >

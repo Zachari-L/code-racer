@@ -7,6 +7,8 @@
   --color-slate-dark: #111112;
   --color-electric-lime: #d2ff00;
   --color-azure-blue: #007bff;
+  /* Azure for fills that carry white text: #007bff gives white only 3.97:1 (A11Y-01). */
+  --color-azure-deep: #0062cc;
   --color-tangerine-orange: #ff7a00;
   --color-arcade-magenta: #d9008d;
   --color-victory-teal: #00bfa5;
@@ -212,4 +214,9 @@ a.arcade-shadow:active,
 
 .dark :focus-visible {
   outline-color: var(--color-electric-lime);
+}
+
+/* Azure text on dark surfaces needs a lighter step for 4.5:1 (A11Y-01). */
+.dark .text-azure-blue {
+  color: #4da3ff;
 }

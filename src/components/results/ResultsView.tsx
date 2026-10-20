@@ -18,7 +18,7 @@ interface ResultsViewProps {
 
 const PODIUM_STYLE = [
   { height: "h-28", bg: "bg-electric-lime text-[#111112]", order: "order-2" },
-  { height: "h-20", bg: "bg-azure-blue text-white", order: "order-1" },
+  { height: "h-20", bg: "bg-azure-deep text-white", order: "order-1" },
   { height: "h-14", bg: "bg-tangerine-orange text-[#111112]", order: "order-3" },
 ];
 

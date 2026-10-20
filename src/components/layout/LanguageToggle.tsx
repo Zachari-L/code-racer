@@ -13,12 +13,13 @@ export function LanguageToggle({ className }: { className?: string }) {
       type="button"
       onClick={toggleLanguage}
       title={t("language.switch")}
-      aria-label={t("language.switch")}
       className={cn(
         "border-slate-dark arcade-shadow flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-2 bg-white py-1 text-xs font-black transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700",
         className
       )}
     >
+      {/* The accessible name must contain the visible "FR / EN" (WCAG 2.5.3). */}
+      <span className="sr-only">{t("language.switch")}</span>
       <Globe className="text-azure-blue hidden h-3.5 w-3.5 sm:block" aria-hidden />
       {LOCALES.map((locale, index) => (
         <span key={locale} className="flex items-center gap-1.5">

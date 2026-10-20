@@ -225,7 +225,7 @@ export function LobbyView({ room, send }: LobbyViewProps) {
                       invite.revoked
                         ? "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200"
                         : invite.usedByName
-                          ? "bg-azure-blue text-white"
+                          ? "bg-azure-deep text-white"
                           : "bg-electric-lime text-[#111112]"
                     )}
                   >

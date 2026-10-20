@@ -27,7 +27,7 @@ test("register, sign out and sign back in with a password (AUTH-01, TEST-03)", a
 test("the language switch persists and changes every label (I18N-02)", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Tapez plus vite");
-  await page.getByRole("button", { name: "Passer en anglais" }).click();
+  await page.getByRole("button", { name: /Passer en anglais/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Type faster");
   await page.reload();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Type faster");
