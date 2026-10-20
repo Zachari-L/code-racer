@@ -549,4 +549,8 @@ export const en: Record<TranslationKey, string> = {
   "history.next": "Next",
   "history.pageOf": "Page {page} of {count}",
   "history.back": "Back to profile",
+  "theme.label": "Theme",
+  "theme.light": "Light theme",
+  "theme.dark": "Dark theme",
+  "theme.system": "System theme",
 };

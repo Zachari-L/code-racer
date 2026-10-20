@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Users, User, Sun, Moon, LogIn, LogOut, Plus } from "lucide-react";
+import { Users, User, LogIn, LogOut, Plus } from "lucide-react";
 import { LinkButton } from "@/components/ui/link-button";
 import { TireIcon } from "@/components/animated/TireIcon";
-import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
+import { ThemeSelector } from "@/components/layout/ThemeSelector";
 
 export function Navbar() {
   const { data: session } = useSession();
-  const { theme, toggleTheme } = useTheme();
   const { t } = useLanguage();
 
   return (
@@ -94,20 +93,7 @@ export function Navbar() {
 
           <LanguageToggle className="px-2.5" />
 
-          {/* Theme Toggle Button (Light / Dark) */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={theme === "light" ? t("nav.themeDark") : t("nav.themeLight")}
-            aria-label={theme === "light" ? t("nav.themeDark") : t("nav.themeLight")}
-            className="border-slate-dark arcade-shadow flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 bg-white transition-all hover:bg-zinc-100 active:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700"
-          >
-            {theme === "light" ? (
-              <Moon className="text-slate-dark h-4 w-4" />
-            ) : (
-              <Sun className="text-electric-lime fill-electric-lime/30 h-4 w-4" />
-            )}
-          </button>
+          <ThemeSelector />
         </div>
       </div>
     </header>

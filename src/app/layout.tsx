@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, JetBrains_Mono } from "next/font/google";
 import { AppProviders } from "@/context/AppProviders";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { getLocale, getTranslator } from "@/lib/i18n/server";
 import "./globals.css";
 
@@ -39,6 +40,10 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${nunito.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Applies the saved or system theme before the first paint (DES-05). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="bg-canvas text-slate-dark selection:bg-electric-lime selection:text-slate-dark flex min-h-full flex-col font-sans transition-colors duration-150 dark:bg-[#111112] dark:text-zinc-100">
         <AppProviders locale={locale}>{children}</AppProviders>
       </body>

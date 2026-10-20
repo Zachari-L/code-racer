@@ -552,6 +552,10 @@ export const fr = {
   "history.next": "Suivant",
   "history.pageOf": "Page {page} sur {count}",
   "history.back": "Retour au profil",
+  "theme.label": "Thème",
+  "theme.light": "Thème clair",
+  "theme.dark": "Thème sombre",
+  "theme.system": "Thème du système",
 } as const satisfies Record<string, string>;
 
 export type TranslationKey = keyof typeof fr;
