@@ -51,9 +51,15 @@ describe("Room state reducer", () => {
     });
     state = roomReducer(state, { type: "self", self, reason: "resync" });
     state = roomReducer(state, { type: "room", room: room(race(1)), serverNow: 0 });
-    expect(state.self).toEqual(self);
+    expect(state.self).toEqual({ state: self, reason: "resync" });
     state = roomReducer(state, { type: "room", room: room(race(2)), serverNow: 0 });
     expect(state.self).toBeNull();
+  });
+
+  it("keeps personal state sent before the first snapshot (reconnection)", () => {
+    let state = roomReducer(INITIAL_ROOM_STATE, { type: "self", self, reason: "resync" });
+    state = roomReducer(state, { type: "room", room: room(race(1)), serverNow: 0 });
+    expect(state.self).toEqual({ state: self, reason: "resync" });
   });
 
   it("keeps the latest bonus notices only", () => {

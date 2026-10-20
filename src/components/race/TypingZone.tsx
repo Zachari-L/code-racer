@@ -53,8 +53,11 @@ export function TypingZone({
 }: TypingZoneProps) {
   const { t } = useLanguage();
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [text, setText] = React.useState(initialText);
-  const [typing, setTyping] = React.useState<TypingState>(createTypingState);
+  // The server may have sent our state before this zone mounted (reconnection, COURSE-08).
+  const [text, setText] = React.useState(self?.state.text ?? initialText);
+  const [typing, setTyping] = React.useState<TypingState>(() =>
+    self ? toTypingState(self.state) : createTypingState()
+  );
   const [now, setNow] = React.useState(() => serverNow());
   const [focused, setFocused] = React.useState(false);
   const [lastSelf, setLastSelf] = React.useState(self);
@@ -180,7 +183,7 @@ export function TypingZone({
           spellCheck={false}
           className="absolute inset-0 h-full w-full cursor-text opacity-0"
         />
-        <p aria-hidden className="whitespace-pre-wrap">
+        <p aria-hidden data-testid="race-text" className="whitespace-pre-wrap">
           {[...text].map((char, index) => {
             const typedChar = typing.typed[index];
             const state =

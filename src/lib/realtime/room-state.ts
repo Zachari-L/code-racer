@@ -18,7 +18,8 @@ export interface BonusNotice {
 export interface RoomState {
   room: RoomSnapshot | null;
   track: TrackEntry[];
-  self: SelfState | null;
+  /** Latest personal race state and how to apply it (see the "self" message). */
+  self: { state: SelfState; reason: "resync" | "text" } | null;
   joinError: { error: JoinError; currentRoom?: string; retryAfterMs?: number } | null;
   actionError: ActionError | null;
   ended: "kicked" | "closed" | "left" | null;
@@ -47,7 +48,8 @@ export function roomReducer(state: RoomState, action: RoomAction): RoomState {
   switch (action.type) {
     case "room": {
       const race = action.room.race;
-      const isNewRace = race?.goAt !== state.room?.race?.goAt;
+      // A first snapshot is not a "new" race: a reconnection may get its state first.
+      const isNewRace = state.room !== null && race?.goAt !== state.room.race?.goAt;
       return {
         ...state,
         room: action.room,
@@ -62,7 +64,7 @@ export function roomReducer(state: RoomState, action: RoomAction): RoomState {
     case "track":
       return { ...state, track: action.track };
     case "self":
-      return { ...state, self: action.self };
+      return { ...state, self: { state: action.self, reason: action.reason } };
     case "bonus": {
       const key = (state.notices.at(-1)?.key ?? 0) + 1;
       return {

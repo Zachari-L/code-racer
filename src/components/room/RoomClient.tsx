@@ -10,7 +10,7 @@ import { LinkButton } from "@/components/ui/link-button";
 import { useLanguage } from "@/context/LanguageContext";
 import type { KeyInput } from "@/lib/game/typing";
 import { useRealtime, type RealtimeClient } from "@/lib/realtime/client";
-import type { SelfState, ServerMessage } from "@/lib/realtime/protocol";
+import type { ServerMessage } from "@/lib/realtime/protocol";
 import { INITIAL_ROOM_STATE, roomReducer } from "@/lib/realtime/room-state";
 import { LobbyView } from "./LobbyView";
 
@@ -24,9 +24,6 @@ const NOTICE_MS = 4000;
 export function RoomClient({ code, invite }: RoomClientProps) {
   const { t } = useLanguage();
   const [state, dispatch] = React.useReducer(roomReducer, INITIAL_ROOM_STATE);
-  const [self, setSelf] = React.useState<{ state: SelfState; reason: "resync" | "text" } | null>(
-    null
-  );
   const joinOptions = React.useRef({ asSpectator: false, leaveCurrent: false });
 
   const onMessage = React.useCallback(
@@ -40,7 +37,6 @@ export function RoomClient({ code, invite }: RoomClientProps) {
         }
         return;
       }
-      if (message.type === "self") setSelf({ state: message.self, reason: message.reason });
       // Every notice lives NOTICE_MS, so expiring the oldest one keeps them in order.
       if (message.type === "bonus") {
         setTimeout(() => dispatch({ type: "dismissOldestNotice" }), NOTICE_MS);
@@ -159,7 +155,7 @@ export function RoomClient({ code, invite }: RoomClientProps) {
         <RaceView
           room={room}
           track={state.track}
-          self={self}
+          self={state.self}
           notices={state.notices}
           serverNow={serverNow}
           onKeys={onKeys}
