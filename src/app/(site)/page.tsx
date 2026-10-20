@@ -1,4 +1,3 @@
-import { JoinLobbyCard } from "@/components/lobby/JoinLobbyCard";
 import { ScrollReveal } from "@/components/animated/ScrollReveal";
 import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -29,13 +28,6 @@ export default async function Home() {
           {t("home.subtitle")}
         </p>
       </ScrollReveal>
-
-      {/* Lobby joining card */}
-      <div className="my-6 flex w-full max-w-lg flex-col items-center justify-center">
-        <ScrollReveal direction="up" delay={0.1} className="flex w-full justify-center">
-          <JoinLobbyCard />
-        </ScrollReveal>
-      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { getTranslator } from "@/lib/i18n/server";
 import type { TranslationKey } from "@/lib/i18n";
-import type { PlayerColor } from "@/types/race";
+import type { PlayerColor } from "@/lib/game/colors";
 
 export interface ProfileRacerResult {
   id: string;

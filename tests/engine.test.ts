@@ -1,11 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-  calculateWpm,
-  calculateAccuracy,
-  computeTypingStats,
-  countCorrectChars,
-  generateLobbyCode,
-} from "../src/lib/utils";
+import { calculateWpm, calculateAccuracy, countCorrectChars } from "../src/lib/utils";
 
 describe("CodeRacer Typing Engine Calculations", () => {
   it("calculates WPM accurately based on standard 5 characters per word formula", () => {
@@ -36,37 +30,9 @@ describe("CodeRacer Typing Engine Calculations", () => {
     expect(acc).toBe(100);
   });
 
-  it("generates a valid 6-digit lobby code", () => {
-    const code = generateLobbyCode();
-    expect(code).toMatch(/^\d{6}$/);
-  });
-
   it("counts position-matching characters, including partial input", () => {
     expect(countCorrectChars("hellp", "hello")).toBe(4);
     expect(countCorrectChars("he", "hello")).toBe(2);
     expect(countCorrectChars("", "hello")).toBe(0);
-  });
-
-  it("computes integer race telemetry from typed input", () => {
-    // 250 chars in 60s, 5 wrong: net 245/5 = 49 WPM, gross 50 WPM, 98% accuracy
-    const target = "a".repeat(250);
-    const typed = "b".repeat(5) + "a".repeat(245);
-    expect(computeTypingStats(typed, target, 60)).toEqual({
-      correctChars: 245,
-      errorsCount: 5,
-      wpm: 49,
-      rawWpm: 50,
-      accuracy: 98,
-    });
-  });
-
-  it("reports a neutral state before any typing", () => {
-    expect(computeTypingStats("", "hello", 0)).toEqual({
-      correctChars: 0,
-      errorsCount: 0,
-      wpm: 0,
-      rawWpm: 0,
-      accuracy: 100,
-    });
   });
 });

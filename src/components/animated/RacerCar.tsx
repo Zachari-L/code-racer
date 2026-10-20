@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import { motion } from "motion/react";
+import type { CarColor } from "@/lib/game/colors";
 
 interface RacerCarProps {
-  color?: "azure" | "tangerine" | "magenta" | "teal" | "lime";
+  color?: CarColor;
   wpm?: number;
   showSmoke?: boolean;
   showHeadlight?: boolean;

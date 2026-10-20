@@ -9,7 +9,7 @@ import {
 } from "@/lib/i18n";
 import { fr } from "@/lib/i18n/messages/fr";
 import { en } from "@/lib/i18n/messages/en";
-import { joinLobbySchema } from "@/lib/validations/race";
+import { roomCodeSchema } from "@/lib/room-code";
 import { registerSchema } from "@/lib/validations/auth";
 
 function placeholders(template: string): string[] {
@@ -94,14 +94,14 @@ describe("Formatting", () => {
 
 describe("Validation messages", () => {
   it("are translation keys translated per locale", () => {
-    const result = joinLobbySchema.safeParse({ code: "12", nickname: "Ace" });
+    const result = roomCodeSchema.safeParse("AB1");
     expect(result.success).toBe(false);
     if (result.success) return;
     expect(translateZodError(createTranslator("en"), result.error, "errors.invalidParams")).toBe(
-      "The lobby code must be exactly 6 digits"
+      "Room codes are 6 letters or digits (no 0, O, 1, I or L)"
     );
     expect(translateZodError(createTranslator("fr"), result.error, "errors.invalidParams")).toBe(
-      "Le code de salon doit comporter exactement 6 chiffres"
+      "Le code de salle comporte 6 lettres ou chiffres (sans 0, O, 1, I ni L)"
     );
   });
 

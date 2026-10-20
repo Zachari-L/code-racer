@@ -1,18 +1,8 @@
 import { prisma } from "../src/lib/prisma";
 import { BADGES, BADGE_CODES, toBadgeRecord } from "../src/lib/badges";
-import { RACE_TEXTS } from "../src/lib/race-texts";
 
 async function main() {
   console.log("🌱 Début du seed CodeRacer...");
-
-  for (const { id, ...text } of RACE_TEXTS) {
-    const data = {
-      ...text,
-      wordCount: text.content.split(/\s+/).length,
-      charCount: text.content.length,
-    };
-    await prisma.textSnippet.upsert({ where: { id }, update: data, create: { id, ...data } });
-  }
 
   for (const badge of BADGES) {
     const record = toBadgeRecord(badge);

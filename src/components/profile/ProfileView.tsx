@@ -30,7 +30,7 @@ import {
   type ProfileRacerResult,
   type GetUserProfileResult,
 } from "@/server/actions/profile";
-import type { PlayerColor } from "@/types/race";
+import type { PlayerColor } from "@/lib/game/colors";
 
 function hoursAgo(hours: number): string {
   return new Date(Date.now() - hours * 3_600_000).toISOString();
