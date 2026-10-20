@@ -275,7 +275,7 @@ export class RoomRuntime {
     }
     this.broadcastRoom();
     const self = this.race?.session.self(memberId);
-    if (self && !this.race?.results) connection.send({ type: "self", self });
+    if (self && !this.race?.results) connection.send({ type: "self", self, reason: "resync" });
   }
 
   /** A socket closed. After the grace delay, the member leaves (COURSE-08). */
@@ -541,7 +541,7 @@ export class RoomRuntime {
     if (result === "rejected") {
       // Impossible progress: the server's state wins (COURSE-06).
       const self = session.self(memberId);
-      if (self) connection.send({ type: "self", self });
+      if (self) connection.send({ type: "self", self, reason: "resync" });
     }
   }
 
@@ -554,7 +554,10 @@ export class RoomRuntime {
     for (const bonus of result.bonuses) this.broadcast({ type: "bonus", bonus });
     for (const racerId of result.changed) {
       const self = race.session.self(racerId);
-      if (self) this.connections.get(racerId)?.forEach((c) => c.send({ type: "self", self }));
+      if (self)
+        this.connections
+          .get(racerId)
+          ?.forEach((c) => c.send({ type: "self", self, reason: "text" }));
     }
     if (now - this.lastTrackAt >= TRACK_BROADCAST_MS || result.ended) this.broadcastTrack(now);
     if (result.ended) void this.enqueue(() => this.finishRace());

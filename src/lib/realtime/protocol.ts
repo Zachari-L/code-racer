@@ -215,7 +215,12 @@ export type ServerMessage =
   | { type: "actionError"; error: ActionError; detail?: string }
   | { type: "room"; room: RoomSnapshot; serverNow: number }
   | { type: "track"; track: TrackEntry[]; serverNow: number }
-  | { type: "self"; self: SelfState }
+  /**
+   * The racer's own state. "resync": adopt it entirely (reconnection, rejected
+   * input). "text": a bonus edited the text; keep the local typed buffer, since
+   * keystrokes may still be in flight.
+   */
+  | { type: "self"; self: SelfState; reason: "resync" | "text" }
   | { type: "bonus"; bonus: BonusEvent }
   | { type: "left" }
   | { type: "kicked" }

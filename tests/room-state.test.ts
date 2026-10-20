@@ -49,7 +49,7 @@ describe("Room state reducer", () => {
       room: room(race(1)),
       serverNow: 0,
     });
-    state = roomReducer(state, { type: "self", self });
+    state = roomReducer(state, { type: "self", self, reason: "resync" });
     state = roomReducer(state, { type: "room", room: room(race(1)), serverNow: 0 });
     expect(state.self).toEqual(self);
     state = roomReducer(state, { type: "room", room: room(race(2)), serverNow: 0 });
