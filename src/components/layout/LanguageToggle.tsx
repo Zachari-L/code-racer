@@ -19,7 +19,7 @@ export function LanguageToggle({ className }: { className?: string }) {
         className
       )}
     >
-      <Globe className="text-azure-blue h-3.5 w-3.5" />
+      <Globe className="text-azure-blue hidden h-3.5 w-3.5 sm:block" aria-hidden />
       {LOCALES.map((locale, index) => (
         <span key={locale} className="flex items-center gap-1.5">
           {index > 0 && <span className="text-zinc-300 dark:text-zinc-600">/</span>}

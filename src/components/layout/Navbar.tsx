@@ -15,13 +15,14 @@ export function Navbar() {
 
   return (
     <header className="border-slate-dark sticky top-0 z-40 w-full border-b-3 bg-white/90 backdrop-blur-md transition-colors duration-150 dark:border-zinc-700 dark:bg-zinc-900/90">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:h-20 sm:px-8">
         {/* Brand Logo */}
-        <Link href="/" className="group flex items-center gap-3">
-          <div className="bg-electric-lime border-slate-dark arcade-shadow flex h-12 w-12 items-center justify-center rounded-2xl border-3 transition-transform duration-200 group-hover:rotate-12 dark:border-zinc-700">
+        <Link href="/" aria-label="CodeRacer" className="group flex shrink-0 items-center gap-3">
+          <div className="bg-electric-lime border-slate-dark arcade-shadow flex h-10 w-10 items-center justify-center rounded-2xl border-3 transition-transform duration-200 group-hover:rotate-12 sm:h-12 sm:w-12 dark:border-zinc-700">
             <TireIcon size={32} spinOnHover />
           </div>
-          <div className="flex flex-col">
+          {/* The wordmark needs room: phones show the logo alone (DES-06). */}
+          <div className="hidden flex-col lg:flex">
             <span className="text-slate-dark text-2xl font-black tracking-wider uppercase dark:text-white">
               Code<span className="text-azure-blue">Racer</span>
             </span>
@@ -32,7 +33,7 @@ export function Navbar() {
         </Link>
 
         {/* Navigation & Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {/* Main Page Links */}
           <nav aria-label={t("nav.main")} className="flex items-center gap-1.5 sm:gap-2">
             <LinkButton href="/rooms" variant="outline" size="sm" className="gap-1.5 sm:gap-2">
@@ -52,7 +53,7 @@ export function Navbar() {
             )}
           </nav>
 
-          <div className="mx-1 h-6 w-[2px] bg-zinc-200 dark:bg-zinc-700" />
+          <div className="mx-1 hidden h-6 w-[2px] bg-zinc-200 sm:block dark:bg-zinc-700" />
 
           {/* User Session Auth Button */}
           {session?.user ? (
