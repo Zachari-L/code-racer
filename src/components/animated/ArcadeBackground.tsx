@@ -1,7 +1,4 @@
-"use client";
-
-import * as React from "react";
-import { motion } from "motion/react";
+import type { CSSProperties } from "react";
 import { SpeedLines } from "./SpeedLines";
 
 interface ConfettiItem {
@@ -98,6 +95,7 @@ const CONFETTI_ELEMENTS: ConfettiItem[] = [
   },
 ];
 
+/** Ambient decoration, animated in CSS (and frozen for reduced motion). */
 export function ArcadeBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none">
@@ -106,25 +104,20 @@ export function ArcadeBackground() {
 
       {/* Gentle ambient floating arcade confetti (strictly background decoration, no mouse tracking) */}
       {CONFETTI_ELEMENTS.map((item) => (
-        <motion.div
+        <div
           key={item.id}
-          className={`absolute ${item.color} ${item.size} drop-shadow-none`}
-          style={{
-            left: `${item.xPercent}%`,
-            top: `${item.yPercent}%`,
-          }}
-          animate={{
-            y: [-8, 8, -8],
-            rotate: [0, item.rotationSpeed * 3, 0],
-          }}
-          transition={{
-            duration: item.floatDuration,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          className={`arcade-float absolute ${item.color} ${item.size} drop-shadow-none`}
+          style={
+            {
+              left: `${item.xPercent}%`,
+              top: `${item.yPercent}%`,
+              "--float-duration": `${item.floatDuration}s`,
+              "--float-rotate": `${item.rotationSpeed * 3}deg`,
+            } as CSSProperties
+          }
         >
           {item.char}
-        </motion.div>
+        </div>
       ))}
     </div>
   );

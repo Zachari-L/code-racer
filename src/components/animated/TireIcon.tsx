@@ -1,38 +1,26 @@
-"use client";
-
-import * as React from "react";
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 interface TireIconProps {
   className?: string;
   size?: number;
+  /** Spins when the parent link (`.group`) is hovered. */
   spinOnHover?: boolean;
-  continuous?: boolean;
 }
 
-export function TireIcon({
-  className,
-  size = 28,
-  spinOnHover = true,
-  continuous = false,
-}: TireIconProps) {
+export function TireIcon({ className, size = 28, spinOnHover = true }: TireIconProps) {
   return (
-    <motion.svg
+    <svg
       width={size}
       height={size}
       viewBox="0 0 100 100"
       fill="none"
+      aria-hidden
       xmlns="http://www.w3.org/2000/svg"
-      whileHover={spinOnHover ? { rotate: 180, scale: 1.1 } : undefined}
-      animate={continuous ? { rotate: 360 } : undefined}
-      transition={{
-        rotate: continuous
-          ? { repeat: Infinity, duration: 6, ease: "linear" }
-          : { type: "spring", stiffness: 200, damping: 12 },
-        scale: { duration: 0.15 },
-      }}
-      className={cn("inline-block shrink-0", className)}
+      className={cn(
+        "inline-block shrink-0 transition-transform duration-300",
+        spinOnHover && "group-hover:rotate-180",
+        className
+      )}
     >
       {/* Outer tire tread (Dark Slate) */}
       <circle cx="50" cy="50" r="46" fill="#111112" stroke="#111112" strokeWidth="4" />
@@ -55,6 +43,6 @@ export function TireIcon({
 
       {/* Center lug nut */}
       <circle cx="50" cy="50" r="5" fill="#111112" />
-    </motion.svg>
+    </svg>
   );
 }

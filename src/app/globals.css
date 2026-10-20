@@ -220,3 +220,28 @@ a.arcade-shadow:active,
 .dark .text-azure-blue {
   color: #4da3ff;
 }
+
+/* Background confetti float (pure CSS, so pages ship no animation library) */
+@keyframes arcade-float {
+  0%,
+  100% {
+    transform: translateY(-8px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+.arcade-float {
+  animation: arcade-float var(--float-duration, 6s) ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
