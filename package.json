@@ -30,16 +30,17 @@
     "next": "16.3.8",
     "next-auth": "^5.0.0-beta.32",
     "pg": "^8.23.1",
+    "prisma": "^7.10.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "^7.89.0",
     "sharp": "0.35.5",
     "tailwind-merge": "^3.7.0",
+    "tsx": "^4.23.15",
     "ws": "^8.22.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^3.0.0",
     "@types/bun": "^1.4.2",
@@ -52,9 +53,7 @@
     "eslint-config-next": "16.3.8",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "prisma": "^7.10.0",
     "tailwindcss": "^4",
-    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "packageManager": "bun@1.4.1",

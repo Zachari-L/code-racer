@@ -1,49 +1,39 @@
-#syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1
+# CodeRacer runs a custom Node server (Next.js + WebSocket on one port),
+# so the image ships the full app instead of Next's standalone output.
 
-# 1. Base Image
-FROM oven/bun:1-alpine AS base
-WORKDIR /app
-
-# 2. Dependencies Stage
-FROM base AS deps
+# 1. Dependencies, installed with Bun from the lockfile.
+FROM oven/bun:1.4.1-debian AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
-COPY prisma ./prisma/
 RUN bun install --frozen-lockfile
 
-# 3. Builder Stage
-FROM base AS builder
+# 2. Build: Prisma client + Next.js production build.
+FROM node:22-bookworm-slim AS builder
 WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Set build environment
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
-RUN bun run db:generate
-RUN bun run build
+RUN npx prisma generate && npx next build
 
-# 4. Runner Stage
-FROM base AS runner
+# 3. Runtime.
+FROM node:22-bookworm-slim AS runner
 WORKDIR /app
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    TRUST_PROXY=true
 
-# Non-root user for security
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs && useradd --system --uid 1001 --gid nodejs nextjs
 
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/public ./public
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/server.ts /app/package.json /app/tsconfig.json /app/next.config.ts /app/prisma.config.ts ./
 
 USER nextjs
-
 EXPOSE 3000
-
-CMD ["bun", "run", "server.js"]
+# Migrations run as Fly's release command (fly.toml) before traffic switches.
+CMD ["node", "--import", "tsx", "server.ts"]
