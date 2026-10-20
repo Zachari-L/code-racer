@@ -54,6 +54,8 @@ jobs:
           node-version: 22
       - run: bun install --frozen-lockfile
       - run: bunx prisma migrate deploy
+      # Corpus of passages for coherent texts, plus demo accounts.
+      - run: bun run db:seed
       - run: bun run build
       - run: bunx playwright install --with-deps chromium
       - run: bun run test:e2e

@@ -4,8 +4,8 @@ const PORT = 3100;
 
 /**
  * End-to-end tests (TEST-02). They sign in with username and password, since
- * OAuth cannot run in tests (TEST-03). The database must be migrated; each test
- * registers its own accounts, so no seed is required. Build the app first.
+ * OAuth cannot run in tests (TEST-03). The database must be migrated and seeded
+ * (text corpus); each test registers its own accounts. Build the app first.
  */
 export default defineConfig({
   testDir: "e2e",
