@@ -25,7 +25,7 @@ export function Navbar() {
             <span className="text-slate-dark text-2xl font-black tracking-wider uppercase dark:text-white">
               Code<span className="text-azure-blue">Racer</span>
             </span>
-            <span className="text-[10px] font-extrabold tracking-widest text-zinc-500 uppercase dark:text-zinc-400">
+            <span className="text-[10px] font-extrabold tracking-widest text-zinc-600 uppercase dark:text-zinc-300">
               {t("nav.subtitle")}
             </span>
           </div>

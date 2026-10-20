@@ -381,4 +381,5 @@ export const en: Record<TranslationKey, string> = {
   "theme.light": "Light theme",
   "theme.dark": "Dark theme",
   "theme.system": "System theme",
+  "nav.skipToContent": "Skip to content",
 };

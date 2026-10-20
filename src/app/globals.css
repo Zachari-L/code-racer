@@ -203,3 +203,13 @@ a.arcade-shadow:active,
   --chart-grid: #3f3f46;
   --chart-surface: #18181b;
 }
+
+/* A11Y-04: a visible focus ring on everything reachable with the keyboard */
+:focus-visible {
+  outline: 3px solid var(--color-azure-blue);
+  outline-offset: 2px;
+}
+
+.dark :focus-visible {
+  outline-color: var(--color-electric-lime);
+}

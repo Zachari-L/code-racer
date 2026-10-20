@@ -381,6 +381,7 @@ export const fr = {
   "theme.light": "Thème clair",
   "theme.dark": "Thème sombre",
   "theme.system": "Thème du système",
+  "nav.skipToContent": "Aller au contenu",
 } as const satisfies Record<string, string>;
 
 export type TranslationKey = keyof typeof fr;
