@@ -305,4 +305,6 @@ export const en: Record<TranslationKey, string> = {
   "validation.timeLimitRange": "The time limit must be between 30 seconds and 10 minutes",
   "validation.wordCountRange": "Length must be between 10 and 150 words",
   "validation.nicknameChars": "Letters, digits, spaces, dashes and underscores only",
+  "errors.signInToHost": "Sign in to create a room.",
+  "errors.alreadyInRoom": "You are already in another room.",
 };

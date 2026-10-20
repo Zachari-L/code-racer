@@ -305,6 +305,8 @@ export const fr = {
   "validation.timeLimitRange": "Le temps maximal doit être entre 30 secondes et 10 minutes",
   "validation.wordCountRange": "La longueur doit être entre 10 et 150 mots",
   "validation.nicknameChars": "Lettres, chiffres, espaces, tirets et underscores uniquement",
+  "errors.signInToHost": "Connecte-toi pour créer une salle.",
+  "errors.alreadyInRoom": "Tu es déjà dans une autre salle.",
 } as const satisfies Record<string, string>;
 
 export type TranslationKey = keyof typeof fr;
