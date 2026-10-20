@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import {
@@ -18,6 +17,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LinkButton } from "@/components/ui/link-button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/context/LanguageContext";
 import { registerUser } from "@/server/actions/auth";
@@ -48,7 +48,9 @@ export function AuthCard() {
   const { t } = useLanguage();
 
   const initialMode = searchParams.get("mode") === "register" ? "register" : "login";
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  // Only same-site paths: an absolute URL here would be an open redirect.
+  const requested = searchParams.get("callbackUrl") ?? "/";
+  const callbackUrl = requested.startsWith("/") && !requested.startsWith("//") ? requested : "/";
 
   // Active view: "main" (social + guest + password button) or "credentials" (inputs)
   const [view, setView] = React.useState<"main" | "credentials">(
@@ -63,6 +65,19 @@ export function AuthCard() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
+
+  /** Signs in with the typed credentials and follows the callback URL on success. */
+  async function signInWithPassword(): Promise<boolean> {
+    const result = await signIn("credentials", {
+      username: username.trim(),
+      password,
+      redirect: false,
+    });
+    if (result?.error) return false;
+    router.push(callbackUrl);
+    router.refresh();
+    return true;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,35 +110,14 @@ export function AuthCard() {
       setSuccess(t("auth.successRegistered"));
 
       // Auto sign-in right after registration
-      const signInResult = await signIn("credentials", {
-        username: username.trim(),
-        password,
-        redirect: false,
-      });
-
+      const signedIn = await signInWithPassword();
       setIsLoading(false);
-
-      if (signInResult?.error) {
-        setMode("login");
-      } else {
-        router.push(callbackUrl);
-        router.refresh();
-      }
+      if (!signedIn) setMode("login");
     } else {
       setIsLoading(true);
-      const res = await signIn("credentials", {
-        username: username.trim(),
-        password,
-        redirect: false,
-      });
+      const signedIn = await signInWithPassword();
       setIsLoading(false);
-
-      if (res?.error) {
-        setError(t("auth.errorInvalid"));
-      } else {
-        router.push(callbackUrl);
-        router.refresh();
-      }
+      if (!signedIn) setError(t("auth.errorInvalid"));
     }
   }
 
@@ -199,17 +193,16 @@ export function AuthCard() {
               {/* SECTION BAS (MÊME SECTION) : INVITÉ ET CONNEXION PAR MOT DE PASSE */}
               <div className="space-y-2.5">
                 {/* 1. Bouton Jouer en tant qu'invité */}
-                <Link href="/" className="block">
-                  <Button
-                    type="button"
-                    variant="azure"
-                    size="lg"
-                    className="w-full gap-2 text-xs font-black uppercase"
-                  >
-                    <Zap className="h-4 w-4" />
-                    <span>{t("auth.playAsGuestBtn")}</span>
-                  </Button>
-                </Link>
+                {/* Guests pick their nickname when they enter a room (AUTH-02). */}
+                <LinkButton
+                  href="/rooms"
+                  variant="azure"
+                  size="lg"
+                  className="w-full gap-2 text-xs font-black uppercase"
+                >
+                  <Zap className="h-4 w-4" aria-hidden />
+                  <span>{t("auth.playAsGuestBtn")}</span>
+                </LinkButton>
 
                 {/* 2. Bouton Connexion par mot de passe (bascule vers la vue inputs) */}
                 <Button
@@ -287,11 +280,16 @@ export function AuthCard() {
               {/* Formulaire Credentials (Inputs) */}
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
-                  <label className="text-slate-dark mb-1 flex items-center gap-1.5 text-xs font-black tracking-wider uppercase dark:text-zinc-200">
+                  <label
+                    htmlFor="auth-username"
+                    className="text-slate-dark mb-1 flex items-center gap-1.5 text-xs font-black tracking-wider uppercase dark:text-zinc-200"
+                  >
                     <User className="text-azure-blue h-3.5 w-3.5" />
                     {t("auth.usernameLabel")}
                   </label>
                   <Input
+                    id="auth-username"
+                    name="username"
                     type="text"
                     autoComplete="username"
                     placeholder={t("auth.usernamePlaceholder")}
@@ -305,11 +303,16 @@ export function AuthCard() {
                 </div>
 
                 <div>
-                  <label className="text-slate-dark mb-1 flex items-center gap-1.5 text-xs font-black tracking-wider uppercase dark:text-zinc-200">
+                  <label
+                    htmlFor="auth-password"
+                    className="text-slate-dark mb-1 flex items-center gap-1.5 text-xs font-black tracking-wider uppercase dark:text-zinc-200"
+                  >
                     <Lock className="text-tangerine-orange h-3.5 w-3.5" />
                     {t("auth.passwordLabel")}
                   </label>
                   <Input
+                    id="auth-password"
+                    name="password"
                     type="password"
                     autoComplete={mode === "login" ? "current-password" : "new-password"}
                     placeholder={t("auth.passwordPlaceholder")}
@@ -323,11 +326,16 @@ export function AuthCard() {
 
                 {mode === "register" && (
                   <div>
-                    <label className="text-slate-dark mb-1 flex items-center gap-1.5 text-xs font-black tracking-wider uppercase dark:text-zinc-200">
+                    <label
+                      htmlFor="auth-confirm"
+                      className="text-slate-dark mb-1 flex items-center gap-1.5 text-xs font-black tracking-wider uppercase dark:text-zinc-200"
+                    >
                       <Lock className="text-victory-teal h-3.5 w-3.5" />
                       {t("auth.confirmPassword")}
                     </label>
                     <Input
+                      id="auth-confirm"
+                      name="confirmPassword"
                       type="password"
                       autoComplete="new-password"
                       placeholder={t("auth.passwordPlaceholder")}
