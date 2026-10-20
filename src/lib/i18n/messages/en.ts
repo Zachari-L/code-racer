@@ -513,4 +513,9 @@ export const en: Record<TranslationKey, string> = {
   "create.leaveAndCreate": "Leave room {code} and create this one",
   "nav.main": "Main navigation",
   "nav.create": "Create",
+  "errors.signInRequired": "Sign in to continue.",
+  "errors.profileSaveFailed": "Unable to save the profile right now.",
+  "errors.avatarMissing": "Choose an image.",
+  "errors.avatarTooLarge": "The image is larger than 2 MB.",
+  "errors.avatarType": "Accepted formats: JPEG, PNG or WebP.",
 };

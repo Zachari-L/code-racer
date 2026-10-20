@@ -516,6 +516,11 @@ export const fr = {
   "create.leaveAndCreate": "Quitter la salle {code} et créer celle-ci",
   "nav.main": "Navigation principale",
   "nav.create": "Créer",
+  "errors.signInRequired": "Connectez-vous pour continuer.",
+  "errors.profileSaveFailed": "Impossible d'enregistrer le profil pour le moment.",
+  "errors.avatarMissing": "Choisissez une image.",
+  "errors.avatarTooLarge": "L'image dépasse 2 Mo.",
+  "errors.avatarType": "Formats acceptés : JPEG, PNG ou WebP.",
 } as const satisfies Record<string, string>;
 
 export type TranslationKey = keyof typeof fr;
