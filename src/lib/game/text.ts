@@ -189,8 +189,9 @@ export interface Passage {
 
 /**
  * Coherent text (CONF-03): a random passage in the language, preferring the
- * requested complexity, cut to the requested length at a word boundary.
- * Character include/exclude filters do not apply to coherent texts (CONF-07).
+ * requested complexity, cut to the requested length at a word boundary. A
+ * passage shorter than the length is followed by other passages of the same
+ * pool. Character include/exclude filters do not apply to coherent texts (CONF-07).
  */
 export function buildCoherentText(
   passages: readonly Passage[],
@@ -200,9 +201,16 @@ export function buildCoherentText(
   const inLanguage = passages.filter((p) => p.language === options.language);
   if (inLanguage.length === 0) return null;
   const sameComplexity = inLanguage.filter((p) => p.complexity === options.complexity);
-  const passage = pick(rng, sameComplexity.length > 0 ? sameComplexity : inLanguage);
-  const text = truncateToWords(applyTextOptions(passage.content, options), options.wordCount);
-  return { passageId: passage.id, text };
+  const pool = sameComplexity.length > 0 ? sameComplexity : inLanguage;
+
+  const first = pick(rng, pool);
+  const others = pool.filter((p) => p.id !== first.id);
+  const parts = [applyTextOptions(first.content, options)];
+  while (countWords(parts.join(" ")) < options.wordCount && others.length > 0) {
+    const [next] = others.splice(Math.floor(rng() * others.length), 1);
+    parts.push(applyTextOptions(next.content, options));
+  }
+  return { passageId: first.id, text: truncateToWords(parts.join(" "), options.wordCount) };
 }
 
 /** Appends `count` dictionary words (bonus "+3 words" on the leader). */

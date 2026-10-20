@@ -138,6 +138,15 @@ describe("Coherent texts", () => {
     expect(result?.passageId).toBe("b");
   });
 
+  it("chains passages of the same pool to reach the requested length (CONF-04)", () => {
+    const pool: Passage[] = [
+      { id: "x", language: "fr", complexity: "EASY", content: "un deux trois" },
+      { id: "y", language: "fr", complexity: "EASY", content: "quatre cinq six" },
+    ];
+    const result = buildCoherentText(pool, { ...random, wordCount: 5 }, createRng(2));
+    expect(countWords(result?.text ?? "")).toBe(5);
+  });
+
   it("returns null when the language has no passage", () => {
     expect(buildCoherentText([], random, createRng(1))).toBeNull();
   });
