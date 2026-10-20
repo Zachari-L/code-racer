@@ -15,8 +15,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.1
+      # postinstall generates the Prisma client.
       - run: bun install --frozen-lockfile
-      - run: bunx prisma generate
       - run: bun run lint
       - run: bun run typecheck
       - run: bun run format:check

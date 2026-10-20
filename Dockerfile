@@ -5,7 +5,9 @@
 # 1. Dependencies, installed with Bun from the lockfile.
 FROM oven/bun:1.4.1-debian AS deps
 WORKDIR /app
-COPY package.json bun.lock ./
+COPY package.json bun.lock prisma.config.ts ./
+# postinstall runs `prisma generate`, which needs the schema.
+COPY prisma ./prisma
 RUN bun install --frozen-lockfile
 
 # 2. Build: Prisma client + Next.js production build.
@@ -14,7 +16,7 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate && npx next build
+RUN npx next build
 
 # 3. Runtime.
 FROM node:22-bookworm-slim AS runner
