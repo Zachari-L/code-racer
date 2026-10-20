@@ -5,18 +5,19 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { getLocale, getTranslator } from "@/lib/i18n/server";
 import "./globals.css";
 
+// Variable fonts: one file per family covers every weight (PERF-01).
 const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800", "900"],
   display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
   display: "swap",
+  // Only the race text uses it: no need to preload it on every page.
+  preload: false,
 });
 
 export async function generateMetadata(): Promise<Metadata> {
