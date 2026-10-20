@@ -300,4 +300,8 @@ export const en: Record<TranslationKey, string> = {
   "errors.resultSaveFailed": "Unable to save the race result right now",
   "errors.invalidLocale": "Unsupported language",
   "validation.roomCode": "Room codes are 6 letters or digits (no 0, O, 1, I or L)",
+  "validation.charFilterTooLong": "30 characters at most",
+  "validation.capacityRange": "Capacity must be between 2 and 30 participants",
+  "validation.timeLimitRange": "The time limit must be between 30 seconds and 10 minutes",
+  "validation.wordCountRange": "Length must be between 10 and 150 words",
 };

@@ -300,6 +300,10 @@ export const fr = {
   "errors.resultSaveFailed": "Impossible d'enregistrer le résultat de course pour le moment",
   "errors.invalidLocale": "Langue non prise en charge",
   "validation.roomCode": "Le code de salle comporte 6 lettres ou chiffres (sans 0, O, 1, I ni L)",
+  "validation.charFilterTooLong": "30 caractères au maximum",
+  "validation.capacityRange": "La capacité doit être entre 2 et 30 participants",
+  "validation.timeLimitRange": "Le temps maximal doit être entre 30 secondes et 10 minutes",
+  "validation.wordCountRange": "La longueur doit être entre 10 et 150 mots",
 } as const satisfies Record<string, string>;
 
 export type TranslationKey = keyof typeof fr;
