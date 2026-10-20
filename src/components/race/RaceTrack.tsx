@@ -67,7 +67,7 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
 
       <ol className="border-slate-dark relative space-y-1 rounded-2xl border-3 bg-[#1c1d22] p-2 dark:border-zinc-700">
         {/* Bonus checkpoints, shared by every lane. */}
-        <div aria-hidden className="pointer-events-none absolute inset-y-2 right-14 left-44">
+        <div aria-hidden className="pointer-events-none absolute inset-y-2 right-14 left-52">
           {CHECKPOINTS.map((checkpoint) => (
             <div
               key={checkpoint}
@@ -91,11 +91,12 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
               className={cn(
                 "relative flex items-center gap-2 rounded-xl px-2",
                 compact ? "h-8" : "h-12",
-                isYou ? "bg-electric-lime/15 ring-electric-lime ring-2" : "bg-white/5"
+                isYou ? "bg-electric-lime/15 ring-electric-lime ring-2" : "bg-white/5",
+                entry?.status === "ABANDONED" && "opacity-60"
               )}
             >
               {/* Racer label */}
-              <div className="flex w-40 shrink-0 items-center gap-1.5 text-white">
+              <div className="flex w-48 shrink-0 items-center gap-1.5 text-white">
                 <span className="w-7 text-right font-mono text-[11px] font-black">
                   {formatOrdinal(language, position)}
                 </span>
@@ -154,6 +155,11 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
                     aria-label={t("bonus.FOG.title")}
                   />
                 )}
+                {entry && entry.status !== "RACING" && (
+                  <span className="absolute -top-1 left-0 z-30 rounded-full bg-white px-2 py-0.5 text-[10px] font-black text-[#111112] uppercase">
+                    {t(`race.status.${entry.status}`)}
+                  </span>
+                )}
                 {notice && (
                   <span
                     role="status"
@@ -174,9 +180,6 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
                 aria-hidden
                 className="absolute inset-y-1 right-14 w-1.5 bg-[repeating-conic-gradient(#111112_0_25%,#ffffff_0_50%)] bg-[length:6px_6px]"
               />
-              {entry && entry.status !== "RACING" && (
-                <span className="sr-only">{t(`race.status.${entry.status}`)}</span>
-              )}
             </li>
           );
         })}
