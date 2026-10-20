@@ -53,3 +53,8 @@ postgres-data/
 # Agent & Local Cache
 .gemini/
 .antigravity/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
