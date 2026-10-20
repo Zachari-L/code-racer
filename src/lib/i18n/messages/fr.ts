@@ -268,7 +268,7 @@ export const fr = {
   // Validation (Zod schema messages)
   "validation.codeLength": "Le code de salon doit comporter exactement 6 chiffres",
   "validation.codeDigits": "Le code de salon doit être composé de 6 chiffres",
-  "validation.nicknameMin": "Le pseudonyme doit comporter au moins 2 caractères",
+  "validation.nicknameMin": "Le pseudonyme doit comporter au moins 3 caractères",
   "validation.nicknameMax": "Le pseudonyme ne peut pas dépasser 20 caractères",
   "validation.usernameMin": "Le nom d'utilisateur doit contenir au moins 3 caractères",
   "validation.usernameMax": "Le nom d'utilisateur ne peut pas dépasser 20 caractères",
@@ -304,6 +304,7 @@ export const fr = {
   "validation.capacityRange": "La capacité doit être entre 2 et 30 participants",
   "validation.timeLimitRange": "Le temps maximal doit être entre 30 secondes et 10 minutes",
   "validation.wordCountRange": "La longueur doit être entre 10 et 150 mots",
+  "validation.nicknameChars": "Lettres, chiffres, espaces, tirets et underscores uniquement",
 } as const satisfies Record<string, string>;
 
 export type TranslationKey = keyof typeof fr;

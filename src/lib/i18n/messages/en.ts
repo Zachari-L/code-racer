@@ -268,8 +268,8 @@ export const en: Record<TranslationKey, string> = {
   // Validation (Zod schema messages)
   "validation.codeLength": "The lobby code must be exactly 6 digits",
   "validation.codeDigits": "The lobby code must only contain digits",
-  "validation.nicknameMin": "Nickname must be at least 2 characters",
-  "validation.nicknameMax": "Nickname cannot exceed 20 characters",
+  "validation.nicknameMin": "The nickname must be at least 3 characters long",
+  "validation.nicknameMax": "The nickname cannot exceed 20 characters",
   "validation.usernameMin": "Username must be at least 3 characters",
   "validation.usernameMax": "Username cannot exceed 20 characters",
   "validation.usernameChars": "Letters, numbers, dashes and underscores only",
@@ -304,4 +304,5 @@ export const en: Record<TranslationKey, string> = {
   "validation.capacityRange": "Capacity must be between 2 and 30 participants",
   "validation.timeLimitRange": "The time limit must be between 30 seconds and 10 minutes",
   "validation.wordCountRange": "Length must be between 10 and 150 words",
+  "validation.nicknameChars": "Letters, digits, spaces, dashes and underscores only",
 };
