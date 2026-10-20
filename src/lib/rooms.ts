@@ -1,12 +1,11 @@
 /** Room rules that do not need the database: tested in tests/rooms.test.ts. */
 
-import { randomBytes } from "node:crypto";
 import type { RoomPhase } from "@/lib/game/state-machine";
 import { isJoinable } from "@/lib/game/state-machine";
 
-/** 16 random bytes = 128 bits of entropy (SALLE-04). */
+/** 16 random bytes = 128 bits of entropy (SALLE-04). Server only (uses Buffer). */
 export function generateInviteToken(): string {
-  return randomBytes(16).toString("base64url");
+  return Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString("base64url");
 }
 
 export interface InviteRecord {
