@@ -173,7 +173,6 @@ export const fr = {
   "room.actionError.noHuman": "Il faut au moins un participant humain.",
   "room.actionError.overCapacity": "La salle serait au-dessus de sa capacité.",
   "room.actionError.invalid": "Demande invalide.",
-  "room.actionError.noText": "Aucun texte disponible pour cette configuration.",
   "lobby.roomCode": "Code de la salle",
   "lobby.copyLink": "Copier le lien",
   "lobby.configTitle": "Configuration",

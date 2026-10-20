@@ -20,16 +20,19 @@ async function loadPassages(): Promise<Passage[]> {
 }
 
 /**
- * Text for a new race, drawn with the race seed (CONF-03). Returns `null` if
- * coherent mode is selected but the corpus has no passage in that language.
+ * Text for a new race, drawn with the race seed (CONF-03). If coherent mode is
+ * selected but the corpus has no passage in that language (e.g. the database
+ * was never seeded), the race falls back to a random text instead of failing.
  */
 export async function buildRaceText(
   config: RoomConfig,
   seed: number
-): Promise<{ text: string; passageId: string | null } | null> {
+): Promise<{ text: string; passageId: string | null }> {
   const rng = createRng(seed);
-  if (config.textMode === "RANDOM") {
-    return { text: generateRandomText(config, rng), passageId: null };
+  if (config.textMode === "COHERENT") {
+    const coherent = buildCoherentText(await loadPassages(), config, rng);
+    if (coherent) return coherent;
+    console.warn(`No "${config.language}" passage in the corpus: using a random text.`);
   }
-  return buildCoherentText(await loadPassages(), config, rng);
+  return { text: generateRandomText(config, rng), passageId: null };
 }

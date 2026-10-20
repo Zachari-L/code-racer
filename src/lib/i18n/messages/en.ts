@@ -176,7 +176,6 @@ export const en: Record<TranslationKey, string> = {
   "room.actionError.noHuman": "At least one human participant is needed.",
   "room.actionError.overCapacity": "The room would exceed its capacity.",
   "room.actionError.invalid": "Invalid request.",
-  "room.actionError.noText": "No text available for this configuration.",
   "lobby.roomCode": "Room code",
   "lobby.copyLink": "Copy link",
   "lobby.configTitle": "Settings",

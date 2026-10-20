@@ -460,7 +460,6 @@ export class RoomRuntime {
 
     const seed = randomInt(0, 2 ** 31);
     const generated = await buildRaceText(this.config, seed);
-    if (!generated) return "noText";
 
     const goAt = Date.now() + COUNTDOWN_MS;
     const racers: RacerView[] = [

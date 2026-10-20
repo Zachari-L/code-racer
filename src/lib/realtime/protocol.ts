@@ -79,7 +79,6 @@ export const ACTION_ERRORS = [
   "noHuman",
   "overCapacity",
   "invalid",
-  "noText",
 ] as const;
 export type ActionError = (typeof ACTION_ERRORS)[number];
 
