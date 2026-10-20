@@ -6,6 +6,7 @@
  */
 
 import { randomInt } from "node:crypto";
+import { avatarUrlFor } from "@/lib/avatar-url";
 import { botName } from "@/lib/game/bot-names";
 import { parseStoredConfig, type RoomConfig } from "@/lib/game/config";
 import { hashString } from "@/lib/game/random";
@@ -84,10 +85,6 @@ export interface RuntimeHooks {
   onPublicChange(): void;
   /** Called once the room is closed and the runtime can be dropped. */
   onClosed(code: string): void;
-}
-
-export function avatarUrlFor(userId: string, updatedAt: Date): string {
-  return `/api/avatars/${userId}?v=${updatedAt.getTime()}`;
 }
 
 function matchesIdentity(member: MemberState, identity: Identity): boolean {
