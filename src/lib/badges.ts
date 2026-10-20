@@ -15,7 +15,8 @@ export interface BadgeContext {
 
 export interface BadgeDefinition {
   code: string;
-  icon: string;
+  /** Lucide icon name, rendered by the profile page (no emoji icons, DES-04). */
+  icon: "flag" | "wind" | "zap" | "target" | "trophy" | "car";
   titleKey: TranslationKey;
   descriptionKey: TranslationKey;
   isEarned: (ctx: BadgeContext) => boolean;
@@ -24,42 +25,42 @@ export interface BadgeDefinition {
 export const BADGES = [
   {
     code: "FIRST_RACE",
-    icon: "🏁",
+    icon: "flag",
     titleKey: "badge.firstRace.title",
     descriptionKey: "badge.firstRace.desc",
     isEarned: (ctx) => ctx.totalRaces >= 1,
   },
   {
     code: "SPEED_50",
-    icon: "💨",
+    icon: "wind",
     titleKey: "badge.speed50.title",
     descriptionKey: "badge.speed50.desc",
     isEarned: (ctx) => ctx.wpm >= 50,
   },
   {
     code: "SPEED_100",
-    icon: "⚡",
+    icon: "zap",
     titleKey: "badge.speed100.title",
     descriptionKey: "badge.speed100.desc",
     isEarned: (ctx) => ctx.wpm >= 100,
   },
   {
     code: "PERFECT_ACCURACY",
-    icon: "🎯",
+    icon: "target",
     titleKey: "badge.perfectAccuracy.title",
     descriptionKey: "badge.perfectAccuracy.desc",
     isEarned: (ctx) => ctx.accuracy >= 100,
   },
   {
     code: "FIRST_VICTORY",
-    icon: "🏆",
+    icon: "trophy",
     titleKey: "badge.firstVictory.title",
     descriptionKey: "badge.firstVictory.desc",
     isEarned: (ctx) => ctx.rank === 1,
   },
   {
     code: "VETERAN_5",
-    icon: "🏎️",
+    icon: "car",
     titleKey: "badge.veteran5.title",
     descriptionKey: "badge.veteran5.desc",
     isEarned: (ctx) => ctx.totalRaces >= 5,

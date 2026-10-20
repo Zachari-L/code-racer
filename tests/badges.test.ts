@@ -36,7 +36,7 @@ describe("Badge registry", () => {
       code: "VETERAN_5",
       name: "Pilote Assidu",
       description: "Terminer 5 courses",
-      iconName: "🏎️",
+      iconName: "car",
     });
   });
 });
