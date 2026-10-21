@@ -85,6 +85,8 @@ export interface RaceStats {
   correctChars: number;
   errors: number;
   progress: number;
+  /** Share of the text typed correctly: wrong characters left behind do not count. */
+  correctProgress: number;
 }
 
 export function computeRaceStats(state: TypingState, text: string, elapsedMs: number): RaceStats {
@@ -97,6 +99,7 @@ export function computeRaceStats(state: TypingState, text: string, elapsedMs: nu
     correctChars,
     errors: state.errors,
     progress: typingProgress(state, text),
+    correctProgress: text.length === 0 ? 1 : Math.min(1, correctChars / text.length),
   };
 }
 

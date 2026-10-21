@@ -191,11 +191,18 @@ export class RaceSession {
   }
 
   private stop(racer: RacerState, status: Exclude<RacerStatus, "RACING">, now: number) {
+    let raceMs = Math.max(0, now - this.goAt);
     if (status === "FINISHED") {
+      // The penalty counts as race time: it sets the finish time, the rank and the WPM.
       racer.penaltyMs = errorPenaltyMs(racer.typing, racer.text, this.config.errorMode);
+      const limitMs = this.endsAt === null ? null : this.endsAt - this.goAt;
+      if (limitMs !== null && raceMs + racer.penaltyMs > limitMs) {
+        // Finishing early with errors must not beat the clock: it is a time out.
+        racer.penaltyMs = Math.max(0, limitMs - raceMs);
+        status = "TIMEOUT";
+      }
+      raceMs += racer.penaltyMs;
     }
-    // The penalty counts as race time: it sets the finish time, the rank and the WPM.
-    const raceMs = Math.max(0, now - this.goAt) + racer.penaltyMs;
     racer.status = status;
     racer.stoppedMs = raceMs;
     if (status === "FINISHED") racer.finishMs = raceMs;
@@ -283,14 +290,15 @@ export class RaceSession {
       return {
         id: r.init.id,
         status: r.status,
-        progress: stats.progress,
+        // Racers who did not finish rank by correct text only, so mashing keys does not help.
+        progress: r.status === "FINISHED" ? 1 : stats.correctProgress,
         finishMs: r.finishMs,
         racer: r,
         stats,
         durationMs,
       };
     });
-    return rankRacers(rows).map(({ racer, stats, durationMs, rank, status }) => ({
+    return rankRacers(rows).map(({ racer, stats, durationMs, rank, status, progress }) => ({
       racerId: racer.init.id,
       userId: racer.init.userId,
       name: racer.init.name,
@@ -304,7 +312,7 @@ export class RaceSession {
       errors: stats.errors,
       durationMs,
       penaltyMs: racer.penaltyMs,
-      progress: stats.progress,
+      progress,
       bonuses: racer.bonuses,
       wpmSeries: racer.wpmSeries,
       missedKeys: racer.typing.missedKeys,

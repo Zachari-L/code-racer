@@ -122,4 +122,30 @@ describe("Race session (COURSE-06, COURSE-09, COURSE-10)", () => {
     race.tick(end);
     expect(race.results()[0]).toMatchObject({ status: "FINISHED", penaltyMs: 0 });
   });
+
+  it("ranks racers who did not finish by correctly typed text only", () => {
+    const race = session([human("masher"), human("careful")], {
+      errorMode: "FREE",
+      timeLimitSec: 30,
+    });
+    race.input("masher", keys("xxxxxxxxxxxxxxx"), 2000);
+    race.input("careful", keys("le chat"), 2000);
+    race.tick(31_000);
+    const [first, second] = race.results();
+    expect([first.racerId, first.status]).toEqual(["careful", "TIMEOUT"]);
+    expect(first.progress).toBeCloseTo(7 / TEXT.length);
+    expect([second.racerId, second.progress]).toEqual(["masher", 0]);
+  });
+
+  it("turns a finish pushed past the time limit by its penalty into a time out", () => {
+    const race = session([human("masher"), bot("b")], { errorMode: "FREE", timeLimitSec: 30 });
+    const mashed = TEXT.replace(/[aeiou]/g, "x");
+    const end = typeSlowly(race, "masher", mashed, 1000, 20);
+    expect(race.self("masher")?.status).toBe("TIMEOUT");
+    race.tick(31_000);
+    const masher = race.results().find((r) => r.racerId === "masher")!;
+    expect(masher.durationMs).toBe(30_000);
+    expect(masher.penaltyMs).toBe(30_000 - (end - 1000));
+    expect(masher.progress).toBeLessThan(1);
+  });
 });
