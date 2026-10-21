@@ -160,6 +160,11 @@ export function ResultsView({ data, viewerId, actions }: ResultsViewProps) {
                 </td>
                 <td className="border-b border-zinc-200 px-2 py-2 font-mono dark:border-zinc-700">
                   {seconds(row.durationMs)}
+                  {row.penaltyMs > 0 && (
+                    <span className="block text-xs font-bold text-rose-700 dark:text-rose-300">
+                      {t("results.penalty", { value: number.format(row.penaltyMs / 1000) })}
+                    </span>
+                  )}
                 </td>
                 <td className="border-b border-zinc-200 px-2 py-2 dark:border-zinc-700">
                   {statusLabel(row)}

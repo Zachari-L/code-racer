@@ -261,7 +261,8 @@ export const en: Record<TranslationKey, string> = {
   "race.wpmValue": "{wpm} WPM",
   "race.accuracyValue": "{accuracy}% accuracy",
   "race.strictHint": "Must correct: type the right key to move on.",
-  "race.freeHint": "Free mode: errors are counted, you can keep going.",
+  "race.freeHint":
+    "Free mode: you can keep going, but each uncorrected error adds 3 s to your time.",
   "race.timeLeft": "Time left",
   "race.elapsed": "Elapsed time",
   "race.abandon": "Give up",
@@ -290,6 +291,7 @@ export const en: Record<TranslationKey, string> = {
   "results.col.bonuses": "Bonuses received",
   "results.seconds": "{value} s",
   "results.percent": "{value}%",
+  "results.penalty": "incl. +{value} s penalty",
   "results.wpmChart": "WPM over the race",
   "results.wpmChartAria": "Chart of each racer's WPM over time. Detailed values are in the table.",
   "results.heatmap": "Your most missed keys",

@@ -260,7 +260,8 @@ export const fr = {
   "race.wpmValue": "{wpm} MPM",
   "race.accuracyValue": "{accuracy} % de précision",
   "race.strictHint": "Correction obligatoire : tapez la bonne touche pour avancer.",
-  "race.freeHint": "Mode libre : les erreurs sont comptées, vous pouvez continuer.",
+  "race.freeHint":
+    "Mode libre : vous pouvez continuer, mais chaque erreur non corrigée ajoute 3 s à votre temps.",
   "race.timeLeft": "Temps restant",
   "race.elapsed": "Temps écoulé",
   "race.abandon": "Abandonner",
@@ -289,6 +290,7 @@ export const fr = {
   "results.col.bonuses": "Bonus reçus",
   "results.seconds": "{value} s",
   "results.percent": "{value} %",
+  "results.penalty": "dont +{value} s de pénalité",
   "results.wpmChart": "MPM au fil de la course",
   "results.wpmChartAria":
     "Graphique du MPM de chaque participant en fonction du temps. Les valeurs détaillées sont dans le tableau.",
