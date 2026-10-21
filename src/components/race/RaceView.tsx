@@ -130,7 +130,13 @@ export function RaceView({
               />
             ) : (
               <p className="border-slate-dark rounded-2xl border-3 bg-white p-4 text-center text-sm font-black dark:border-zinc-700 dark:bg-zinc-900">
-                {t(myEntry?.status === "FINISHED" ? "race.waitingOthers" : "race.youAbandoned")}
+                {t(
+                  myEntry?.status === "FINISHED"
+                    ? "race.waitingOthers"
+                    : myEntry?.status === "TIMEOUT"
+                      ? "race.penaltyTimeout"
+                      : "race.youAbandoned"
+                )}
               </p>
             )}
           </div>

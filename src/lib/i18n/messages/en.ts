@@ -272,6 +272,8 @@ export const en: Record<TranslationKey, string> = {
     "To type, use a computer with a physical keyboard. You can follow the race here.",
   "race.spectating": "You are watching as a spectator.",
   "race.waitingOthers": "Finished! Waiting for the others...",
+  "race.penaltyTimeout":
+    "Finished, but your error penalties go past the time limit. Results appear when the race ends.",
   "race.youAbandoned": "You gave up. Results appear when the race ends.",
   "race.status.RACING": "Racing",
   "race.status.FINISHED": "Finished",

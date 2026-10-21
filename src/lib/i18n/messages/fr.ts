@@ -271,6 +271,8 @@ export const fr = {
     "Pour taper, utilisez un ordinateur avec un clavier physique. Vous pouvez suivre la course ici.",
   "race.spectating": "Vous regardez la course en spectateur.",
   "race.waitingOthers": "Arrivée ! En attente des autres participants...",
+  "race.penaltyTimeout":
+    "Arrivée, mais les pénalités d'erreur dépassent la limite de temps. Les résultats arrivent à la fin de la course.",
   "race.youAbandoned": "Vous avez abandonné. Les résultats arrivent à la fin de la course.",
   "race.status.RACING": "En course",
   "race.status.FINISHED": "Terminé",
