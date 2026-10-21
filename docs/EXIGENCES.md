@@ -169,6 +169,7 @@ Statuts : **complet**, **partiel** ou **non fait**. Les tests unitaires sont dan
 - **Correction obligatoire** : la mauvaise touche n'est pas insérée (le joueur doit taper la bonne). C'est l'erreur comptée, sans retour arrière nécessaire.
 - **Précision** : frappes correctes / frappes totales, retours arrière exclus ; une erreur corrigée reste une erreur (annexe A).
 - **MPM net** : caractères corrects présents dans le texte tapé (annexe A) ; en mode libre, un caractère faux laissé en place compte dans le MPM brut mais pas dans le net.
+- **Pénalité d'erreur** (ajout hors cahier des charges) : en mode libre, chaque erreur encore présente à l'arrivée ajoute 3 s au temps (`errorPenaltyMs`), ce qui compte pour le classement et le MPM. Sans elle, taper n'importe quoi très vite permettait de gagner. Les erreurs corrigées ne sont pas pénalisées ; le mode correction obligatoire n'en laisse aucune.
 - **Bonus** : quand plusieurs retardataires gagnent un bonus au même point de contrôle, le meneur n'est ciblé qu'une fois ; les autres reçoivent un raccourci.
 - **Instance unique** : l'état des courses est en mémoire ; l'application doit tourner sur une seule machine (choix assumé, voir l'ADR).
 
