@@ -302,7 +302,6 @@ export const en: Record<TranslationKey, string> = {
   "results.restart": "Race again",
   "results.closeRoom": "Close the room",
   "results.waitingHost": "The host can start another race or close the room.",
-  "results.permalink": "Results page",
   "home.playTitle": "Ready to race?",
   "home.codeLabel": "Room code",
   "home.joinButton": "Join",

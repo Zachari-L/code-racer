@@ -302,7 +302,6 @@ export const fr = {
   "results.restart": "Relancer une course",
   "results.closeRoom": "Fermer la salle",
   "results.waitingHost": "L'hôte peut relancer une course ou fermer la salle.",
-  "results.permalink": "Page des résultats",
   "home.playTitle": "Prêt à rouler ?",
   "home.codeLabel": "Code de la salle",
   "home.joinButton": "Rejoindre",
