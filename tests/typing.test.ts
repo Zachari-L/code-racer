@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import {
+  ERROR_PENALTY_MS,
   MAX_CHAR_BURST,
   applyKey,
   applyKeys,
@@ -7,6 +8,7 @@ import {
   consumeChars,
   createRateBucket,
   createTypingState,
+  errorPenaltyMs,
   isTextComplete,
   retargetText,
   type KeyInput,
@@ -83,5 +85,25 @@ describe("Input rate limit (COURSE-06)", () => {
     expect(drained).not.toBeNull();
     expect(consumeChars(drained!, 1, 0)).toBeNull();
     expect(consumeChars(drained!, 5, 200)).not.toBeNull();
+  });
+});
+
+describe("Error penalty", () => {
+  it("adds time for each error left in the text, in FREE mode only", () => {
+    const left = applyKeys(createTypingState(), "abcd", chars("axcy"), "FREE");
+    expect(errorPenaltyMs(left, "abcd", "FREE")).toBe(2 * ERROR_PENALTY_MS);
+    const strict = applyKeys(createTypingState(), "abcd", chars("axbcyd"), "STRICT");
+    expect(errorPenaltyMs(strict, "abcd", "STRICT")).toBe(0);
+  });
+
+  it("does not penalise errors fixed with backspace", () => {
+    const fixed = applyKeys(
+      createTypingState(),
+      "abc",
+      [...chars("ax"), BACKSPACE, ...chars("bc")],
+      "FREE"
+    );
+    expect(fixed.errors).toBe(1);
+    expect(errorPenaltyMs(fixed, "abc", "FREE")).toBe(0);
   });
 });

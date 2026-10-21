@@ -40,6 +40,7 @@ export async function saveRaceResults(
         accuracy: row.accuracy,
         errorsCount: row.errors,
         durationMs: Math.round(row.durationMs),
+        penaltyMs: row.penaltyMs,
         progress: row.progress,
         bonuses: row.bonuses,
         wpmSeries: row.wpmSeries,

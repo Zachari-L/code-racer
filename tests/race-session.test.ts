@@ -101,4 +101,25 @@ describe("Race session (COURSE-06, COURSE-09, COURSE-10)", () => {
     race.input("a", keys("le ch"), 2000);
     expect(race.self("a")).toMatchObject({ typed: "le ch", status: "RACING", text: TEXT });
   });
+
+  it("adds 3 s per uncorrected error, so mashing keys does not win (FREE mode)", () => {
+    const race = session([human("masher"), human("careful")], { errorMode: "FREE" });
+    const mashed = TEXT.replace(/[aeiou]/g, "x");
+    const mashEnd = typeSlowly(race, "masher", mashed, 1000, 20);
+    typeSlowly(race, "careful", TEXT, 1000, 10);
+    race.tick(mashEnd + 20_000);
+    const [first, second] = race.results();
+    const errors = [...TEXT].filter((c, i) => c !== mashed[i]).length;
+    expect(first.racerId).toBe("careful");
+    expect(first.penaltyMs).toBe(0);
+    expect(second.penaltyMs).toBe(errors * 3000);
+    expect(second.durationMs).toBe(mashEnd - 1000 + errors * 3000);
+  });
+
+  it("never adds a penalty in STRICT mode", () => {
+    const race = session([human("a")], { errorMode: "STRICT" });
+    const end = typeSlowly(race, "a", TEXT, 1000);
+    race.tick(end);
+    expect(race.results()[0]).toMatchObject({ status: "FINISHED", penaltyMs: 0 });
+  });
 });

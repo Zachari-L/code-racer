@@ -137,7 +137,9 @@ export interface ResultRow {
   rawWpm: number;
   accuracy: number;
   errors: number;
+  /** Included in durationMs: uncorrected errors in FREE mode. */
   durationMs: number;
+  penaltyMs: number;
   progress: number;
   bonuses: BonusType[];
   wpmSeries: { t: number; wpm: number }[];

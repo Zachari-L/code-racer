@@ -159,6 +159,7 @@ export async function getRaceResultsForUser(
         accuracy: r.accuracy,
         errors: r.errorsCount,
         durationMs: r.durationMs,
+        penaltyMs: r.penaltyMs,
         progress: r.progress,
         bonuses: Array.isArray(r.bonuses)
           ? r.bonuses.filter(

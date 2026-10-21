@@ -22,6 +22,7 @@ import {
   consumeChars,
   createRateBucket,
   createTypingState,
+  errorPenaltyMs,
   isTextComplete,
   retargetText,
   type KeyInput,
@@ -45,6 +46,8 @@ interface RacerState {
   finishMs: number | null;
   /** Race time (ms) when the racer stopped: finish, abandon or time out. */
   stoppedMs: number | null;
+  /** Time added to the finish for uncorrected errors (FREE mode). */
+  penaltyMs: number;
   bonuses: BonusType[];
   fogUntil: number | null;
   bot: BotState | null;
@@ -97,6 +100,7 @@ export class RaceSession {
         status: "RACING",
         finishMs: null,
         stoppedMs: null,
+        penaltyMs: 0,
         bonuses: [],
         fogUntil: null,
         bot: init.bot ? createBot(init.bot.level, init.bot.seed) : null,
@@ -187,7 +191,11 @@ export class RaceSession {
   }
 
   private stop(racer: RacerState, status: Exclude<RacerStatus, "RACING">, now: number) {
-    const raceMs = Math.max(0, now - this.goAt);
+    if (status === "FINISHED") {
+      racer.penaltyMs = errorPenaltyMs(racer.typing, racer.text, this.config.errorMode);
+    }
+    // The penalty counts as race time: it sets the finish time, the rank and the WPM.
+    const raceMs = Math.max(0, now - this.goAt) + racer.penaltyMs;
     racer.status = status;
     racer.stoppedMs = raceMs;
     if (status === "FINISHED") racer.finishMs = raceMs;
@@ -295,6 +303,7 @@ export class RaceSession {
       accuracy: stats.accuracy,
       errors: stats.errors,
       durationMs,
+      penaltyMs: racer.penaltyMs,
       progress: stats.progress,
       bonuses: racer.bonuses,
       wpmSeries: racer.wpmSeries,

@@ -100,6 +100,19 @@ export function computeRaceStats(state: TypingState, text: string, elapsedMs: nu
   };
 }
 
+/** Time added to a FREE-mode finish for each error left in the text. */
+export const ERROR_PENALTY_MS = 3000;
+
+/**
+ * Penalty for the errors still in the typed text, so mashing keys cannot win
+ * a race. STRICT mode never leaves an error behind; errors fixed with
+ * backspace are not penalised, they already cost the time to correct them.
+ */
+export function errorPenaltyMs(state: TypingState, text: string, errorMode: ErrorMode): number {
+  if (errorMode === "STRICT") return 0;
+  return (state.typed.length - countCorrectChars(state.typed, text)) * ERROR_PENALTY_MS;
+}
+
 /**
  * Text after a bonus edit: keeps what was already typed valid by trimming the
  * typed buffer if the new text is shorter (BONUS-04).

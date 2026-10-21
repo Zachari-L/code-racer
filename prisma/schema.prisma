@@ -228,6 +228,8 @@ model RaceResult {
   accuracy       Float
   errorsCount    Int
   durationMs     Int
+  /// Part of durationMs added for uncorrected errors (FREE mode).
+  penaltyMs      Int          @default(0)
   progress       Float
   /// Bonus types received, in order.
   bonuses        Json
