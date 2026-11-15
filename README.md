@@ -4,7 +4,7 @@ Course de frappe au clavier multijoueur en temps réel, pensée pour la classe (
 
 **En ligne : <https://coderacer.fly.dev>** (compte de démonstration `demo` / `demo1234`).
 
-> Le nom et le logo sont provisoires : voir `docs/DEMARCHE-CREATIVE.md`.
+> Démarche créative (nom, logo roue, moodboard) : voir `docs/DEMARCHE-CREATIVE.md`.
 
 | Accueil                                 | Salle d'attente                               |
 | --------------------------------------- | --------------------------------------------- |

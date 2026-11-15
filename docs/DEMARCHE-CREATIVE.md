@@ -1,41 +1,53 @@
 # Démarche créative
 
-> **Sections à rédiger par l'étudiant, sans IA (DES-01, DES-02).** L'énoncé exige que le nom et le logo viennent de vous. Les parties marquées « À compléter » sont des gabarits vides : rien n'y a été inventé. La palette et les typographies reprennent la direction artistique déjà définie dans `doc/artistic-direction.md`.
+> Le nom et le logo viennent de l'étudiant, sans IA (DES-01, DES-02). La direction artistique reprend la démarche artistique remise au checkpoint 1 (7 octobre 2026), avant le développement des fonctionnalités. Les parties marquées « À compléter » restent à fournir par l'étudiant : rien n'y a été inventé.
 
 ## 1. Nom du site (DES-01)
 
-**À compléter.**
+Nom retenu : **CodeRacer**.
+
+**À compléter :**
 
 - Noms envisagés (avec, pour chacun, pourquoi vous l'avez gardé ou écarté) :
   1. …
   2. …
-  3. …
-- Nom retenu et raison du choix : …
+- Raison du choix final : …
 - Vérification d'originalité (recherches faites, résultats) : …
 
-> Note : le nom de travail « CodeRacer » est déjà utilisé par un projet open source connu (« Code Racer » de WebDevCody). Il faudra le vérifier, et probablement en changer, avant de le déclarer original.
+> Attention : un projet open source connu porte déjà le nom « Code Racer » (de WebDevCody). L'énoncé demande de vérifier que le nom n'est pas déjà utilisé par un produit connu ; la vérification ci-dessus doit expliquer pourquoi le nom reste acceptable, ou le nom doit changer.
 
 ## 2. Logo (DES-02)
 
-**À compléter.**
+Le logo est une **roue**. L'idée vient de la première tempête d'idées du checkpoint 1, qui notait déjà « des boutons ronds en forme de roues » à côté des petites voitures et de la ligne d'arrivée. Elle est affichée dans la barre de navigation (`src/components/layout/Navbar.tsx`, composant `src/components/animated/TireIcon.tsx`), sur la première page montrée plus bas.
 
-- Croquis papier ou tablette : ajouter les photos dans `docs/images/croquis/` et les afficher ici.
+**À compléter :**
+
+- Croquis papier ou tablette : ajouter les photos dans `docs/images/croquis/` et les afficher ici (exigé par l'énoncé).
 - Étapes de mise au propre (outil utilisé : Figma, Illustrator, Inkscape…) : …
-- Fichier final : déposer le SVG dans `public/` et remplacer `src/app/favicon.ico` ; le logo est affiché dans la barre de navigation (`src/components/layout/Navbar.tsx`, actuellement un pneu provisoire dans `src/components/animated/TireIcon.tsx`).
+- Favicon : `src/app/favicon.ico` est encore celui de Next.js par défaut ; l'énoncé demande que le logo serve aussi de favicon.
 
 ## 3. Direction artistique (DES-03)
 
-Thème : **« Arcade de classe vibrante »**. Un canevas clair et lisible pour la lecture, entouré de couleurs d'arcade très saturées, de lignes de vitesse et de formes « tactiles » (bordures épaisses, ombres franches, pilules).
+Thème : **« Arcade de classe vibrante »**. L'application fait courser des élèves de 12 à 17 ans dans un cadre scolaire : le site doit être vibrant, énergique et jeune, mais aussi clair et épuré. Le résultat : un canevas clair et lisible pour la lecture, entouré de couleurs d'arcade très saturées, de lignes de vitesse et de formes « tactiles » (bordures épaisses, ombres franches, pilules).
 
 ### Moodboard
 
-**À compléter** : 3 à 5 références (captures ou liens) et ce que chacune apporte. Pistes cohérentes avec la direction actuelle : bornes d'arcade des années 90, jeux de course jouet (Mario Kart), outils de frappe minimalistes (Monkeytype), quiz de classe (Kahoot).
+| Référence                                                                                                     | Ce qu'on en garde                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Kahoot](https://kahoot.com/fr/)                                                                              | Idée principale : un jeu de classe vibrant. Les couleurs vives (bleu azur, orange mandarine, magenta arcade) et les petites formes qui bougent en fond. |
+| [Site de Lando Norris](https://landonorris.com/), pilote de Formule 1                                         | Le thème de la course : son vert électrique et certaines teintes de gris.                                                                               |
+| [« Financial Web App for Teens »](https://dribbble.com/shots/22562393-Financial-Web-App-for-Teens) (Dribbble) | Le néobrutalisme : bordures épaisses et ombres franches, qui rappellent les arcades et la jeunesse tout en restant épurées.                             |
+| Maquette générée par Gemini (séance de remue-méninges)                                                        | Une vue d'ensemble du style à partir des idées ci-dessus : voitures colorées sur des pistes, gros bouton lime, boutons-roues.                           |
 
-| Référence | Ce qu'on en garde |
-| --------- | ----------------- |
-| …         | …                 |
-| …         | …                 |
-| …         | …                 |
+![Maquette générée par Gemini à partir des idées de la démarche](images/moodboard/maquette-gemini.png)
+
+_Source : Gemini. Malgré certains éléments en trop, elle montre bien le style visé._
+
+Première page assemblée à partir de ces éléments, pour mieux visualiser les idées (checkpoint 1) :
+
+![Première version de la page d'accueil](images/moodboard/premiere-page.png)
+
+Le fond animé (lignes de couleur qui rappellent les lignes d'une route vues d'une voiture, petites formes et étoiles comme dans Kahoot) et les boutons qui avancent au survol ont été ajoutés ensuite, puis le visuel a été validé auprès du client.
 
 ### Palette
 
@@ -49,6 +61,8 @@ Thème : **« Arcade de classe vibrante »**. Un canevas clair et lisible pour l
 | Coureur 3        | `#D9008D` magenta arcade   | Adversaires                                                      |
 | Coureur 4        | `#00BFA5` sarcelle         | Adversaires                                                      |
 
+Le vert lime et les gris viennent du site de Lando Norris ; les couleurs des coureurs, des couleurs vives de Kahoot.
+
 Ajustements pour l'accessibilité (A11Y-01), sans changer l'identité :
 
 - `#0062CC` (azur foncé) derrière du texte blanc, car `#007BFF` n'offre que 3,97:1 ;
@@ -58,7 +72,7 @@ Ajustements pour l'accessibilité (A11Y-01), sans changer l'identité :
 
 ### Typographies
 
-- **Nunito** (interface et menus) : sans empattement arrondie, énergique sans être enfantine pour des 12–17 ans.
+- **Nunito** (interface et menus) : beaucoup de courbes, donc un effet moderne et très jeune ; contrairement à une police comme Comic Sans, elle reste très lisible. Elle combine l'aspect jeune et la lisibilité qu'il faut pour un jeu éducatif.
 - **JetBrains Mono** (zone de frappe) : chasse fixe nette qui distingue bien `0`/`O` et `1`/`l`, essentiel en course.
 
 Les deux sont chargées en police variable par `next/font` (un seul fichier par famille).
