@@ -15,7 +15,7 @@
 import { pick, type Rng } from "./random";
 import type { RacerStatus } from "./ranking";
 
-export const BONUS_TYPES = ["SHORTCUT", "HEAVY_LOAD", "FOG"] as const;
+const BONUS_TYPES = ["SHORTCUT", "HEAVY_LOAD", "FOG"] as const;
 export type BonusType = (typeof BONUS_TYPES)[number];
 
 /** -3 words for the lagging racer, +3 words for the leader. */
@@ -25,10 +25,10 @@ export const FOG_DURATION_MS = 5000;
 export const FOG_BOT_SLOWDOWN = 1.6;
 export const CHECKPOINTS = [0.25, 0.5, 0.75] as const;
 export const MAX_BONUSES_PER_RACER = 3;
-export const LAG_THRESHOLD = 0.25;
+const LAG_THRESHOLD = 0.25;
 
 /** Whether the bonus targets the leader rather than helping the lagging racer. */
-export function targetsLeader(type: BonusType): boolean {
+function targetsLeader(type: BonusType): boolean {
   return type !== "SHORTCUT";
 }
 
@@ -39,7 +39,7 @@ export interface BonusRacer {
   bonusesReceived: number;
 }
 
-export interface BonusActivation {
+interface BonusActivation {
   checkpoint: number;
   type: BonusType;
   /** Lagging racer who earned the bonus. */

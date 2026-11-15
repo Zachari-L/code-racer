@@ -93,7 +93,7 @@ export interface MemberView {
   joinedAt: string;
 }
 
-export interface BotView {
+interface BotView {
   id: string;
   name: string;
   level: BotLevel;

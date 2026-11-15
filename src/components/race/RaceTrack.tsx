@@ -21,7 +21,7 @@ const BAR_COLORS = {
 } as const;
 
 /** Live order: finishers first, then by progress. */
-export function trackPositions(track: readonly TrackEntry[]): Map<string, number> {
+function trackPositions(track: readonly TrackEntry[]): Map<string, number> {
   const order = [...track].sort(
     (a, b) =>
       Number(b.status === "FINISHED") - Number(a.status === "FINISHED") ||

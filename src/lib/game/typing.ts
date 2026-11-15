@@ -70,7 +70,7 @@ export function applyKeys(
   return keys.reduce((current, key) => applyKey(current, text, key, errorMode), state);
 }
 
-export function typingProgress(state: TypingState, text: string): number {
+function typingProgress(state: TypingState, text: string): number {
   return text.length === 0 ? 1 : Math.min(1, state.typed.length / text.length);
 }
 
@@ -130,7 +130,7 @@ export function retargetText(state: TypingState, newText: string): TypingState {
  * Token bucket limiting typed characters (COURSE-06). 25 chars/s is 300 WPM,
  * above any human record over a race; the burst absorbs network batching.
  */
-export const MAX_CHARS_PER_SECOND = 25;
+const MAX_CHARS_PER_SECOND = 25;
 export const MAX_CHAR_BURST = 20;
 
 export interface RateBucket {

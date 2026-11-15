@@ -8,10 +8,8 @@ import { z } from "zod";
 import { LOCALES, i18nKey } from "@/lib/i18n";
 
 export const VISIBILITIES = ["PUBLIC", "CODE", "PRIVATE"] as const;
-export type Visibility = (typeof VISIBILITIES)[number];
 
 export const TEXT_MODES = ["COHERENT", "RANDOM"] as const;
-export type TextMode = (typeof TEXT_MODES)[number];
 
 export const COMPLEXITIES = ["EASY", "MEDIUM", "HARD"] as const;
 export type Complexity = (typeof COMPLEXITIES)[number];
@@ -28,18 +26,17 @@ export const MIN_TIME_LIMIT_SEC = 30;
 export const MAX_TIME_LIMIT_SEC = 600;
 export const MIN_WORD_COUNT = 10;
 export const MAX_WORD_COUNT = 150;
-export const MAX_CHAR_FILTER_LENGTH = 30;
+const MAX_CHAR_FILTER_LENGTH = 30;
 
 const charFilterSchema = z
   .string()
   .max(MAX_CHAR_FILTER_LENGTH, i18nKey("validation.charFilterTooLong"))
   .transform((value) => [...new Set(value.replace(/\s/g, "").toLowerCase())].join(""));
 
-export const botSchema = z.object({
+const botSchema = z.object({
   id: z.string().min(1).max(40),
   level: z.enum(BOT_LEVELS),
 });
-export type BotConfig = z.infer<typeof botSchema>;
 
 export const roomConfigSchema = z.object({
   visibility: z.enum(VISIBILITIES),

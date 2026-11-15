@@ -114,14 +114,6 @@ export class RaceSession {
     return this.endedAtMs !== null;
   }
 
-  hasRacer(id: string): boolean {
-    return this.racers.has(id);
-  }
-
-  racerIds(): string[] {
-    return [...this.racers.keys()];
-  }
-
   /**
    * Applies a human's keystrokes. Rejects the whole batch if it arrives before
    * the start or faster than humanly possible; the client then resyncs.

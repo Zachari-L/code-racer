@@ -4,7 +4,7 @@ import * as React from "react";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
 
 export type ThemePreference = "light" | "dark" | "system";
-export type Theme = "light" | "dark";
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
   preference: ThemePreference;

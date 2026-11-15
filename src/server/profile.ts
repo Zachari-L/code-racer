@@ -3,7 +3,7 @@ import type { RaceResultsData, ResultRow } from "@/lib/realtime/protocol";
 import { prisma } from "@/lib/prisma";
 import { avatarUrlFor } from "@/lib/avatar-url";
 
-export const HISTORY_PAGE_SIZE = 10;
+const HISTORY_PAGE_SIZE = 10;
 
 export interface ProfileData {
   id: string;

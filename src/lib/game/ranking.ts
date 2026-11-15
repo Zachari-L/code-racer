@@ -23,7 +23,7 @@ const STATUS_ORDER: Record<RacerStatus, number> = {
   ABANDONED: 2,
 };
 
-export function compareRacers(a: RankableRacer, b: RankableRacer): number {
+function compareRacers(a: RankableRacer, b: RankableRacer): number {
   const byStatus = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
   if (byStatus !== 0) return byStatus;
   if (a.status === "FINISHED") {

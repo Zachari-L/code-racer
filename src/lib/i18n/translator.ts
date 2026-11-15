@@ -4,7 +4,7 @@ import { fr, type TranslationKey } from "./messages/fr";
 
 export type { TranslationKey };
 
-export type TranslationParams = Record<string, string | number>;
+type TranslationParams = Record<string, string | number>;
 
 export type Translator = (key: TranslationKey, params?: TranslationParams) => string;
 

@@ -20,9 +20,8 @@ export const guestSessionSchema = z.object({
   id: z.string().regex(/^g_[\w-]{10,}$/),
   nickname: nicknameSchema,
 });
-export type GuestSession = z.infer<typeof guestSessionSchema>;
 
-export const identitySchema = z.object({
+const identitySchema = z.object({
   kind: z.enum(["user", "guest"]),
   id: z.string().min(1),
   name: z.string().min(1).max(40),

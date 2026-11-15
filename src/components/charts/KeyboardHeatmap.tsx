@@ -21,7 +21,7 @@ const LAYOUTS: Record<Locale, string[][]> = {
 };
 
 /** Accented letters count on their base key; other symbols stay as they are. */
-export function aggregateMissedKeys(missed: Record<string, number>): Map<string, number> {
+function aggregateMissedKeys(missed: Record<string, number>): Map<string, number> {
   const totals = new Map<string, number>();
   for (const [key, count] of Object.entries(missed)) {
     const base = key === "space" ? key : stripAccents(key.toLowerCase());

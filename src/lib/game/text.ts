@@ -10,7 +10,7 @@ import { pick, randomInt, type Rng } from "./random";
 import { EN_WORDS } from "./words/en";
 import { FR_WORDS } from "./words/fr";
 
-export const DICTIONARIES: Record<Locale, readonly string[]> = { fr: FR_WORDS, en: EN_WORDS };
+const DICTIONARIES: Record<Locale, readonly string[]> = { fr: FR_WORDS, en: EN_WORDS };
 
 export type TextOptions = Pick<
   RoomConfig,
@@ -75,7 +75,7 @@ export function countWords(text: string): number {
   return trimmed ? trimmed.split(/\s+/).length : 0;
 }
 
-export function truncateToWords(text: string, wordCount: number): string {
+function truncateToWords(text: string, wordCount: number): string {
   return text.trim().split(/\s+/).slice(0, wordCount).join(" ");
 }
 
@@ -144,13 +144,13 @@ export function generateRandomText(options: RandomTextOptions, rng: Rng): string
   return tokens.join(" ");
 }
 
-export interface PassageMetrics {
+interface PassageMetrics {
   averageWordLength: number;
   longWordRatio: number;
   specialCharRatio: number;
 }
 
-export function measurePassage(text: string): PassageMetrics {
+function measurePassage(text: string): PassageMetrics {
   const words = text.trim().split(/\s+/).filter(Boolean);
   const letters = words.map((w) => w.replace(/[^\p{L}]/gu, ""));
   const totalLetters = letters.reduce((sum, w) => sum + w.length, 0);
@@ -170,12 +170,12 @@ export function measurePassage(text: string): PassageMetrics {
  *     lowercase letters are ordinary letters)
  *   + 4 x share of long words (8+ letters).
  */
-export function passageScore(text: string): number {
+function passageScore(text: string): number {
   const m = measurePassage(text);
   return m.averageWordLength + 10 * m.specialCharRatio + 4 * m.longWordRatio;
 }
 
-export const PASSAGE_SCORE_THRESHOLDS = { medium: 5.1, hard: 5.8 } as const;
+const PASSAGE_SCORE_THRESHOLDS = { medium: 5.1, hard: 5.8 } as const;
 
 /** EASY below 5.1, HARD from 5.8, MEDIUM in between. */
 export function classifyPassage(text: string): Complexity {
