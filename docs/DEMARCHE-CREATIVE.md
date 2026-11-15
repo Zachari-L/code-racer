@@ -23,19 +23,17 @@ Le logo est une **roue**. L'idée vient de la première tempête d'idées du che
 
 ### Croquis
 
-Le premier jet : la roue seule, puis la roue à la place du « o » de « Code », avec « Racer » en bleu.
+Le premier jet, dessiné dans Paint : la roue seule, puis la roue à la place du « o » de « Code », avec « Racer » en bleu.
 
 ![Croquis du logo](images/croquis/logo-draft.png)
 
 ### Version au propre
 
-La roue seule sert de logo ; la version complète reprend l'idée du croquis, avec deux roues superposées qui forment le « o ».
+Générée avec Gemini à partir du croquis ci-dessus : l'idée et la composition viennent du croquis, Gemini en a fait une version plus nette. La roue seule sert de logo ; la version complète reprend l'idée du croquis, avec deux roues superposées qui forment le « o ».
 
 | Roue                                               | Logo complet                                                   |
 | -------------------------------------------------- | -------------------------------------------------------------- |
 | ![Logo roue](images/logo/coderacer-wheel-logo.jpg) | ![Logo complet CodeRacer](images/logo/coderacer-full-logo.jpg) |
-
-**À compléter (recommandé) :** l'outil utilisé pour la mise au propre (Figma, Illustrator, Inkscape…) et les étapes, pour montrer le passage du croquis à la version finale.
 
 ### Dans l'application
 
