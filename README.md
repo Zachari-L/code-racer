@@ -2,6 +2,8 @@
 
 Course de frappe au clavier multijoueur en temps réel, pensée pour la classe (12–17 ans). Les joueurs se retrouvent dans une salle identifiée par un code de 6 caractères, tapent le même texte et voient la progression de chacun en direct sur une piste. Des bots de cinq niveaux peuvent compléter la salle, et des bonus de remontée gardent la course serrée jusqu'au bout.
 
+**En ligne : <https://coderacer.fly.dev>** (compte de démonstration `demo` / `demo1234`).
+
 > Le nom et le logo sont provisoires : voir `docs/DEMARCHE-CREATIVE.md`.
 
 | Accueil                                 | Salle d'attente                               |
@@ -34,7 +36,7 @@ Course de frappe au clavier multijoueur en temps réel, pensée pour la classe (
 | Validation       | Zod (actions, messages WebSocket, configuration)                                        |
 | Style            | Tailwind CSS v4, Lucide                                                                 |
 | Images           | sharp (redimensionnement des avatars)                                                   |
-| Tests            | `bun test` (unitaires), Playwright (bout en bout)                                       |
+| Tests            | `bun test` (unitaires et intégration), Playwright (bout en bout)                        |
 | Outils           | Bun, ESLint, Prettier, GitHub Actions, Docker, Fly.io                                   |
 
 L'architecture (modèle de données, machine à états, flux des messages, ADR) est décrite dans [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), et la matrice des exigences dans [`docs/EXIGENCES.md`](docs/EXIGENCES.md).
@@ -82,12 +84,15 @@ Toutes sont documentées dans [`.env.example`](.env.example).
 bun run typecheck      # tsc --noEmit
 bun run lint           # ESLint
 bun run format:check   # Prettier
-bun test               # tests unitaires (tests/)
+bun test               # tests unitaires (tests/), sans base de données
+bun run test:integration  # serveur temps réel, résultats et profils (tests/integration/) : base migrée
 bun run build          # build de production
 bun run test:e2e       # Playwright (e2e/) : nécessite la base migrée et la build
 ```
 
-Les tests de bout en bout démarrent eux-mêmes le serveur de production sur le port 3100 et créent leurs propres comptes. La première fois : `bunx playwright install chromium`. GitHub Actions exécute tout cela à chaque push (`.github/workflows/ci.yml`).
+Les tests d'intégration utilisent la base de `DATABASE_URL` et suppriment ce qu'ils créent. Les tests de bout en bout démarrent eux-mêmes le serveur de production sur le port 3100 et créent leurs propres comptes. La première fois : `bunx playwright install chromium`.
+
+GitHub Actions (`.github/workflows/ci.yml`) exécute tout cela à chaque push : un premier job pour le lint, les types, le formatage et les tests unitaires, un second avec PostgreSQL pour les tests d'intégration et de bout en bout. Un push sur `main` qui passe les deux est ensuite déployé sur Fly.io.
 
 ## Déploiement (Fly.io)
 
@@ -96,9 +101,11 @@ fly launch --no-deploy                      # une seule fois, garde fly.toml
 fly postgres create && fly postgres attach  # ou toute base PostgreSQL
 fly secrets set AUTH_SECRET=... AUTH_DISCORD_ID=... AUTH_DISCORD_SECRET=... \
   AUTH_GITHUB_ID=... AUTH_GITHUB_SECRET=...
-fly deploy                                  # migrations appliquées en release_command
+fly deploy --remote-only --depot=false      # migrations appliquées en release_command
 fly ssh console -C "node --import tsx prisma/seed.ts"   # données de démonstration
 ```
+
+Le déploiement se fait ensuite tout seul : le job `deploy` de la CI lance la même commande avec le secret GitHub `FLY_API_TOKEN` (créé avec `fly tokens create deploy -a coderacer`). Le constructeur Depot par défaut de Fly s'est déjà bloqué pendant l'envoi, d'où `--depot=false`.
 
 L'état des courses est en mémoire : l'application doit tourner sur **une seule machine** (voir l'ADR). `fly.toml` la garde allumée en permanence.
 
