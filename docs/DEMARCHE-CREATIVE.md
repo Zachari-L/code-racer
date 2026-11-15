@@ -6,12 +6,13 @@
 
 Nom retenu : **CodeRacer**.
 
+J'ai choisi le nom « CodeRacer », car une des listes de mots que le client voulait était « code ». De plus, l'application est destinée à une cohorte d'étudiants, et une des raisons principales de vouloir s'améliorer à l'écriture sur ordinateur est de coder ou de faire toutes sortes de tâches semblables à de la programmation. Même si l'application ne s'adresse pas spécifiquement à l'écriture de code, elle s'adresse à des cohortes de jeunes qui ont un intérêt pour le code. La personnalité du site tourne autour de la course, alors c'est « CodeRacer ».
+
 **À compléter :**
 
-- Noms envisagés (avec, pour chacun, pourquoi vous l'avez gardé ou écarté) :
+- Autres noms envisagés (avec, pour chacun, pourquoi vous l'avez écarté) :
   1. …
   2. …
-- Raison du choix final : …
 - Vérification d'originalité (recherches faites, résultats) : …
 
 > Attention : un projet open source connu porte déjà le nom « Code Racer » (de WebDevCody). L'énoncé demande de vérifier que le nom n'est pas déjà utilisé par un produit connu ; la vérification ci-dessus doit expliquer pourquoi le nom reste acceptable, ou le nom doit changer.
