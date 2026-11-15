@@ -37,10 +37,10 @@ Générée avec Gemini à partir du croquis ci-dessus : l'idée et la compositio
 
 ### Dans l'application
 
-- **Barre de navigation** : le logo complet (`src/components/layout/BrandLogo.tsx`, image `src/assets/full-logo.png`). Ses lettres sont foncées : en thème sombre, il est posé sur une tuile blanc cassé pour rester lisible.
+- **Barre de navigation** : le logo complet, composé comme dans le croquis (`src/components/layout/BrandLogo.tsx`) : « C », la roue (`src/assets/wheel-logo.png`) à la place du « O », « DE » en ardoise et « RACER » en bleu, en Nunito Black. L'image générée du logo complet n'est pas utilisée telle quelle : ses lettres y sont dédoublées (deux « RACER » superposés, une bande floue entre les deux). En texte, les lettres suivent le thème (blanches en thème sombre).
 - **Favicon** : la roue seule, détourée en cercle, en `src/app/favicon.ico` (16, 32 et 48 px), `src/app/icon.png` (192 px) et `src/app/apple-icon.png` (180 px, sur le fond blanc cassé).
 
-Les dessins ne sont pas modifiés : le fond est seulement rendu transparent (détourage en cercle pour la roue), puis l'image est redimensionnée.
+La roue n'est pas modifiée : elle est seulement détourée en cercle et redimensionnée.
 
 ## 3. Direction artistique (DES-03)
 
