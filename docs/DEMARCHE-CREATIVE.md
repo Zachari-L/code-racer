@@ -19,12 +19,30 @@ J'ai choisi le nom « CodeRacer », car une des listes de mots que le client vou
 
 ## 2. Logo (DES-02)
 
-Le logo est une **roue**. L'idée vient de la première tempête d'idées du checkpoint 1, qui notait déjà « des boutons ronds en forme de roues » à côté des petites voitures et de la ligne d'arrivée. Elle est affichée dans la barre de navigation (`src/components/layout/Navbar.tsx`, composant `src/components/animated/TireIcon.tsx`), sur la première page montrée plus bas. Le même dessin, exporté tel quel, sert de favicon : `src/app/icon.svg`, `src/app/favicon.ico` (16, 32 et 48 px) et `src/app/apple-icon.png` (sur le fond blanc cassé).
+Le logo est une **roue**. L'idée vient de la première tempête d'idées du checkpoint 1, qui notait déjà « des boutons ronds en forme de roues » à côté des petites voitures et de la ligne d'arrivée.
 
-**À compléter :**
+### Croquis
 
-- Croquis papier ou tablette : ajouter les photos dans `docs/images/croquis/` et les afficher ici (exigé par l'énoncé).
-- Étapes de mise au propre (outil utilisé : Figma, Illustrator, Inkscape…) : …
+Le premier jet : la roue seule, puis la roue à la place du « o » de « Code », avec « Racer » en bleu.
+
+![Croquis du logo](images/croquis/logo-draft.png)
+
+### Version au propre
+
+La roue seule sert de logo ; la version complète reprend l'idée du croquis, avec deux roues superposées qui forment le « o ».
+
+| Roue                                               | Logo complet                                                   |
+| -------------------------------------------------- | -------------------------------------------------------------- |
+| ![Logo roue](images/logo/coderacer-wheel-logo.jpg) | ![Logo complet CodeRacer](images/logo/coderacer-full-logo.jpg) |
+
+**À compléter (recommandé) :** l'outil utilisé pour la mise au propre (Figma, Illustrator, Inkscape…) et les étapes, pour montrer le passage du croquis à la version finale.
+
+### Dans l'application
+
+- **Barre de navigation** : la roue, détourée sur la tuile lime (`src/components/layout/WheelLogo.tsx`, image `src/assets/wheel-logo.png`). Le nom à côté est du texte (« Code » en ardoise, « Racer » en bleu, comme le logo complet), pour rester lisible dans les deux thèmes.
+- **Favicon** : la même roue en `src/app/favicon.ico` (16, 32 et 48 px), `src/app/icon.png` (192 px) et `src/app/apple-icon.png` (180 px, sur le fond blanc cassé).
+
+Le dessin n'est pas modifié : il est seulement détouré en cercle et redimensionné.
 
 ## 3. Direction artistique (DES-03)
 
