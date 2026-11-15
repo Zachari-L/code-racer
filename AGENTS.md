@@ -22,7 +22,7 @@ Welcome to **CodeRacer**, a competitive classroom typing arcade web application 
 - **Database & ORM:** PostgreSQL + Prisma 7 (using `@prisma/adapter-pg` and `pg.Pool`)
 - **Styling:** Tailwind CSS v4 (`@theme` tokens) + shadcn/ui primitives + Lucide React
 - **Validation:** Zod schemas shared across forms and server actions
-- **Forms:** React Hook Form + `@hookform/resolvers/zod`
+- **Forms:** Controlled React state; the server action validates the input with the shared Zod schemas and returns translated errors
 - **Authentication:** NextAuth v5 (Auth.js) with JWT sessions, Credentials (username/password with `bcryptjs`), and Discord/GitHub OAuth
 - **Deployment:** Fly.io with multi-stage standalone Dockerfile (`oven/bun`)
 
