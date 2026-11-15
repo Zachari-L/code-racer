@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Users, User, LogIn, LogOut, Plus } from "lucide-react";
 import { LinkButton } from "@/components/ui/link-button";
-import { TireIcon } from "@/components/animated/TireIcon";
+import { WheelLogo } from "@/components/layout/WheelLogo";
 import { useLanguage } from "@/context/LanguageContext";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { ThemeSelector } from "@/components/layout/ThemeSelector";
@@ -19,7 +19,7 @@ export function Navbar() {
         {/* Brand Logo */}
         <Link href="/" aria-label="CodeRacer" className="group flex shrink-0 items-center gap-3">
           <div className="bg-electric-lime border-slate-dark arcade-shadow flex h-10 w-10 items-center justify-center rounded-2xl border-3 transition-transform duration-200 group-hover:rotate-12 sm:h-12 sm:w-12 dark:border-zinc-700">
-            <TireIcon size={32} spinOnHover />
+            <WheelLogo size={32} />
           </div>
           {/* The wordmark needs room: phones show the logo alone (DES-06). */}
           <div className="hidden flex-col lg:flex">
