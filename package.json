@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
+    "test:integration": "bun test ./tests/integration/room-runtime.int.ts ./tests/integration/hub.int.ts ./tests/integration/results.int.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
