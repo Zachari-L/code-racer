@@ -37,10 +37,10 @@ Générée avec Gemini à partir du croquis ci-dessus : l'idée et la compositio
 
 ### Dans l'application
 
-- **Barre de navigation** : la roue, détourée sur la tuile lime (`src/components/layout/WheelLogo.tsx`, image `src/assets/wheel-logo.png`). Le nom à côté est du texte (« Code » en ardoise, « Racer » en bleu, comme le logo complet), pour rester lisible dans les deux thèmes.
-- **Favicon** : la même roue en `src/app/favicon.ico` (16, 32 et 48 px), `src/app/icon.png` (192 px) et `src/app/apple-icon.png` (180 px, sur le fond blanc cassé).
+- **Barre de navigation** : le logo complet (`src/components/layout/BrandLogo.tsx`, image `src/assets/full-logo.png`). Ses lettres sont foncées : en thème sombre, il est posé sur une tuile blanc cassé pour rester lisible.
+- **Favicon** : la roue seule, détourée en cercle, en `src/app/favicon.ico` (16, 32 et 48 px), `src/app/icon.png` (192 px) et `src/app/apple-icon.png` (180 px, sur le fond blanc cassé).
 
-Le dessin n'est pas modifié : il est seulement détouré en cercle et redimensionné.
+Les dessins ne sont pas modifiés : le fond est seulement rendu transparent (détourage en cercle pour la roue), puis l'image est redimensionnée.
 
 ## 3. Direction artistique (DES-03)
 
