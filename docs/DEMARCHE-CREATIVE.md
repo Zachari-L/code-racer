@@ -18,13 +18,12 @@ Nom retenu : **CodeRacer**.
 
 ## 2. Logo (DES-02)
 
-Le logo est une **roue**. L'idée vient de la première tempête d'idées du checkpoint 1, qui notait déjà « des boutons ronds en forme de roues » à côté des petites voitures et de la ligne d'arrivée. Elle est affichée dans la barre de navigation (`src/components/layout/Navbar.tsx`, composant `src/components/animated/TireIcon.tsx`), sur la première page montrée plus bas.
+Le logo est une **roue**. L'idée vient de la première tempête d'idées du checkpoint 1, qui notait déjà « des boutons ronds en forme de roues » à côté des petites voitures et de la ligne d'arrivée. Elle est affichée dans la barre de navigation (`src/components/layout/Navbar.tsx`, composant `src/components/animated/TireIcon.tsx`), sur la première page montrée plus bas. Le même dessin, exporté tel quel, sert de favicon : `src/app/icon.svg`, `src/app/favicon.ico` (16, 32 et 48 px) et `src/app/apple-icon.png` (sur le fond blanc cassé).
 
 **À compléter :**
 
 - Croquis papier ou tablette : ajouter les photos dans `docs/images/croquis/` et les afficher ici (exigé par l'énoncé).
 - Étapes de mise au propre (outil utilisé : Figma, Illustrator, Inkscape…) : …
-- Favicon : `src/app/favicon.ico` est encore celui de Next.js par défaut ; l'énoncé demande que le logo serve aussi de favicon.
 
 ## 3. Direction artistique (DES-03)
 
