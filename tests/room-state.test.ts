@@ -82,4 +82,42 @@ describe("Room state reducer", () => {
     );
     expect(state).toEqual({ ...INITIAL_ROOM_STATE, ended: "kicked" });
   });
+
+  it("follows live track updates", () => {
+    const track = [
+      { id: "m1", progress: 0.5, wpm: 40, status: "RACING" as const, bonuses: 0, fogged: false },
+    ];
+    const state = roomReducer(INITIAL_ROOM_STATE, { type: "track", track, serverNow: 0 });
+    expect(state.track).toEqual(track);
+  });
+
+  it("expires notices oldest first", () => {
+    const bonus = { type: "FOG" as const, beneficiaryId: "a", targetId: "b", checkpoint: 0.25 };
+    let state = roomReducer(INITIAL_ROOM_STATE, { type: "bonus", bonus });
+    state = roomReducer(state, { type: "bonus", bonus: { ...bonus, type: "SHORTCUT" } });
+    state = roomReducer(state, { type: "dismissOldestNotice" });
+    expect(state.notices.map((n) => n.bonus.type)).toEqual(["SHORTCUT"]);
+  });
+
+  it("keeps join details and action errors until they are cleared", () => {
+    let state = roomReducer(INITIAL_ROOM_STATE, {
+      type: "joinError",
+      error: "alreadyInRoom",
+      currentRoom: "ZX7K2P",
+    });
+    expect(state.joinError).toEqual({
+      error: "alreadyInRoom",
+      currentRoom: "ZX7K2P",
+      retryAfterMs: undefined,
+    });
+    state = roomReducer(state, { type: "actionError", error: "notHost" });
+    expect(state.actionError).toBe("notHost");
+    state = roomReducer(state, { type: "clearErrors" });
+    expect([state.actionError, state.joinError]).toEqual([null, null]);
+  });
+
+  it("ignores messages that do not change the room view", () => {
+    const state = roomReducer(INITIAL_ROOM_STATE, { type: "pong", t: 1, serverNow: 2 });
+    expect(state).toBe(INITIAL_ROOM_STATE);
+  });
 });

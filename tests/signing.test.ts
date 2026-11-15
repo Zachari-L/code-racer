@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
+import { createHmac } from "node:crypto";
 import { z } from "zod";
-import { signPayload, verifyPayload } from "@/lib/signing";
+import { getAuthSecret, signPayload, verifyPayload } from "@/lib/signing";
 
 const schema = z.object({ id: z.string() });
 const SECRET = "test-secret";
@@ -23,5 +24,22 @@ describe("Signed payloads", () => {
     expect(verifyPayload(undefined, SECRET, schema)).toBeNull();
     expect(verifyPayload("garbage", SECRET, schema)).toBeNull();
     expect(verifyPayload(signPayload({ id: 3 }, SECRET), SECRET, schema)).toBeNull();
+    expect(verifyPayload(`${signPayload({ id: "g_1" }, SECRET)}.extra`, SECRET, schema)).toBeNull();
+    // Correctly signed, but not JSON.
+    const data = Buffer.from("not json").toString("base64url");
+    const signature = createHmac("sha256", SECRET).update(data).digest("base64url");
+    expect(verifyPayload(`${data}.${signature}`, SECRET, schema)).toBeNull();
+  });
+
+  it("reads the shared secret from the environment", () => {
+    const saved = process.env.AUTH_SECRET;
+    try {
+      process.env.AUTH_SECRET = "from-env";
+      expect(getAuthSecret()).toBe("from-env");
+      delete process.env.AUTH_SECRET;
+      expect(() => getAuthSecret()).toThrow("AUTH_SECRET is not set");
+    } finally {
+      process.env.AUTH_SECRET = saved;
+    }
   });
 });
