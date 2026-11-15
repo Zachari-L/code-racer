@@ -1,6 +1,5 @@
 export const fr = {
   // Nav
-  "nav.subtitle": "Arcade Frappe Multijoueur",
   "nav.lobbies": "Salles",
   "nav.profile": "Profil",
   "nav.signIn": "Connexion",
@@ -383,6 +382,7 @@ export const fr = {
   "theme.light": "Thème clair",
   "theme.dark": "Thème sombre",
   "theme.system": "Thème du système",
+  "theme.cycle": "Changer de thème (actuel : {theme})",
   "nav.skipToContent": "Aller au contenu",
 } as const satisfies Record<string, string>;
 

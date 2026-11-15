@@ -22,8 +22,14 @@ export function LanguageToggle({ className }: { className?: string }) {
       <span className="sr-only">{t("language.switch")}</span>
       <Globe className="text-azure-blue hidden h-3.5 w-3.5 sm:block" aria-hidden />
       {LOCALES.map((locale, index) => (
-        <span key={locale} className="flex items-center gap-1.5">
-          {index > 0 && <span className="text-zinc-300 dark:text-zinc-600">/</span>}
+        // Phones only show the current language (DES-06).
+        <span
+          key={locale}
+          className={cn("items-center gap-1.5", language === locale ? "flex" : "hidden sm:flex")}
+        >
+          {index > 0 && (
+            <span className="hidden text-zinc-300 sm:inline dark:text-zinc-600">/</span>
+          )}
           <span
             className={
               language === locale

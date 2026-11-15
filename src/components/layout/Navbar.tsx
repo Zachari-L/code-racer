@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Users, User, LogIn, LogOut, Plus } from "lucide-react";
 import { LinkButton } from "@/components/ui/link-button";
-import { WheelLogo } from "@/components/layout/WheelLogo";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useLanguage } from "@/context/LanguageContext";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { ThemeSelector } from "@/components/layout/ThemeSelector";
@@ -17,19 +17,8 @@ export function Navbar() {
     <header className="border-slate-dark sticky top-0 z-40 w-full border-b-3 bg-white/90 backdrop-blur-md transition-colors duration-150 dark:border-zinc-700 dark:bg-zinc-900/90">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:h-20 sm:px-8">
         {/* Brand Logo */}
-        <Link href="/" aria-label="CodeRacer" className="group flex shrink-0 items-center gap-3">
-          <div className="bg-electric-lime border-slate-dark arcade-shadow flex h-10 w-10 items-center justify-center rounded-2xl border-3 transition-transform duration-200 group-hover:rotate-12 sm:h-12 sm:w-12 dark:border-zinc-700">
-            <WheelLogo size={32} />
-          </div>
-          {/* The wordmark needs room: phones show the logo alone (DES-06). */}
-          <div className="hidden flex-col lg:flex">
-            <span className="text-slate-dark text-2xl font-black tracking-wider uppercase dark:text-white">
-              Code<span className="text-azure-blue">Racer</span>
-            </span>
-            <span className="text-[10px] font-extrabold tracking-widest text-zinc-600 uppercase dark:text-zinc-300">
-              {t("nav.subtitle")}
-            </span>
-          </div>
+        <Link href="/" className="group flex shrink-0 items-center">
+          <BrandLogo />
         </Link>
 
         {/* Navigation & Controls */}
@@ -40,12 +29,13 @@ export function Navbar() {
               <Users className="text-azure-blue h-4 w-4" aria-hidden />
               <span className="sr-only sm:not-sr-only">{t("nav.lobbies")}</span>
             </LinkButton>
+            {/* Phones create rooms from the home and rooms pages (DES-06). */}
             {session?.user && (
               <LinkButton
                 href="/rooms/new"
                 variant="outline"
                 size="sm"
-                className="gap-1.5 sm:gap-2"
+                className="hidden gap-1.5 sm:inline-flex sm:gap-2"
               >
                 <Plus className="h-4 w-4" aria-hidden />
                 <span className="sr-only sm:not-sr-only">{t("nav.create")}</span>

@@ -3,7 +3,6 @@ import type { TranslationKey } from "./fr";
 // Typed against the French source dictionary: a missing or unknown key fails typecheck.
 export const en: Record<TranslationKey, string> = {
   // Nav
-  "nav.subtitle": "Arcade Multiplayer Typing",
   "nav.lobbies": "Rooms",
   "nav.profile": "Profile",
   "nav.signIn": "Sign In",
@@ -383,5 +382,6 @@ export const en: Record<TranslationKey, string> = {
   "theme.light": "Light theme",
   "theme.dark": "Dark theme",
   "theme.system": "System theme",
+  "theme.cycle": "Change theme (current: {theme})",
   "nav.skipToContent": "Skip to content",
 };
