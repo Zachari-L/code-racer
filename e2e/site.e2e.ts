@@ -59,6 +59,19 @@ test("pages fit a 360 px phone, where the race shows a keyboard message (DES-06)
     expect({ path, overflow }).toEqual({ path, overflow: 0 });
   }
 
+  // The signed-in navbar has more buttons; it must fit too.
+  const signedInContext = await browser.newContext({ viewport: { width: 360, height: 740 } });
+  const signedInPhone = await signedInContext.newPage();
+  await registerUser(signedInPhone, uniqueName("phone"));
+  await signedInPhone.goto("/");
+  await expect(signedInPhone.getByRole("link", { name: "Profil" })).toBeVisible();
+  expect(
+    await signedInPhone.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    )
+  ).toBe(0);
+  await signedInContext.close();
+
   await registerUser(page, uniqueName("mobile"));
   const code = await createRoom(page, { words: 10 });
   await phone.goto(`/room/${code}`);
