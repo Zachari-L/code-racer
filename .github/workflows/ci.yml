@@ -115,7 +115,7 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
-      - uses: superfly/flyctl-actions/setup-flyctl@1.5
+      - uses: superfly/flyctl-actions/setup-flyctl@1.6
       # Migrations run as the release command (fly.toml). Fly's Depot builder
       # has hung on uploads, so the image is built by Fly's own remote builder.
       - run: flyctl deploy --remote-only --depot=false
