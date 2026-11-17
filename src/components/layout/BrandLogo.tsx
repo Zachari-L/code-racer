@@ -17,7 +17,8 @@ export function BrandLogo() {
         src={wheelLogo}
         alt=""
         loading="eager"
-        className="mx-px h-[0.95em] w-[0.95em] transition-transform duration-300 group-hover:rotate-180"
+        // Taller than the capitals: lifted so it sits on the baseline like an "O" instead of hanging below it.
+        className="relative -top-[0.1em] mx-px h-[0.95em] w-[0.95em] transition-transform duration-300 group-hover:rotate-180"
       />
       <span className="text-slate-dark dark:text-white">de</span>
       <span className="text-azure-blue">Racer</span>
