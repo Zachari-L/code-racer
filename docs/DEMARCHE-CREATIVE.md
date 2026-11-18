@@ -54,7 +54,7 @@ Générée avec Gemini à partir du croquis ci-dessus : l'idée et la compositio
 
 ### Dans l'application
 
-- **Barre de navigation** : le logo complet avec le nom retenu (`src/components/layout/BrandLogo.tsx`), sur le même principe que le croquis : « CL », la roue (`src/assets/wheel-logo.png`) à la place du premier « O » de « CLASSROOM », « SSROOM » en ardoise et « RACER » en bleu, en Nunito Black. En texte, les lettres suivent le thème (blanches en thème sombre). Sous 1024 px de large, les deux mots passent sur deux lignes pour que la barre tienne sur un téléphone. L'image générée du logo complet n'est pas utilisée : elle porte l'ancien nom et ses lettres y sont dédoublées (deux « RACER » superposés, une bande floue entre les deux).
+- **Barre de navigation** : le logo complet avec le nom retenu (`src/components/layout/BrandLogo.tsx`), sur le même principe que le croquis : « CLASSR », la roue (`src/assets/wheel-logo.png`) à la place du premier « O », puis « OM » en ardoise et « RACER » en bleu, en Nunito Black. En texte, les lettres suivent le thème (blanches en thème sombre). Sous 1024 px de large, les deux mots passent sur deux lignes pour que la barre tienne sur un téléphone. L'image générée du logo complet n'est pas utilisée : elle porte l'ancien nom et ses lettres y sont dédoublées (deux « RACER » superposés, une bande floue entre les deux).
 - **Favicon** : la roue seule, détourée en cercle, en `src/app/favicon.ico` (16, 32 et 48 px), `src/app/icon.png` (192 px) et `src/app/apple-icon.png` (180 px, sur le fond blanc cassé).
 
 La roue n'est pas modifiée : elle est seulement détourée en cercle et redimensionnée.

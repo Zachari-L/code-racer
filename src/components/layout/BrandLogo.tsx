@@ -15,7 +15,7 @@ export function BrandLogo() {
       className="flex flex-col items-start text-sm leading-none font-black uppercase sm:text-base lg:flex-row lg:items-center lg:gap-[0.3em] lg:text-3xl lg:tracking-wide"
     >
       <span className="text-slate-dark flex items-center dark:text-white">
-        Cl
+        Classr
         <Image
           src={wheelLogo}
           alt=""
@@ -23,7 +23,7 @@ export function BrandLogo() {
           // Taller than the capitals: lifted so it sits on the baseline like an "O" instead of hanging below it.
           className="relative -top-[0.1em] mx-px h-[0.95em] w-[0.95em] transition-transform duration-300 group-hover:rotate-180"
         />
-        ssroom
+        om
       </span>
       <span className="text-azure-blue">Racer</span>
     </span>
