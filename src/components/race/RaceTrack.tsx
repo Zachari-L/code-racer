@@ -41,7 +41,8 @@ interface RaceTrackProps {
 /**
  * The progress track (COURSE-05): one lane per racer with avatar, name,
  * position and live WPM. Positions arrive 5 times per second and the cars
- * glide between them with a CSS transition, so motion stays smooth.
+ * glide between them with a CSS transition, so motion stays smooth. It
+ * follows the theme: light lanes in light mode, asphalt in dark mode.
  */
 export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
   const { t, language } = useLanguage();
@@ -71,7 +72,7 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
         tabIndex={compact ? 0 : undefined}
         aria-label={compact ? t("race.trackTitle") : undefined}
         className={cn(
-          "border-slate-dark relative space-y-1 rounded-2xl border-3 bg-[#1c1d22] p-2 dark:border-zinc-700",
+          "border-slate-dark relative space-y-1 rounded-2xl border-3 bg-white p-2 dark:border-zinc-700 dark:bg-[#1c1d22]",
           compact && "max-h-[38vh] overflow-y-auto"
         )}
       >
@@ -89,13 +90,15 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
               className={cn(
                 "relative flex items-center gap-2 rounded-xl px-2",
                 compact ? "h-8" : "h-12",
-                isYou ? "bg-electric-lime/15 ring-electric-lime ring-2" : "bg-white/5",
-                isYou && compact && "sticky top-0 z-40 bg-[#2b3010]",
+                isYou
+                  ? "bg-electric-lime/25 ring-slate-dark dark:bg-electric-lime/15 dark:ring-electric-lime ring-2"
+                  : "bg-zinc-100 dark:bg-white/5",
+                isYou && compact && "sticky top-0 z-40 bg-[#f1ffb8] dark:bg-[#2b3010]",
                 entry?.status === "ABANDONED" && "opacity-60"
               )}
             >
               {/* Racer label */}
-              <div className="flex w-48 shrink-0 items-center gap-1.5 text-white">
+              <div className="text-slate-dark flex w-48 shrink-0 items-center gap-1.5 dark:text-white">
                 <span className="w-7 text-right font-mono text-[11px] font-black">
                   {formatOrdinal(language, position)}
                 </span>
@@ -105,16 +108,18 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
                     name={racer.name}
                     src={racer.avatarUrl}
                     size={24}
-                    className="border-white/60"
+                    className="border-zinc-300 dark:border-white/60"
                   />
                 )}
                 <span className="truncate text-xs font-black">
                   {racer.name}
-                  {isYou && <span className="text-electric-lime"> {t("lobby.you")}</span>}
+                  {isYou && (
+                    <span className="dark:text-electric-lime text-zinc-600"> {t("lobby.you")}</span>
+                  )}
                 </span>
                 {racer.isBot && (
                   <span
-                    className="flex shrink-0 items-center gap-0.5 rounded-full bg-white/15 px-1.5 py-0.5 text-[9px] font-black uppercase"
+                    className="flex shrink-0 items-center gap-0.5 rounded-full bg-zinc-200 px-1.5 py-0.5 text-[9px] font-black uppercase dark:bg-white/15"
                     title={t("race.botTag")}
                   >
                     <Bot className="h-3 w-3" aria-hidden />
@@ -130,15 +135,17 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
                   <div
                     key={checkpoint}
                     aria-hidden
-                    className="absolute inset-y-0 border-l-2 border-dashed border-white/25"
+                    className="absolute inset-y-0 border-l-2 border-dashed border-zinc-300 dark:border-white/25"
                     style={{ left: `${checkpoint * 100}%` }}
                   />
                 ))}
-                <div className="absolute inset-x-0 top-1/2 h-2.5 -translate-y-1/2 overflow-hidden rounded-full bg-black/40">
+                <div className="absolute inset-x-0 top-1/2 h-2.5 -translate-y-1/2 overflow-hidden rounded-full bg-black/10 dark:bg-black/40">
                   <div
                     className={cn(
                       "h-full rounded-full transition-[width] duration-200 ease-linear",
-                      BAR_COLORS[color]
+                      BAR_COLORS[color],
+                      // Lime barely shows on a light lane: outline it.
+                      color === "lime" && "ring-slate-dark/60 ring-1 ring-inset dark:ring-0"
                     )}
                     style={{ width: `${progress * 100}%` }}
                   />
@@ -158,13 +165,13 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
                 </div>
                 {entry?.fogged && (
                   <CloudFog
-                    className="absolute top-1/2 z-20 h-5 w-5 -translate-y-1/2 text-white/90"
+                    className="absolute top-1/2 z-20 h-5 w-5 -translate-y-1/2 text-zinc-600 dark:text-white/90"
                     style={{ left: `calc(${progress} * (100% - 52px) + 40px)` }}
                     aria-label={t("bonus.FOG.title")}
                   />
                 )}
                 {entry && entry.status !== "RACING" && (
-                  <span className="absolute -top-1 left-0 z-30 rounded-full bg-white px-2 py-0.5 text-[10px] font-black text-[#111112] uppercase">
+                  <span className="bg-slate-dark absolute -top-1 left-0 z-30 rounded-full px-2 py-0.5 text-[10px] font-black text-white uppercase dark:bg-white dark:text-[#111112]">
                     {t(`race.status.${entry.status}`)}
                   </span>
                 )}
@@ -180,9 +187,11 @@ export function RaceTrack({ racers, track, youId, notices }: RaceTrackProps) {
               </div>
 
               {/* Speed and finish */}
-              <div className="flex w-12 shrink-0 items-center justify-end gap-1 text-white">
+              <div className="text-slate-dark flex w-12 shrink-0 items-center justify-end gap-1 dark:text-white">
                 <span className="font-mono text-[11px] font-black">{entry?.wpm ?? 0}</span>
-                <span className="text-[9px] font-bold text-white/70">{t("race.wpmShort")}</span>
+                <span className="text-[9px] font-bold text-zinc-600 dark:text-white/70">
+                  {t("race.wpmShort")}
+                </span>
               </div>
               <div
                 aria-hidden
