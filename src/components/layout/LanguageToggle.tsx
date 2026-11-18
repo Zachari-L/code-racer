@@ -20,15 +20,15 @@ export function LanguageToggle({ className }: { className?: string }) {
     >
       {/* The accessible name must contain the visible "FR / EN" (WCAG 2.5.3). */}
       <span className="sr-only">{t("language.switch")}</span>
-      <Globe className="text-azure-blue hidden h-3.5 w-3.5 sm:block" aria-hidden />
+      <Globe className="text-azure-blue hidden h-3.5 w-3.5 lg:block" aria-hidden />
       {LOCALES.map((locale, index) => (
-        // Phones only show the current language (DES-06).
+        // Below 1024 px, only the current language shows (DES-06).
         <span
           key={locale}
-          className={cn("items-center gap-1.5", language === locale ? "flex" : "hidden sm:flex")}
+          className={cn("items-center gap-1.5", language === locale ? "flex" : "hidden lg:flex")}
         >
           {index > 0 && (
-            <span className="hidden text-zinc-300 sm:inline dark:text-zinc-600">/</span>
+            <span className="hidden text-zinc-300 lg:inline dark:text-zinc-600">/</span>
           )}
           <span
             className={

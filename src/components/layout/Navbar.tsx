@@ -27,7 +27,7 @@ export function Navbar() {
           <nav aria-label={t("nav.main")} className="flex items-center gap-1.5 sm:gap-2">
             <LinkButton href="/rooms" variant="outline" size="sm" className="gap-1.5 sm:gap-2">
               <Users className="text-azure-blue h-4 w-4" aria-hidden />
-              <span className="sr-only sm:not-sr-only">{t("nav.lobbies")}</span>
+              <span className="sr-only lg:not-sr-only">{t("nav.lobbies")}</span>
             </LinkButton>
             {/* Phones create rooms from the home and rooms pages (DES-06). */}
             {session?.user && (
@@ -38,7 +38,7 @@ export function Navbar() {
                 className="hidden gap-1.5 sm:inline-flex sm:gap-2"
               >
                 <Plus className="h-4 w-4" aria-hidden />
-                <span className="sr-only sm:not-sr-only">{t("nav.create")}</span>
+                <span className="sr-only lg:not-sr-only">{t("nav.create")}</span>
               </LinkButton>
             )}
           </nav>
@@ -54,7 +54,7 @@ export function Navbar() {
                 className="border-slate-dark arcade-shadow flex h-9 items-center gap-1.5 rounded-full border-2 bg-white px-2.5 text-xs font-black hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
               >
                 <User className="text-azure-blue h-4 w-4" aria-hidden />
-                <span className="hidden max-w-[120px] truncate sm:inline">
+                <span className="hidden max-w-[120px] truncate lg:inline">
                   {session.user.name ?? session.user.username}
                 </span>
               </Link>
@@ -76,7 +76,7 @@ export function Navbar() {
               className="gap-1.5 text-xs font-black"
             >
               <LogIn className="h-3.5 w-3.5" aria-hidden />
-              <span className="sr-only sm:not-sr-only">{t("nav.signIn")}</span>
+              <span className="sr-only lg:not-sr-only">{t("nav.signIn")}</span>
             </LinkButton>
           )}
 
