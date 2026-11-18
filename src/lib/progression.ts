@@ -1,5 +1,5 @@
 /**
- * Driver progression and prestige leveling engine for CodeRacer
+ * Driver progression and prestige leveling engine for Classroom Racer
  */
 
 import type { TranslationKey } from "@/lib/i18n";

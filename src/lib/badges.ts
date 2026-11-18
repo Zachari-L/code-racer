@@ -1,5 +1,5 @@
 /**
- * Single source of truth for CodeRacer badges: codes, unlock rules, icons and
+ * Single source of truth for Classroom Racer badges: codes, unlock rules, icons and
  * display strings. Used by the seed, `saveRaceResult` and the profile page.
  */
 

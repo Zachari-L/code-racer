@@ -42,7 +42,7 @@ async function main() {
   });
 
   server.listen(port, () => {
-    console.log(`> CodeRacer ready on http://${hostname}:${port} (${dev ? "dev" : "production"})`);
+    console.log(`> Classroom Racer ready on http://${hostname}:${port} (${dev ? "dev" : "production"})`);
   });
 }
 

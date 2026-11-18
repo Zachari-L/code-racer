@@ -62,7 +62,7 @@ export const en: Record<TranslationKey, string> = {
   "profile.races": "Races",
 
   // Footer
-  "footer.text": "CodeRacer © {year} — Designed for classrooms and coding enthusiasts.",
+  "footer.text": "Classroom Racer © {year} — Designed for classrooms and coding enthusiasts.",
 
   // Badges (rules live in src/lib/badges.ts)
   "badge.firstRace.title": "First Lap",
@@ -79,7 +79,7 @@ export const en: Record<TranslationKey, string> = {
   "badge.veteran5.desc": "Finish 5 races",
 
   // Metadata
-  "meta.title": "CodeRacer — The Multiplayer Typing Race",
+  "meta.title": "Classroom Racer — The Multiplayer Typing Race",
   "meta.description":
     "A typing practice web app combining solo training with real-time multiplayer races.",
 
@@ -139,7 +139,7 @@ export const en: Record<TranslationKey, string> = {
   "common.yes": "Yes",
   "common.no": "No",
   "common.retry": "Try again",
-  "meta.roomTitle": "Room {code} · CodeRacer",
+  "meta.roomTitle": "Room {code} · Classroom Racer",
   "guest.title": "Pick a nickname",
   "guest.description":
     "Play without an account: a nickname is enough. Your results will not be kept.",
@@ -315,8 +315,8 @@ export const en: Record<TranslationKey, string> = {
   "home.createDefaultRoom": "Create a public room",
   "home.browseRooms": "Browse rooms",
   "home.createRoom": "Create a room",
-  "meta.roomsTitle": "Public rooms · CodeRacer",
-  "meta.createTitle": "Create a room · CodeRacer",
+  "meta.roomsTitle": "Public rooms · Classroom Racer",
+  "meta.createTitle": "Create a room · Classroom Racer",
   "explorer.title": "Public rooms",
   "explorer.caption": "Open public rooms, updated live",
   "explorer.all": "All",
@@ -347,9 +347,9 @@ export const en: Record<TranslationKey, string> = {
   "errors.avatarMissing": "Choose an image.",
   "errors.avatarTooLarge": "The image is larger than 2 MB.",
   "errors.avatarType": "Accepted formats: JPEG, PNG or WebP.",
-  "meta.profileTitle": "My profile · CodeRacer",
-  "meta.publicProfileTitle": "{name} · CodeRacer",
-  "meta.raceTitle": "Race results · CodeRacer",
+  "meta.profileTitle": "My profile · Classroom Racer",
+  "meta.publicProfileTitle": "{name} · Classroom Racer",
+  "meta.raceTitle": "Race results · Classroom Racer",
   "profile.statsTitle": "Statistics",
   "profile.bestWpm": "Best WPM",
   "profile.avgWpm": "Average WPM",

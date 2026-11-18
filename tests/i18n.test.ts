@@ -40,7 +40,7 @@ describe("Dictionaries", () => {
 describe("Translator", () => {
   it("translates and interpolates parameters", () => {
     expect(createTranslator("en")("footer.text", { year: 2026 })).toBe(
-      "CodeRacer © 2026 — Designed for classrooms and coding enthusiasts."
+      "Classroom Racer © 2026 — Designed for classrooms and coding enthusiasts."
     );
     expect(createTranslator("fr")("nav.lobbies")).toBe("Salles");
   });

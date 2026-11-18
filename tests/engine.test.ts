@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { calculateWpm, calculateAccuracy, countCorrectChars } from "../src/lib/utils";
 
-describe("CodeRacer Typing Engine Calculations", () => {
+describe("Classroom Racer Typing Engine Calculations", () => {
   it("calculates WPM accurately based on standard 5 characters per word formula", () => {
     // 250 characters typed correctly in 60 seconds = 50 words / 1 min = 50 WPM
     const wpm = calculateWpm(250, 60);

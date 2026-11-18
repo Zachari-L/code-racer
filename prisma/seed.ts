@@ -187,7 +187,7 @@ async function seedHistory(users: Awaited<ReturnType<typeof seedUsers>>) {
 }
 
 async function main() {
-  console.log("Seeding CodeRacer...");
+  console.log("Seeding Classroom Racer...");
   await seedPassages();
   await seedBadges();
   const users = await seedUsers();

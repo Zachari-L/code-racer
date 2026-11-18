@@ -59,7 +59,7 @@ export const fr = {
   "profile.races": "Courses",
 
   // Footer
-  "footer.text": "CodeRacer © {year} — Conçu pour les classes et les passionnés de code.",
+  "footer.text": "Classroom Racer © {year} — Conçu pour les classes et les passionnés de code.",
 
   // Badges (rules live in src/lib/badges.ts)
   "badge.firstRace.title": "Premier Tour de Piste",
@@ -76,7 +76,7 @@ export const fr = {
   "badge.veteran5.desc": "Terminer 5 courses",
 
   // Metadata
-  "meta.title": "CodeRacer — La Course de Dactylographie Multijoueur",
+  "meta.title": "Classroom Racer — La Course de Dactylographie Multijoueur",
   "meta.description":
     "Application web d'entraînement à la frappe au clavier associant entraînement individuel et courses multijoueur en temps réel.",
 
@@ -136,7 +136,7 @@ export const fr = {
   "common.yes": "Oui",
   "common.no": "Non",
   "common.retry": "Réessayer",
-  "meta.roomTitle": "Salle {code} · CodeRacer",
+  "meta.roomTitle": "Salle {code} · Classroom Racer",
   "guest.title": "Choisissez un pseudonyme",
   "guest.description":
     "Jouez sans compte : votre pseudonyme suffit. Vos résultats ne seront pas conservés.",
@@ -315,8 +315,8 @@ export const fr = {
   "home.createDefaultRoom": "Créer une salle publique",
   "home.browseRooms": "Explorer les salles",
   "home.createRoom": "Créer une salle",
-  "meta.roomsTitle": "Salles publiques · CodeRacer",
-  "meta.createTitle": "Créer une salle · CodeRacer",
+  "meta.roomsTitle": "Salles publiques · Classroom Racer",
+  "meta.createTitle": "Créer une salle · Classroom Racer",
   "explorer.title": "Salles publiques",
   "explorer.caption": "Salles publiques ouvertes, mises à jour en direct",
   "explorer.all": "Toutes",
@@ -347,9 +347,9 @@ export const fr = {
   "errors.avatarMissing": "Choisissez une image.",
   "errors.avatarTooLarge": "L'image dépasse 2 Mo.",
   "errors.avatarType": "Formats acceptés : JPEG, PNG ou WebP.",
-  "meta.profileTitle": "Mon profil · CodeRacer",
-  "meta.publicProfileTitle": "{name} · CodeRacer",
-  "meta.raceTitle": "Résultats de course · CodeRacer",
+  "meta.profileTitle": "Mon profil · Classroom Racer",
+  "meta.publicProfileTitle": "{name} · Classroom Racer",
+  "meta.raceTitle": "Résultats de course · Classroom Racer",
   "profile.statsTitle": "Statistiques",
   "profile.bestWpm": "Meilleur MPM",
   "profile.avgWpm": "MPM moyen",

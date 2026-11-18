@@ -17,7 +17,7 @@ export function Navbar() {
     <header className="border-slate-dark sticky top-0 z-40 w-full border-b-3 bg-white/90 backdrop-blur-md transition-colors duration-150 dark:border-zinc-700 dark:bg-zinc-900/90">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:h-20 sm:px-8">
         {/* Brand Logo */}
-        <Link href="/" aria-label="CodeRacer" className="group flex shrink-0 items-center">
+        <Link href="/" aria-label="Classroom Racer" className="group flex shrink-0 items-center">
           <BrandLogo />
         </Link>
 
