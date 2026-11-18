@@ -1,4 +1,4 @@
-# CodeRacer
+# Classroom Racer
 
 Course de frappe au clavier multijoueur en temps réel, pensée pour la classe (12–17 ans). Les joueurs se retrouvent dans une salle identifiée par un code de 6 caractères, tapent le même texte et voient la progression de chacun en direct sur une piste. Des bots de cinq niveaux peuvent compléter la salle, et des bonus de remontée gardent la course serrée jusqu'au bout.
 

@@ -4,9 +4,9 @@
 
 ## 1. Nom du site (DES-01)
 
-Nom retenu : **CodeRacer**.
+Nom retenu : **Classroom Racer**.
 
-J'ai choisi le nom « CodeRacer », car une des listes de mots que le client voulait était « code ». De plus, l'application est destinée à une cohorte d'étudiants, et une des raisons principales de vouloir s'améliorer à l'écriture sur ordinateur est de coder ou de faire toutes sortes de tâches semblables à de la programmation. Même si l'application ne s'adresse pas spécifiquement à l'écriture de code, elle s'adresse à des cohortes de jeunes qui ont un intérêt pour le code. La personnalité du site tourne autour de la course, alors c'est « CodeRacer ».
+« Classroom Racer » représente bien le public cible de l'application, des classes d'élèves, ainsi que son thème, la course.
 
 ### Noms envisagés
 
@@ -15,13 +15,24 @@ J'ai choisi le nom « CodeRacer », car une des listes de mots que le client vou
 3. Race N Type
 4. Typing Wars
 5. Code Trainer
-6. **Code Racer** (retenu)
+6. TypeRacer : écarté, le nom existe déjà.
+7. Code Racer : mon premier choix (voir plus bas), écarté parce qu'un projet porte déjà ce nom, sur une adresse en .dev.
+8. Type N Code Racer
+9. **Classroom Racer** (retenu)
 
-Je cherchais quelque chose en lien avec l'écriture ou le codage, et « Code Racer » était tout simplement celui qui sonnait le mieux.
+Je cherchais quelque chose en lien avec l'écriture ou le codage. Mon premier choix était « Code Racer », celui qui sonnait le mieux :
+
+> J'avais choisi le nom « CodeRacer », car une des listes de mots que le client voulait était « code ». De plus, l'application est destinée à une cohorte d'étudiants, et une des raisons principales de vouloir s'améliorer à l'écriture sur ordinateur est de coder ou de faire toutes sortes de tâches semblables à de la programmation. Même si l'application ne s'adresse pas spécifiquement à l'écriture de code, elle s'adresse à des cohortes de jeunes qui ont un intérêt pour le code. La personnalité du site tourne autour de la course, alors c'est « CodeRacer ».
+
+Il existe toutefois déjà un projet connu à ce nom (« Code Racer » de WebDevCody), ce qui va à l'encontre de l'exigence d'originalité. J'ai donc choisi un autre nom.
 
 ### Originalité
 
-Un projet open source connu porte déjà le nom « Code Racer » (de WebDevCody). Même si le nom est déjà pris, étant donné que le site est réalisé dans le cadre d'un cours, j'ai décidé de le garder malgré tout.
+Recherches faites le 18 novembre 2026 pour « Classroom Racer » :
+
+- **Web** : aucun site, jeu ni application de ce nom. On trouve seulement des noms proches mais différents, comme « Classroom Car Race » (jeu d'anglais), « Boddle Racers » ou les jeux de frappe connus (Nitro Type, TypeRacer, Ratatype).
+- **GitHub** : un seul dépôt, `PaulWerner346/Classroom-Racer`, un petit projet abandonné (aucune étoile, aucune modification depuis sa création en avril 2024) et d'un autre genre : l'enseignant clique sur les élèves pour les faire avancer, sans frappe au clavier. Ce n'est pas un produit connu.
+- **Domaines** : classroomracer.com, .app, .dev et .io ne répondent pas ; aucun site n'y est en ligne.
 
 ## 2. Logo (DES-02)
 
@@ -35,7 +46,7 @@ Le premier jet, dessiné dans Paint : la roue seule, puis la roue à la place du
 
 ### Version au propre
 
-Générée avec Gemini à partir du croquis ci-dessus : l'idée et la composition viennent du croquis, Gemini en a fait une version plus nette. La roue seule sert de logo ; la version complète reprend l'idée du croquis, avec deux roues superposées qui forment le « o ».
+Générée avec Gemini à partir du croquis ci-dessus : l'idée et la composition viennent du croquis, Gemini en a fait une version plus nette. La roue seule sert de logo ; la version complète reprend l'idée du croquis avec l'ancien nom, CodeRacer, et deux roues superposées qui forment le « o ».
 
 | Roue                                               | Logo complet                                                   |
 | -------------------------------------------------- | -------------------------------------------------------------- |
@@ -43,7 +54,7 @@ Générée avec Gemini à partir du croquis ci-dessus : l'idée et la compositio
 
 ### Dans l'application
 
-- **Barre de navigation** : le logo complet, composé comme dans le croquis (`src/components/layout/BrandLogo.tsx`) : « C », la roue (`src/assets/wheel-logo.png`) à la place du « O », « DE » en ardoise et « RACER » en bleu, en Nunito Black. L'image générée du logo complet n'est pas utilisée telle quelle : ses lettres y sont dédoublées (deux « RACER » superposés, une bande floue entre les deux). En texte, les lettres suivent le thème (blanches en thème sombre).
+- **Barre de navigation** : le logo complet avec le nom retenu (`src/components/layout/BrandLogo.tsx`), sur le même principe que le croquis : « CL », la roue (`src/assets/wheel-logo.png`) à la place du premier « O » de « CLASSROOM », « SSROOM » en ardoise et « RACER » en bleu, en Nunito Black. En texte, les lettres suivent le thème (blanches en thème sombre). Sous 1024 px de large, les deux mots passent sur deux lignes pour que la barre tienne sur un téléphone. L'image générée du logo complet n'est pas utilisée : elle porte l'ancien nom et ses lettres y sont dédoublées (deux « RACER » superposés, une bande floue entre les deux).
 - **Favicon** : la roue seule, détourée en cercle, en `src/app/favicon.ico` (16, 32 et 48 px), `src/app/icon.png` (192 px) et `src/app/apple-icon.png` (180 px, sur le fond blanc cassé).
 
 La roue n'est pas modifiée : elle est seulement détourée en cercle et redimensionnée.

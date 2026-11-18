@@ -8,9 +8,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# CodeRacer — Project Architecture & Agent Rules
+# Classroom Racer — Project Architecture & Agent Rules
 
-Welcome to **CodeRacer**, a competitive classroom typing arcade web application built for students aged 12–17 and teachers, blending the solo practice of Monkeytype with the multiplayer energy of Kahoot.
+Welcome to **Classroom Racer**, a competitive classroom typing arcade web application built for students aged 12–17 and teachers, blending the solo practice of Monkeytype with the multiplayer energy of Kahoot.
 
 ---
 
