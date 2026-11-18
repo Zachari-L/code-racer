@@ -8,14 +8,20 @@ Nom retenu : **CodeRacer**.
 
 J'ai choisi le nom « CodeRacer », car une des listes de mots que le client voulait était « code ». De plus, l'application est destinée à une cohorte d'étudiants, et une des raisons principales de vouloir s'améliorer à l'écriture sur ordinateur est de coder ou de faire toutes sortes de tâches semblables à de la programmation. Même si l'application ne s'adresse pas spécifiquement à l'écriture de code, elle s'adresse à des cohortes de jeunes qui ont un intérêt pour le code. La personnalité du site tourne autour de la course, alors c'est « CodeRacer ».
 
-**À compléter :**
+### Noms envisagés
 
-- Autres noms envisagés (avec, pour chacun, pourquoi vous l'avez écarté) :
-  1. …
-  2. …
-- Vérification d'originalité (recherches faites, résultats) : …
+1. Typing Racing
+2. Faster Typer
+3. Race N Type
+4. Typing Wars
+5. Code Trainer
+6. **Code Racer** (retenu)
 
-> Attention : un projet open source connu porte déjà le nom « Code Racer » (de WebDevCody). L'énoncé demande de vérifier que le nom n'est pas déjà utilisé par un produit connu ; la vérification ci-dessus doit expliquer pourquoi le nom reste acceptable, ou le nom doit changer.
+Je cherchais quelque chose en lien avec l'écriture ou le codage, et « Code Racer » était tout simplement celui qui sonnait le mieux.
+
+### Originalité
+
+Un projet open source connu porte déjà le nom « Code Racer » (de WebDevCody). Même si le nom est déjà pris, étant donné que le site est réalisé dans le cadre d'un cours, j'ai décidé de le garder malgré tout.
 
 ## 2. Logo (DES-02)
 
