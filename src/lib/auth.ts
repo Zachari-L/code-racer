@@ -29,6 +29,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Discord({
       clientId: process.env.AUTH_DISCORD_ID,
       clientSecret: process.env.AUTH_DISCORD_SECRET,
+      // Discord now returns an `iss` parameter on the callback. Without an
+      // issuer, Auth.js compares it to a placeholder and rejects every sign-in.
+      issuer: "https://discord.com",
     }),
     Credentials({
       credentials: {
